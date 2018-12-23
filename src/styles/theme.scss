@@ -1,0 +1,85 @@
+/*============================================================================
+  Built with Slate
+    - You cannot use native CSS/Sass @imports in this file without a build script
+    - Do not adjust the order of stylesheets in the `global` directory!
+==============================================================================*/
+
+/*================ VENDOR ================*/
+// Import these up here to allow overrides down below
+@import url('vendor/slick.scss');
+@import url('vendor/chosen.scss');
+
+/*================ GLOBAL ================*/
+@import url('global/variables.scss.liquid');
+@import url('global/mixins.scss');
+@import url('global/reboot.scss');
+@import url('global/fonts.scss.liquid');
+@import url('global/typography.scss');
+@import url('global/helper-classes.scss');
+@import url('global/grid.scss');
+@import url('global/layout.scss');
+@import url('global/flexbox.scss');
+@import url('global/component-animations.scss');
+
+/*================ COMPONENTS ================*/
+// Components are small elements that may be re-used in multiple modules
+@import url('components/icons.scss');
+@import url('components/buttons.scss');
+@import url('components/blank-states.scss');
+@import url('components/modals.scss');
+@import url('components/page.scss');
+@import url('components/forms.scss');
+@import url('components/rte.scss');
+@import url('components/breadcrumbs.scss');
+@import url('components/pagination.scss');
+@import url('components/filters.scss');
+@import url('components/tables.scss');
+@import url('components/social-sharing.scss');
+@import url('components/alerts.scss');
+@import url('components/chosen.scss');
+@import url('components/content.scss');
+@import url('components/cards.scss');
+@import url('components/quick-view.scss');
+@import url('components/docs.scss');
+@import url('components/banner.scss');
+@import url('components/minimal-input.scss');
+@import url('components/dots.scss');
+@import url('components/promo.scss');
+@import url('components/frames.scss');
+@import url('components/spacer.scss');
+@import url('components/slideup.scss');
+@import url('components/arrows.scss');
+@import url('components/drawer.scss');
+@import url('components/panels.scss');
+@import url('components/expandable-list.scss');
+@import url('components/overlays.scss');
+@import url('components/yotpo.scss');
+
+/*================ MODULES ================*/
+// Modules are larger pieces of functionality that consume components
+// It is common for there to only be one instance of each on a page
+@import url('modules/header.scss');
+@import url('modules/footer.scss');
+@import url('modules/gift-card-template.scss');
+@import url('modules/pencil-banner.scss');
+@import url('modules/ajax-cart.scss');
+@import url('modules/product-detail.scss');
+@import url('modules/slideshow.scss');
+@import url('modules/mobile-menu.scss');
+
+/*================ TEMPLATES ================*/
+// Styles *specific* to a shopify template
+// Only use if there is no less specific / more logical place to put styles
+// Try to use the body template class as a CSS hook
+@import url('templates/cart.scss');
+@import url('templates/collection.scss');
+@import url('templates/404.scss');
+@import url('templates/gift-card.scss');
+
+// Necessary bottom placement for specificity w/o `!important`
+@import url('global/utilities.scss');
+@import url('global/responsive-utilities.scss');
+
+// DEV: Don't display Shopify's admin preview bar
+.shopify-preview-bar, 
+#preview-bar-iframe { display: none; }

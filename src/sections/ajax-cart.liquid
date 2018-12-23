@@ -1,0 +1,105 @@
+<div data-section-id="{{ section.id }}" data-section-type="ajax-cart">
+  <div class="ajax-cart-container" data-ajax-cart-container></div>
+</div>
+
+{% raw %}
+<script type="text/x-handlebars-template" data-ajax-cart-template>
+  <div class="ajax-cart">
+    <form action="/cart" method="post" novalidate>
+      <div class="ajax-cart__header" data-ajax-cart-header>
+        <a href="#" class="ajax-cart__close" data-ajax-cart-close>{% endraw %}{% include 'icon-close' %}{% raw %}</a>
+        <h4>Your Bag</h4>
+      </div>
+      <div class="ajax-cart__body" data-ajax-cart-body>
+        {{#if items}}
+          <ul class="ajax-cart__list">
+            {{#each items}}
+            <li class="ajax-cart__item" data-id="{{ variant_id }}" data-qty="{{ quantity }}" data-ajax-item>
+              <img src="{{ image }}" class="ajax-cart__item-image">
+              <div class="ajax-cart__item-info">
+                <h5 class="ajax-cart__item-header">
+                  <span class="ajax-cart__item-price">{{ price }}</span>
+                  <a href="{{ url }}" class="ajax-cart__item-title">{{ product_title }}</a>
+                </h5>
+                <ul class="ajax-cart__item-options">
+                  {{#unless has_only_default_variant}}
+                    {{#if variant_options}}
+                      {{#each variant_options}}
+                        <li>
+                          {{ name }}: {{ value }}
+                        </li>
+                      {{/each}}
+                    {{else}}
+                      {{#if variant_title}}
+                        <li>{{ variant_title }}</li>
+                      {{/if}}
+                    {{/if}}
+                  {{/unless}}
+                  <li><span class="ajax-cart__item-qty">Quantity: {{ quantity }}</span></li>
+                  <li>
+                    <a href="#" class="ajax-cart__item-remove" data-ajax-cart-item-remove>Remove</a>
+                  </li>
+                  <li>
+                    <a href="#" data-ajax-cart-item-increment>Increment</a>
+                    <a href="#" data-ajax-cart-item-decrement>Decrement</a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+            {{/each}}
+          </ul>
+        {{else}}
+          <div class="ajax-cart__empty-message">
+            {% endraw %}
+            {% if section.settings.empty_text != blank %}
+              {{ section.settings.empty_text }}
+            {% else %}
+              {{ 'cart.general.empty' | t }}
+            {% endif %}
+            {% raw %}
+          </div>
+        {{/if}}
+      </div>
+      {{#if items}}
+        <div class="ajax-cart__footer" data-ajax-cart-footer>
+          <div class="ajax-cart__footer-row">
+            <p class="clearfix">Subtotal <span style="float: right">{{ total_price }}</span></p>  
+          </div>
+          <div class="ajax-cart__footer-row">
+            <a href="/cart" class="btn btn-block btn-primary">{% endraw %}{{ 'cart.general.view' | t }}{% raw %}</a>
+            <button type="submit" name="checkout" class="btn btn-block">{% endraw %}{{ 'cart.general.checkout' | t }}{% raw %}</button>
+          </div>
+          {% endraw %}
+          {% if section.settings.footer_text != blank %}
+            <div class="ajax-cart__footer-row u-ta-center">
+              {{ section.settings.footer_text }}
+            </div>
+          {% endif %}
+          {% raw %}
+        </div>
+      {{/if}}
+    </form>
+  </div>
+</script>
+{% endraw %}
+
+
+{% schema %}
+  {
+    "name": "Ajax Cart",
+    "settings": [
+      {
+        "id": "empty_text",
+        "type": "richtext",
+        "label": "Empty Text",
+        "default": "<p>Your bag is empty</p>"
+      },
+      {
+        "id": "footer_text",
+        "type": "richtext",
+        "label": "Footer Text",
+        "default": "<p>Promotional Message Here</p>"
+      }
+    ]
+  }
+{% endschema %}

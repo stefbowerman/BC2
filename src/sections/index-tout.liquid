@@ -1,0 +1,94 @@
+<div data-section-id="{{ section.id }}" data-section-type="banner">
+  <div class="banner banner--small">
+    {% include 'banner-panel',
+                id: section.id,
+                content_alignment: section.settings.content_alignment,
+                content_max_width: section.settings.content_max_width,
+                background_image: section.settings.background_base,
+                background_image_small: section.settings.background_small,
+                light_text: section.settings.light_text,
+                title: section.settings.title,
+                text: section.settings.text,
+    %}
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "Tout",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Content"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title"
+      },
+      {
+        "type": "text",
+        "id": "text",
+        "label": "Text"
+      },
+      {
+        "type": "header",
+        "content": "Design"
+      },
+      {
+        "type": "checkbox",
+        "id" : "light_text",
+        "label": "Light Text",
+        "default": false
+      },
+      {
+        "type":      "select",
+        "id":        "content_alignment",
+        "label":     "Content Alignment",
+        "options": [
+          { "value": "left", "label": "Left" },
+          { "value": "center", "label": "Center" },
+          { "value": "right", "label": "Right" }
+        ],
+        "default":   "center"
+      },
+      {
+        "type": "range",
+        "id":   "content_max_width",
+        "min":  300,
+        "max":  850,
+        "step": 25,
+        "unit": "px",
+        "label": "Max Content Width",
+        "default": 600
+      },
+      {
+        "type": "header",
+        "content": "Background - Desktop",
+        "info": "Main image will always be used.  Tablet and mobile images will be displayed if they are set."
+      },
+      {
+        "type": "image_picker",
+        "id": "background_base",
+        "label": "Main Image"
+      },
+      {
+        "type": "header",
+        "content": "Background - Mobile"
+      },
+      {
+        "type": "image_picker",
+        "id": "background_small",
+        "label": "Main Image"
+      }
+    ],
+    "presets": [{
+      "name": "Tout",
+      "category": "Image",
+      "settings": {
+        "title": "Tout Headline",
+        "text": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
+      }
+    }]
+  }
+{% endschema %}

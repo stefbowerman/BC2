@@ -1,0 +1,79 @@
+{% capture page_sidebar_html %}
+  {% include 'page-sidebar' %}
+{% endcapture %}
+
+{% assign has_sidebar = false %}
+{% if page_sidebar_html != blank %}
+  {% assign has_sidebar = true %}
+{% endif %}
+
+{% assign title = 'customer.addresses.title' | t %}
+
+{% paginate customer.addresses by 5 %}
+
+  <div class="layout-content-wrapper">
+    <div class="container">
+
+      {% include 'page-header', title: title %}
+
+      <div class="row">
+
+        <div class="page-content{% if has_sidebar %} page-content--has-sidebar{% endif %}">
+
+          <div id="AddressNewForm" class="hide">
+            {% include 'customer-new-address-form' %}
+            <hr />
+          </div>
+
+          {% if customer.addresses.size > 0 %}
+
+            {% for address in customer.addresses %}
+
+              <div id="EditAddress_{{ address.id }}" class="hide">
+                {% include 'customer-edit-address-form', address: address %}
+                <hr />
+              </div>
+
+            {% endfor %}
+
+            <div class="row">
+              {% for address in customer.addresses %}
+                <div class="col-md-6 col-lg-4">
+
+                  {{ address | format_address }}
+
+                  {% if address == customer.default_address %}
+                    <p class="small u-color-grey"><em>Default Address</em></p>
+                  {% endif %}
+
+                  <p class="small">
+                    <a href="#" class="cta" data-address-edit-toggle data-form-id="{{ address.id }}">
+                      {{ 'customer.addresses.edit' | t }}
+                    </a>
+                    &middot;
+                    <a href="#" data-address-delete data-form-id="{{ address.id }}" data-confirm-message="{{ 'customer.addresses.delete_confirm' | t }}">
+                      {{ 'customer.addresses.delete' | t }}
+                    </a>
+                  </p>
+                </div>
+              {% endfor %}
+            </div>
+
+          {% endif %}
+
+          <hr />
+          <button type="button" class="btn" data-address-new-toggle>{{ 'customer.addresses.add_new' | t }}</button>       
+
+         </div>
+
+        {{ page_sidebar_html }}
+
+      </div>
+    </div>
+  </div>        
+
+  {% if paginate.pages > 1 %}
+    {% include 'pagination' %}
+  {% endif %}
+
+{% endpaginate %}

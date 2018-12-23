@@ -1,0 +1,99 @@
+// -------------------------
+// Mixin - Button Variants
+// -------------------------
+//
+// Easily pump out default styles, as well as :hover, :focus, :active,
+// and disabled options for all buttons
+
+@mixin button-variant($color, $background, $border, $hover-color: $color, $hover-background: false, $hover-border: false) {
+
+  // Add support for transparent backgrounds
+  @if $hover-background {
+    $hover-background: $hover-background;
+  } @else if $hover-background == transparent {
+    $hover-background: transparent;
+  } @else {
+    $hover-background: darken($background, 12%);
+  }
+
+  // Add support for transparent borders
+  @if $hover-border {
+    $hover-border: $hover-border;
+  } @else if $background == transparent {
+    $hover-border: transparent;
+  } @else {
+    $hover-border: darken($border, 12%);
+  }
+
+  $active-focus-background: $hover-background;
+  @if $background != transparent {
+    $active-focus-background: darken($background, 17%);
+  }
+
+  $active-focus-border: $border;
+  @if $border != transparent {
+    $active-focus-border: darken($border, 25%);
+  }
+
+  color: $color;
+  background-color: $background;
+  border-color: $border;
+  transition: all ease-in-out .3s;
+
+  &:focus,
+  &.focus {
+    color: $hover-color;
+    background-color: $hover-background;
+        border-color: $hover-border;
+  }
+  &:hover {
+    color: $hover-color;
+    background-color: $hover-background;
+        border-color: $hover-border;
+    transition: all ease-in-out .3s;
+  }
+  &:active,
+  &.active,
+  .open > &.dropdown-toggle {
+    color: $color;
+    background-color: $hover-background;
+        border-color: $hover-border;
+
+    &:hover,
+    &:focus,
+    &.focus {
+      color: $color;
+      background-color: $active-focus-background;
+          border-color: $active-focus-border;
+    }
+  }
+  &:active,
+  &.active,
+  .open > &.dropdown-toggle {
+    background-image: none;
+  }
+  &.disabled,
+  &[disabled],
+  fieldset[disabled] & {
+    &:hover,
+    &:focus,
+    &.focus {
+      color: $color;
+      background-color: $background;
+          border-color: $border;
+    }
+  }
+
+  .badge {
+    color: $background;
+    background-color: $color;
+  }
+}
+
+// Button sizes
+@mixin button-size($padding-vertical, $padding-horizontal, $font-size, $line-height, $border-radius) {
+  padding: $padding-vertical $padding-horizontal;
+  font-size: $font-size;
+  line-height: $line-height;
+  border-radius: $border-radius;
+}

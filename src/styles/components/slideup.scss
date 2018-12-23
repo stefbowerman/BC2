@@ -1,0 +1,114 @@
+// -------------------------
+// Slideup
+// -------------------------
+
+.slideup {
+  position: fixed;
+  z-index: $z-index-slideup;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+  padding: $slideup-padding-vertical 0;
+  background-color: $slideup-bg;
+  opacity: 0;
+  @include translateY(100%);
+  @include transition(transform $transition-duration-slow $transition-timing-function-slide-in, opacity $transition-duration-slow step-end);
+
+  &.is-visible {
+    pointer-events: auto;
+    opacity: 1;
+    @include translateY(0);
+    @include transition(transform $transition-duration-slow $transition-timing-function-slide-in, opacity $transition-duration-slow step-start);
+  }
+
+  > .container {
+    position: relative;
+  }
+}
+
+.slideup__close {
+  position: absolute;
+  z-index: 1;
+  top: 30px;
+  right: 17px;
+
+  .container > & {
+    top: 1px;
+  }
+}
+
+.slideup__content {
+  position: relative;
+  max-width: $slideup-content-max-width;
+  padding: 0 $grid-gutter-width;
+  @include center-block;
+}
+
+.slideup__title {
+  margin-bottom: 5px;
+  text-align: center;
+  font-size: $font-size-h5;
+
+  @media (min-width: $screen-sm-min) {
+    font-size: $font-size-h4;
+  }
+}
+
+.slideup__text {
+  text-align: center;
+}
+
+/*
+ * This stuff is specific to the subscribe form
+ *
+ * .slideup__form-content
+ *   form.slideup__form
+ *   .slideup__form-success
+ */
+
+.slideup__form-content {
+  position: relative;
+}
+
+.slideup__form-message {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  bottom: 0;
+  @include display-flex;
+  @include align-items(center);
+  @include justify-content(center);
+  pointer-events: none;
+
+  .slideup__title:only-child {
+    margin-bottom: 0;
+  }
+}
+
+.slideup__form-content {
+
+  .slideup__form {
+    opacity: 1;
+    @include transition(opacity $transition-duration-slow $transition-timing-function-in-out-ui $transition-duration-slow);
+  }
+
+  .slideup__form-message {
+    opacity: 0;
+    @include transition(opacity $transition-duration-slow $transition-timing-function-in-out-ui);
+  }
+
+  &.show-message {
+    .slideup__form {
+      opacity: 0;
+      @include transition(opacity $transition-duration-slow $transition-timing-function-in-out-ui);
+    }
+    .slideup__form-message {
+      pointer-events: auto;
+      opacity: 1;
+      @include transition(opacity $transition-duration-slow $transition-timing-function-in-out-ui $transition-duration-slow);    
+    }
+  }
+}

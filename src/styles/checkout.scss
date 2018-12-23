@@ -1,0 +1,89 @@
+/*============================================================================
+  Checkout styles
+    - You cannot use native CSS/Sass @imports in this file without a build script
+    - Do not adjust the order of stylesheets in the `global` directory!
+==============================================================================*/
+
+/*================ GLOBAL ================*/
+@import url('global/variables.scss.liquid');
+@import url('global/mixins.scss');
+@import url('global/reboot.scss');
+@import url('global/fonts.scss.liquid');
+@import url('global/typography.scss');
+@import url('global/helper-classes.scss');
+@import url('global/grid.scss');
+@import url('global/layout.scss');
+@import url('global/flexbox.scss');
+
+/*================ COMPONENTS ================*/
+@import url('components/buttons.scss');
+@import url('components/forms.scss');
+
+/*================ CHECKOUT ================*/
+$checkout-bp-sm-min: 750px;
+$checkout-bp-md-min: 1000px;
+$checkout-bp-sm-max: $checkout-bp-md-min - 1px;
+
+$checkout-grid-gutter-width: 30px;
+$checkout-bg: #FAFAFA;
+$checkout-border: #F00;
+$checkout-border-subtle: mix(#FFF, #F00, 80%);
+
+$total-line-vertical-spacing: 17.5px;
+
+$header-height: 70px;
+$header-padding-v: 15px;
+$header-z-index: 100;
+
+@import url('checkout/layout.scss');
+@import url('checkout/forms.scss');
+@import url('checkout/breadcrumbs.scss');
+@import url('checkout/steps.scss');
+@import url('checkout/sidebar.scss');
+
+.icon-svg--color-accent {
+  color: #F00;
+  vertical-align: inherit;
+}
+
+.notice {
+
+}
+
+.main {
+  h2 {
+
+  }
+}
+
+
+// Content Boxes
+
+.content-box {
+
+  .boxshadow & {
+    // -webkit-box-shadow: none;
+    //         box-shadow: none;
+  }
+}
+
+.content-box__row {
+
+}
+
+ul.policy-list {
+
+}
+
+// Desktop Design with min-width: 1000px
+@media screen and (min-width: $checkout-bp-md-min) {
+
+  .anyflexbox .content .wrap {
+    @include flex-direction(row);
+  }
+}
+
+// Mobile Design with max-width: 749px
+@media screen and (max-width: $checkout-bp-sm-max) {
+  
+}

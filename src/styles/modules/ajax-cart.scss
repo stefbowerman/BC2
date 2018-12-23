@@ -1,0 +1,175 @@
+// -------------------------
+// AJAX Cart
+// -------------------------
+
+body.ajax-cart-open {
+  overflow: hidden;
+}
+
+.ajax-cart-container {
+  position: fixed;
+  z-index: $z-index-ajax-cart;
+  top: 0;
+  right: 0;
+  width: 100%;
+  max-height: 100%;
+  background: $ajax-cart-bg;
+  border: 1px solid $ajax-cart-border-color;
+  pointer-events: none;
+  overflow: scroll;
+  -webkit-overflow-scrolling: touch;
+  @include translateX(100%);
+  @include transition(all $transition-duration-slide $transition-timing-function-slide-out);
+
+  &.is-open {
+    pointer-events: auto;
+    @include translateX(0%);
+    @include transition(all $transition-duration-slide $transition-timing-function-slide-in);
+  }
+
+  // Ajax cart shield
+  &:before {
+    content: '';
+    @include stretch-within;
+    background: transparentize($ajax-cart-bg, 0.5);
+    opacity: 0;
+    pointer-events: none;
+    @include transition(opacity $transition-duration-base $transition-timing-function-base);   
+  }
+
+  &.request-in-progress:before {
+    opacity: 1;
+    pointer-events: auto;
+    cursor: $cursor-disabled;
+  }    
+
+  // Ensure that the cart is full width on screen sizes below this
+  @media (min-width: $screen-xs-min) {
+    max-width: $ajax-cart-width;
+  }
+}
+
+.ajax-cart {
+  background: $ajax-cart-bg;
+}
+
+.ajax-cart__header,
+.ajax-cart__body,
+.ajax-cart__footer {
+  padding: $ajax-cart-padding-vertical $ajax-cart-padding-horizontal;
+}
+
+.ajax-cart__header {
+  padding-bottom: 0;
+
+  h4 {
+    margin-bottom: 0;
+  }
+}
+
+.ajax-cart__body {
+
+}
+
+.ajax-cart__footer {
+  padding-top: 0;
+}
+
+.ajax-cart__close {
+  float: right;
+}
+
+.ajax-cart__empty-message {
+  margin: $ajax-cart-padding-vertical*2 0;
+  text-align: center;
+}
+
+.ajax-cart__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ajax-cart__item {
+  @include clearfix;
+  margin-bottom: 15px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &.is-being-removed {
+    opacity: 0;
+    @include transition(opacity $transition-duration-base $transition-timing-function-in);
+  }
+}
+
+.ajax-cart__item-image {
+  width: 110px;
+  height: auto;
+  float: left;
+}
+
+.ajax-cart__item-info {
+  padding-left: 110px + 30px; // Make room for the image floated left
+}
+
+.ajax-cart__item-header {
+
+}
+
+.ajax-cart__item-price {
+  float: right;
+  padding-left: 5px;
+}
+
+.ajax-cart__item-title {
+  margin-bottom: 10px;
+}
+
+.ajax-cart__item-options {
+  @include list-unstyled;
+}
+
+.ajax-cart__item-qty {
+
+}
+
+.ajax-cart__item-remove {
+
+}
+
+.ajax-cart__footer {
+
+}
+
+.ajax-cart__footer-row {
+  padding-top: $ajax-cart-padding-vertical / 2;
+
+  &:not(:last-child) {
+    margin-bottom: 15px;
+  }
+
+  p:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.ajax-cart-backdrop {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: $z-index-ajax-cart-backdrop;
+  background-color: $ajax-cart-backdrop-color;
+  opacity: 0;
+  pointer-events: none;
+  @include transition(all $transition-duration-slide $transition-timing-function-slide-out);
+
+  &.is-visible {
+    opacity: $ajax-cart-backdrop-opacity;
+    pointer-events: auto;
+    @include transition(all $transition-duration-slide $transition-timing-function-slide-in);
+  }
+}

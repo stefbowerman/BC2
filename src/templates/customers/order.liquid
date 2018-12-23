@@ -1,0 +1,145 @@
+{%- comment %}
+  Individual customer order
+
+  Styles:
+  - account.scss
+  - page.scss
+{% endcomment -%}
+
+{% capture page_sidebar_html %}
+  {% include 'page-sidebar' %}
+{% endcapture %}
+
+{% assign has_sidebar = false %}
+{% if page_sidebar_html != blank %}
+  {% assign has_sidebar = true %}
+{% endif %}
+
+{% assign created_at = order.created_at | time_tag: format: 'month_day_year' %}
+{% assign title = 'customer.order.title' | t: name: order.name %}
+{% assign subtitle = 'Placed: ' | append: created_at %}
+
+<div class="layout-content-wrapper">
+  <div class="container">
+
+    {% include 'page-header', title: title, subtitle: subtitle %}
+
+    <div class="row">
+      
+      <div class="page-content{% if has_sidebar %} page-content--has-sidebar{% endif %}">
+
+        <div data-order="{{ order.id }}">
+          {% if order.cancelled %}
+            {%- assign cancelled_at = order.cancelled_at | date: "%B %d, %Y %I:%M%p" -%}
+            <div class="alert alert-danger u-ta-center">
+              <p>{{ 'customer.order.cancelled' | t: date: cancelled_at }}.  {{ 'customer.order.cancelled_reason' | t: reason: order.cancel_reason }}</p>
+            </div>
+            <br />
+          {% endif %}
+
+          <div class="row">
+            <div class="col-sm-6 col-md-4">
+              <h6>{{ 'customer.order.billing_address' | t }}</h6>
+              {{- order.billing_address | format_address -}}
+            </div>
+            <div class="col-sm-6 col-md-4">
+              <h6>{{ 'customer.order.shipping_address' | t }}</h6>
+              {{- order.shipping_address | format_address -}}
+            </div>
+            <div class="col-md-4">
+              <h6>{{ 'customer.orders.tracking_status' | t }}</h6>
+              <p>{{ 'customer.order.payment_status' | t }}: <strong>{{- order.financial_status_label -}}</strong></p>
+              <p>{{ 'customer.order.fulfillment_status' | t }}: <strong>{{- order.fulfillment_status_label -}}</strong></p>
+            </div>
+          </div>
+
+          <hr />
+
+          <h6>{{ 'customer.order.line_items_title' | t }}</h6>
+
+          <div class="table-responsive">
+            <table class="table table-borderless">
+              <tbody>
+                <!-- line-item -->
+                {% for line_item in order.line_items %}                  
+                  <tr>
+                    <td style="width:150px">{{ line_item.image | img_url: '250x' | img_tag | link_to: line_item.product.url }}</td>
+                    <td>
+                      <p><strong>{{ line_item.product.title | link_to: line_item.product.url }}</strong></p>
+                      {% comment %} Only show this line if there is non-default content {% endcomment %}
+                      {% if line_item.variant.title != "Default Title" %}
+                        <p>{{ line_item.variant.title  | link_to: line_item.variant.url }}</p>
+                      {% endif %}
+                      <p>
+                        <span class="u-tt-uppercase">{{ 'customer.order.line_item_quantity' | t }}</span>: {{ line_item.quantity }}
+
+                        {% if line_item.quantity > 1 %}
+                          ({{ line_item.quantity | times: line_item.price | money }} each)
+                        {% endif %}
+                      </p>
+
+                      {% if line_item.fulfillment %}
+                        <div class="small">
+                          <p>
+                            {{ 'customer.order.fulfilled_at' | t }}: {{ line_item.fulfillment.created_at | date: format: 'month_day_year' }}
+                          </p>
+
+                          {% if line_item.fulfillment.tracking_number %}
+                            <p>
+                              {{ 'customer.order.tracking_number' | t }}: {{ line_item.fulfillment.tracking_number }}
+                            </p>
+                          {% endif %}
+
+                          {% if line_item.fulfillment.tracking_url %}
+                            <p>
+                              <a href="{{ line_item.fulfillment.tracking_url }}">{{ 'customer.order.track_shipment' | t }}</a>
+                            </p>
+                          {% endif %}
+                        </div>
+                      {% endif %}
+                    </td>
+                    <td class="u-ta-right">
+                      <strong>{{ line_item.line_price | money }}</strong>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+              <tfoot class="u-ta-right">
+                <tr>
+                  <td colspan="3">{{ 'customer.order.subtotal' | t }}: <strong>{{ order.subtotal_price | money }}</strong></td>
+                </tr>
+                {% for discount in order.discounts %}
+                  <tr>
+                    <td colspan="3">{{ discount.code }} {{ 'customer.order.discount' | t }}: <strong>{{ discount.savings | money }}</strong></td>
+                  </tr>
+                {% endfor %}
+                {% for shipping_method in order.shipping_methods %}
+                  <tr>
+                    <td colspan="3">{{ 'customer.order.shipping' | t }} ({{ shipping_method.title }}): <strong>{{ shipping_method.price | money }}</strong></td>
+                  </tr>
+                {% endfor %}
+                {% for tax_line in order.tax_lines %}
+                  <tr>
+                    <td colspan="3">{{ 'customer.order.tax' | t }} ({{ tax_line.title }} {{ tax_line.rate | times: 100 }}%): <strong>{{ tax_line.price | money }}</strong></td>
+                  </tr>
+                {% endfor %}
+                <tr>
+                  <td colspan="3">
+                    {{ 'customer.order.total' | t }}: <strong>{{ order.total_price | money }}</strong></p>
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+
+        <p>
+          <a href="/account">« {{ 'customer.account.return' | t }}</a>
+        </p>
+      </div>
+
+      {{ page_sidebar_html }}
+
+    </div>
+  </div>
+</div>

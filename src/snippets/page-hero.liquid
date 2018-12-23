@@ -1,0 +1,128 @@
+{%- comment %}
+
+  Page Hero
+  ------------------------------------------------------------------------------
+
+  Usage:
+
+  {% include 'page-hero',
+              id: { string } - required
+              background_image: { image }
+              background_image_medium: { image }
+              background_image_small: { image }
+              content_alignment: { string } - defaults to 'center' - only has effect when `content_max_width` is set and less than page-hero width
+              text_alignment: { string } - defaults to content_alignment
+              light_text: { boolean } - defaults to false
+              content_max_width: { number } - optional
+              title: { string } - optional
+              toptitle: { string } - optional - text that goes on the top of the title
+              subtitle: { string } - optional
+              title_link: { string } - optional
+              cta_url: { url }
+              cta_text { string }
+  %}
+
+{% endcomment -%}
+
+{% comment %} Defaults {% endcomment %}
+{% if content_alignment == blank %}
+  {% assign content_alignment = 'center' %}
+{% endif %}
+
+{% if text_alignment == blank %}
+  {% assign text_alignment = content_alignment %}
+{% endif %}
+
+{% if light_text == blank %}
+  {% assign light_text = false %}
+{% endif %}
+{% comment %} End Defaults {% endcomment %}
+
+<style type="text/css">
+{% if background_image %}
+#page-hero-{{ id }} .page-hero__bg-image {
+  background-image: url({{ background_image | img_url: '1800x' }});
+}
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  #page-hero-{{ id }} .page-hero__bg-image {
+    background-image: url({{ background_image | img_url: '2400x' }});
+  }
+}
+{% endif %}
+{% if content_max_width != blank %}
+  #page-hero-{{ id }} .page-hero__content {
+    max-width: {{ content_max_width | append: 'px' }};
+  }
+{% endif %}
+@media (max-width: 991px) {
+  #page-hero-{{ id }} .page-hero__bg-image {
+    {% if background_image_medium %}
+      background-image: url({{ background_image_medium | img_url: '1000x' }});
+    {% elsif background_image %}
+      background-image: url({{ background_image | img_url: '1000x' }});
+    {% endif %}
+  }
+}
+@media (-webkit-min-device-pixel-ratio: 2) and (max-width: 991px),
+        (min-resolution: 192dpi)           and (max-width: 991px) {
+  #page-hero-{{ id }} .page-hero__bg-image {
+    {% if background_image_medium %}
+      background-image: url({{ background_image_medium | img_url: '1500x' }});
+    {% elsif background_image %}
+      background-image: url({{ background_image | img_url: '1500x' }});
+    {% endif %}
+  }
+}
+@media (max-width: 767px) {
+  #page-hero-{{ id }} .page-hero__bg-image {
+    {% if background_image_small %}
+      background-image: url({{ background_image_small | img_url: '800x' }});
+    {% elsif background_image %}
+      background-image: url({{ background_image | img_url: '800x' }});
+    {% endif %}
+  }
+}
+@media (-webkit-min-device-pixel-ratio: 2) and (max-width: 767px),
+        (min-resolution: 192dpi)           and (max-width: 767px) {
+  #page-hero-{{ id }} .page-hero__bg-image {
+    {% if background_image_small %}
+      background-image: url({{ background_image_small | img_url: '1200x' }});
+    {% elsif background_image %}
+      background-image: url({{ background_image | img_url: '1200x' }});
+    {% endif %}
+  }
+}
+
+</style>
+
+<div id="page-hero-{{ id }}" class="page-hero page-hero--content-{{ content_alignment }} page-hero--text-{{ text_alignment }}{% if light_text %} page-hero--light{% endif %}">
+  <div class="page-hero__bg">
+    <div class="page-hero__bg-image"></div>
+  </div>
+  <div class="container">
+    <div class="page-hero__content">
+      {% if toptitle != blank %}
+        <div class="page-hero__toptitle">
+          {{ toptitle }}
+        </div>
+      {% endif %}
+      {% if title != blank %}
+        <h1 class="page-hero__title">
+          {% if title_link != blank %}
+            <a href="{{ title_link }}">{{ title }}</a>
+          {% else %}
+            {{ title }}
+          {% endif %}
+        </h1>
+      {% endif %}
+      {% if subtitle != blank %}
+        <div class="page-hero__subtitle">{{ subtitle }}</div>
+      {% endif %}
+      {% if cta_url != blank and cta_text != blank %}
+        <a href="{{ cta_url }}" class="btn btn-primary">
+          {{ cta_text }}
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</div>

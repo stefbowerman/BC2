@@ -1,0 +1,175 @@
+{%- comment %}
+
+  Banner Panel
+  ------------------------------------------------------------------------------
+
+  Usage:
+
+  {% include 'banner-panel',
+              id: { string } - required
+              content_alignment: { string } - optional
+              vertical_padding: { number } - optional
+              vertical_padding_mobile: { number } - optional
+              content_max_width: { number } - optional
+              background_image: { image } - optional
+              background_image_vertical_alignment: { string } - optional - defaults to "center"
+              background_image_medium: { image } - optional
+              background_image_medium_vertical_alignment: { string } - optional - defaults to "center"
+              background_image_small: { image } - optional
+              background_image_small_vertical_alignment: { string } - optional - defaults to "center",
+              overlay: { string } - optional - accepted values are "light" and "dark"
+              light_text: { boolean }
+              title: { string }
+              text: { string }
+              text_alignment: { string } - optional - defaults to "center"
+              cta_url: { url }
+              cta_text { string }
+  %}
+
+{% endcomment -%}
+
+{% comment %} Defaults {% endcomment %}
+{% if background_image_vertical_alignment == blank %}
+  {% assign background_image_vertical_alignment = 'center' %}
+{% endif %}
+
+{% if background_image_medium_vertical_alignment == blank %}
+  {% assign background_image_medium_vertical_alignment = 'center' %}
+{% endif %}
+
+{% if background_image_small_vertical_alignment == blank %}
+  {% assign background_image_small_vertical_alignment = 'center' %}
+{% endif %}
+
+{% if text_alignment == blank %}
+  {% assign text_alignment = 'center' %}
+{% endif %}
+
+{% comment %} Check for missing arguments {% endcomment %}
+{% assign has_title = false %}
+{% if title != blank %}
+  {% assign has_title = true %}
+{% endif %}
+
+{% assign has_text = false %}
+{% if text != blank %}
+  {% assign has_text = true %}
+{% endif %}
+
+{% assign has_cta = false %}
+{% if cta_url != blank and cta_text != blank %}
+  {% assign has_cta = true %}
+{% endif %}
+
+{% comment %} Only show the banner panel if there is text or a cta or a background image {% endcomment %}
+{% if has_title or has_text or has_cta or background_image %}
+
+  <div id="banner__panel-{{ id }}" class="banner__panel{% if light_text %} banner__panel--light{% endif %}">
+
+    <style type="text/css">
+      {% if vertical_padding != blank %}
+      #banner__panel-{{ id }} {
+        padding-top: {{ vertical_padding | append: 'px' }};
+        padding-bottom: {{ vertical_padding | append: 'px' }};
+      }
+      {% endif %}
+      #banner__panel-{{ id }} .banner__content-container {
+        text-align: {{ text_alignment }};
+        {% if content_max_width != blank %}
+          max-width: {{ content_max_width | append: 'px' }};
+        {% endif %}
+      }
+      {% if background_image %}
+      #banner__panel-{{ id }} .banner__bg-image {
+        background-image: url({{ background_image | img_url: '1800x' }});
+        background-position: center {{ background_image_vertical_alignment }};
+      }
+
+      @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+        #banner__panel-{{ id }} .banner__bg-image {
+          background-image: url({{ background_image | img_url: '2400x' }});
+        }
+      }
+      {% endif %}
+
+      @media (max-width: 991px) {
+        #banner__panel-{{ id }} .banner__bg-image {
+          background-position: center {{ background_image_medium_vertical_alignment }};
+          {% if background_image_medium %}
+            background-image: url({{ background_image_medium | img_url: '1000x' }});
+          {% elsif background_image %}
+            background-image: url({{ background_image | img_url: '1000x' }});
+          {% endif %}
+        }      
+      }
+      @media (-webkit-min-device-pixel-ratio: 2) and (max-width: 991px),
+              (min-resolution: 192dpi)           and (max-width: 991px) {
+        #banner__panel-{{ id }} .banner__bg-image {
+          {% if background_image_medium %}
+            background-image: url({{ background_image_medium | img_url: '1500x' }});
+          {% elsif background_image %}
+            background-image: url({{ background_image | img_url: '1500x' }});
+          {% endif %}
+        }
+      }
+
+      @media (max-width: 767px) {
+        {% if vertical_padding_mobile != blank %}
+        #banner__panel-{{ id }} {
+          padding-top: {{ vertical_padding_mobile | append: 'px' }};
+          padding-bottom: {{ vertical_padding_mobile | append: 'px' }};
+        }
+        {% endif %}
+        #banner__panel-{{ id }} .banner__bg-image {
+          background-position: center {{ background_image_small_vertical_alignment }};
+          {% if background_image_small %}
+            background-image: url({{ background_image_small | img_url: '800x' }});
+          {% elsif background_image %}
+            background-image: url({{ background_image | img_url: '800x' }});
+          {% endif %}
+        }
+      }
+      @media (-webkit-min-device-pixel-ratio: 2) and (max-width: 767px),
+              (min-resolution: 192dpi)           and (max-width: 767px) {
+        #banner__panel-{{ id }} .banner__bg-image {
+          {% if background_image_small %}
+            background-image: url({{ background_image_small | img_url: '1200x' }});
+          {% elsif background_image %}
+            background-image: url({{ background_image | img_url: '1200x' }});
+          {% endif %}
+        }
+      }      
+    </style>
+
+    {% if background_image or background_image_medium or background_image_small %}
+      <div class="banner__bg-container">
+        <div class="banner__bg-image"></div>
+      </div>
+    {% endif %}
+
+    {% if overlay == "light" or overlay == "dark" %}
+      <div class="banner__overlay banner__overlay--{{ overlay }}"></div>
+    {% endif %}
+
+    <div class="container-fluid-max">
+      <div class="banner__content-container banner__content-container--{{ content_alignment }}">
+        {% if has_title %}
+          <h3 class="banner__title">{{ title }}</h3>
+        {% endif %}
+        {% if has_text %}
+          <div class="banner__text">{{ text }}</div>
+        {% endif %}
+
+        {% capture cta_html %}
+          {% if has_cta %}
+            <a href="{{ cta_url }}" class="btn btn-primary">{{ cta_text }}</a>
+          {% endif %}
+        {% endcapture %}
+
+        {% if cta_html != blank %}
+          <div class="cta-group">{{ cta_html }}</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endif %}

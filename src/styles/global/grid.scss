@@ -1,0 +1,105 @@
+// -------------------------
+// Grid
+//   - Taken from Bootstrap 3.3.6
+//   - variables tweaked in accordance w/ our pre-existing spacing/size values
+// -------------------------
+
+//
+// Container Layouts
+//
+
+.container {
+  @include container-fixed;
+
+  @media (min-width: $screen-sm-min) {
+    width: $container-sm;
+  }
+
+  @media (min-width: $screen-md-min) {
+    width: $container-md;
+  }
+
+  @media (min-width: $screen-lg-min) {
+    width: $container-lg;
+  }
+
+  @media (min-width: $screen-xl-min) {
+    width: $container-xl;
+  }
+
+  .container { width: 100%; } // prevents issues with containers nested within other containers
+}
+
+// Fluid container
+//
+// Utilizes the mixin meant for fixed width containers, but without any defined
+// width for fluid, full width layouts.
+
+.container-fluid {
+  @include container-fixed;
+}
+
+// Fluid max container
+//
+// Utilizes the mixin meant for fixed width containers, but with width set to 100% and max width set to container width for different screen sizes
+// This is for elements that may or may not span the entire screen, but you need to ensure that they don't grow beyond the container width
+
+.container-fluid-max {
+  @include container-fixed;
+  width: 100%;
+
+  @media (min-width: $screen-sm-min) {
+    max-width: $container-sm;
+  }
+
+  @media (min-width: $screen-md-min) {
+    max-width: $container-md;
+  }
+
+  @media (min-width: $screen-lg-min) {
+    max-width: $container-lg;
+  }
+
+  @media (min-width: $screen-xl-min) {
+    max-width: $container-xl;
+  }
+}
+
+
+// Row
+//
+// Rows contain and clear the floats of your columns.
+
+.row {
+  @include make-row;
+}
+
+
+// Columns
+//
+// Common styles for small and large grid columns
+
+@include make-grid-columns;
+
+// Extra small grid
+@include make-grid(xs);
+
+// Small grid
+@media (min-width: $screen-sm-min) {
+  @include make-grid(sm);
+}
+
+// Medium grid
+@media (min-width: $screen-md-min) {
+  @include make-grid(md);
+}
+
+// Large grid
+@media (min-width: $screen-lg-min) {
+  @include make-grid(lg);
+}
+
+// X-Large grid
+@media (min-width: $screen-xl-min) {
+  @include make-grid(xl);
+}

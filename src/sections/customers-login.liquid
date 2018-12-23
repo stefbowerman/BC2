@@ -1,0 +1,259 @@
+{%- comment %}
+  Combines customer login + register forms into one template
+
+  Requires:
+  - bootstrap.scss
+  - customers-login.js
+{% endcomment -%}
+
+<div class="layout-content-wrapper flush-top">
+
+  {% assign page_hero_id = 'page-hero-' | append: section.id %}
+  {% capture page_hero_title %}
+    {% if section.settings.title != blank %}
+      {{ section.settings.title }}
+    {% else %}
+      {{ 'customer.login.title' | t }}
+    {% endif %}
+  {% endcapture %}
+  
+  {% include 'page-hero',
+          id: page_hero_id,
+          content_max_width: 800,
+          light_text: section.settings.light_text,
+          background_image: section.settings.background_image,
+          title: page_hero_title,
+          subtitle: section.settings.subtitle
+  %}
+
+  <div class="container">
+
+    <div class="row">
+      <div class="col-md-12 col-md-offset-0 col-lg-10 col-lg-offset-1">
+        <div class="form-success alert alert-success u-ta-center hide" id="ResetSuccess">
+          {{ 'customer.recover_password.success' | t }}
+        </div>
+        <div class="row">
+          <div class="col-sm-6 col-lg-5">
+
+            <div id="CustomerLoginForm">
+              <h2 class="h4">{{ 'customer.login.title' | t }}</h2>
+              <p>{{ 'customer.login.subtitle' | t }}</p>
+
+              {% form 'customer_login' %}
+
+                {{ form.errors | default_errors }}
+
+                <div class="form-group {% if form.errors contains 'email' %}has-error{% endif %}">
+                  <label for="CustomerEmail" class="control-label">
+                    {{ 'customer.login.email' | t }}
+                  </label>
+
+                  <input type="email"
+                  name="customer[email]"
+                  id="CustomerEmail"
+                  class="form-control"
+                  placeholder="{{ 'customer.login.email' | t }}"
+                  spellcheck="false"
+                  autocomplete="off"
+                  autocapitalize="off"
+                  autofocus>
+                </div>
+
+                {% if form.password_needed %}
+                  <div class="form-group  {% if form.errors contains 'password' %}has-error{% endif %}">
+                    <label for="CustomerPassword" class="control-label">
+                      {{ 'customer.login.password' | t }}
+                    </label>
+
+                    <input type="password"
+                    name="customer[password]"
+                    id="CustomerPassword"
+                    class="form-control"
+                    placeholder="{{ 'customer.login.password' | t }}">
+                  </div>
+                {% endif %}
+
+                {% if form.password_needed %}
+                  <div class="form-group">
+                    <a href="#recover" id="RecoverPassword">{{ 'customer.login.forgot_password' | t }}</a>
+                  </div>
+                {% endif %}
+
+                <div class="form-group">
+                  <input type="submit" class="btn btn-primary btn-block" value="{{ 'customer.login.sign_in' | t }}">
+                </div>
+              {% endform %}
+            </div>
+
+            <div id="RecoverPasswordForm" class="hide">
+              <h2 class="h4">{{ 'customer.recover_password.title' | t }}</h2>
+              <p>{{ 'customer.recover_password.subtext' | t }}</p>
+
+              {%- comment %} Recover Password Form {% endcomment -%}
+              {% form 'recover_customer_password' %}
+                {% if form.errors %}
+                  {% for field in form.errors %}
+                     {% unless form.errors.messages[field] contains 'login' %}
+                        {{ form.errors | default_errors }}
+                     {% endunless %}
+                  {% endfor %}
+                {% endif %}
+
+                {% if form.posted_successfully? %}
+                  <span class="hide reset-password-success"></span>
+                {% endif %}
+
+                <div class="form-group">
+                  <label for="RecoverEmail" class="control-label">
+                    {{ 'customer.recover_password.email' | t }}
+                  </label>
+                  <input type="email"
+                  name="email"
+                  id="RecoverEmail"
+                  class="form-control"
+                  placeholder="{{ 'customer.recover_password.email' | t }}"
+                  spellcheck="false"
+                  autocomplete="off"
+                  autocapitalize="off">
+                </div>
+
+                <div class="form-group">
+                  <input type="submit" class="btn btn-primary" value="{{ 'customer.recover_password.submit' | t }}">
+                  <button type="button" class="btn btn-default" id="HideRecoverPasswordLink">
+                    {{ 'customer.recover_password.cancel' | t }}
+                  </button>
+                </div>
+              {% endform %}
+
+            </div>
+
+          </div>
+
+          <div class="col-sm-6 col-sm-offset-0 col-lg-5 col-lg-offset-2">
+            <h2 class="h4">{{ 'customer.register.title' | t }}</h2>
+            <p>{{ 'customer.register.subtitle' | t }}</p>
+
+            {% form 'create_customer' %}
+
+              {% if form.errors %}
+                {% for field in form.errors %}
+                   {% unless form.errors.messages[field] contains 'login' %}
+                      {{ form.errors | default_errors }}
+                   {% endunless %}
+                {% endfor %}
+              {% endif %}
+
+              <div class="form-group">
+                <label for="FirstName" class="control-label">
+                  {{ 'customer.register.first_name' | t }}
+                </label>
+                <input type="text"
+                  name="customer[first_name]"
+                  id="FirstName"
+                  class="form-control"
+                  placeholder="{{ 'customer.register.first_name' | t }}"
+                  autofocus
+                  {% if form.first_name %}value="{{ form.first_name }}"{% endif %}>
+              </div>
+
+              <div class="form-group">
+                <label for="LastName" class="control-label">
+                  {{ 'customer.register.last_name' | t }}
+                </label>
+
+                <input type="text"
+                  name="customer[last_name]"
+                  id="LastName"
+                  class="form-control"
+                  placeholder="{{ 'customer.register.last_name' | t }}"
+                  {% if form.last_name %}value="{{ form.last_name }}"{% endif %}>
+              </div>
+
+              <div class="form-group {% if form.errors contains 'email' %}has-error{% endif %}">
+                <label for="Email" class="control-label">
+                  {{ 'customer.register.email' | t }}
+                </label>
+
+                <input type="email"
+                  name="customer[email]"
+                  id="Email"
+                  class="form-control"
+                  placeholder="{{ 'customer.register.email' | t }}"
+                  value="{% if form.email %}{{ form.email }}{% endif %}"
+                  spellcheck="false"
+                  autocomplete="off"
+                  autocapitalize="off">
+              </div>
+
+              <div class="form-group {% if form.errors contains 'password' %}has-error{% endif %}">
+                <label for="CreatePassword" class="control-label">
+                  {{ 'customer.register.password' | t }}
+                </label>
+
+                <input type="password"
+                  name="customer[password]"
+                  id="CreatePassword"
+                  class="form-control"
+                  placeholder="{{ 'customer.register.password' | t }}">
+              </div>
+
+              <div class="form-group">
+                <div class="checkbox">
+                  <label for="accepts-marketing">
+                    <input type="checkbox" name="customer[accepts_marketing]" checked="checked" value="true" id="accepts-marketing" />
+                    <span class="checkbox-ui"></span>
+                    Receive news and special offers
+                  </label>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <input type="submit" value="{{ 'customer.register.submit' | t }}" class="btn btn-primary btn-block">
+              </div>
+            {% endform %}
+
+            {% if shop.checkout.guest_login %}
+              {% form 'guest_login' %}
+                <input type="submit" class="btn btn-block" value="{{ 'customer.login.guest_title' | t }}">
+              {% endform %}
+            {% endif %}              
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+{% schema %}
+  {
+    "name": "Customers - Login",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id" : "light_text",
+        "label": "Light Text",
+        "default": false
+      },    
+      {
+        "id": "title",
+        "type": "text",
+        "label": "Title",
+        "info": "Leave blank for default title"
+      },
+      {
+        "id": "subtitle",
+        "type": "richtext",
+        "label": "Subtitle"
+      },
+      {
+        "type": "image_picker",
+        "id": "background_image",
+        "label": "Background Image"
+      }  
+    ]
+  }
+{% endschema %}

@@ -1,0 +1,20 @@
+{
+  "curly"         : false,  // true: Require {} for every new block or scope
+  "strict"        : false,  // true: Requires all functions run in ES5 Strict Mode
+  "expr"          : true,   // true: Tolerate `ExpressionStatement` as Programs
+  "jquery"        : true,   // jQuery
+  "sub"           : true,   // true: Tolerate using `[]` notation when it can still be expressed in dot notation
+  "laxbreak"      : true,    // true: Tolerate possibly unsafe line breakings
+
+  // Custom Globals
+  "globals"       : {
+    "theme": true,
+    "slate": true,
+    "Shopify": true,
+    "ShopifyAPI": true,
+    "QRCode": true,
+    "Instafeed": true,
+    "Handlebars": true,
+    "Modernizr": true
+  }
+}

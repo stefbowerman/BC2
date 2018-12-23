@@ -1,0 +1,23 @@
+// -------------------------
+// Spacer
+// -------------------------
+
+.spacer {
+  height: $spacer-height-medium;
+
+  &.spacer--small {
+    height: $spacer-height-small;
+  }
+  &.spacer--medium {
+    height: $spacer-height-medium;
+  }
+  &.spacer--large {
+    height: $spacer-height-large;
+  }
+  &.spacer--xlarge {
+    height: $spacer-height-xlarge;
+  }
+  &.spacer--huge {
+    height: $spacer-height-huge;
+  }
+}

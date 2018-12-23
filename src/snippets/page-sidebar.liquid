@@ -1,0 +1,44 @@
+{% if template contains 'account' or template contains 'addresses' or template contains 'order' %}
+  {% capture page_sidebar_html %}
+
+    {% comment %} Customer Account sidebar menu {% endcomment %}
+    <h5 class="page-sidebar__title">{{ 'customer.account.title' | t }}</h5>
+    <ul class="page-sidebar__menu">
+      <li {% if template.name == 'account' %}class="is-active"{% endif %}>
+        <a href="/account">Home</a>
+      </li>
+      <li {% if template.name == 'order' %}class="is-active"{% endif %}>
+        <a href="/account/orders">{{ 'customer.orders.title' | t }}</a>
+      </li>
+      <li {% if template.name == 'addresses' %}class="is-active"{% endif %}>
+        <a href="/account/addresses">{{ 'customer.account.addresses' | t }}</a>
+      </li>
+
+      {% if settings.customer_account_menu != blank %}
+        {% assign customer_account_menu = linklists[settings.customer_account_menu] %}
+
+        {% if customer_account_menu.links.size > 0 %}
+          {% for link in customer_account_menu.links %}
+            <li {% if link.active %}class="is-active"{% endif %}>
+              <a href="{{ link.url }}" >
+                {{ link.title }}
+              </a>
+            </li>
+          {% endfor %}
+        {% endif %}
+      {% endif %}
+
+      <li>{{ 'layout.customer.log_out' | t | | customer_logout_link }}</li>
+    </ul>
+  {% endcapture %}
+
+{% endif %}
+
+{% assign page_sidebar_html = page_sidebar_html | strip %}
+{% if page_sidebar_html != blank %}
+  <div class="page-sidebar">
+    <div class="page-sidebar__content">
+      {{ page_sidebar_html }}
+    </div>
+  </div>
+{% endif %}

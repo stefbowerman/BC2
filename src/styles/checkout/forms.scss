@@ -1,0 +1,95 @@
+// -------------------------
+// Forms
+// -------------------------
+
+input[type="file"],
+input[type="radio"],
+input[type="checkbox"] {
+  &:focus {
+    outline: none;
+  }
+}
+ 
+.input-checkbox,
+.input-radio {
+
+  .main & {
+
+  }
+}
+.checkbox-wrapper {
+  @include display-flex();
+  @include align-items(center);
+}
+
+.field {
+  width: 100% !important;
+  padding-top: 0;
+  padding-bottom: 0;
+
+  + .field {
+    margin-top: 10px;
+  }
+}
+
+.field__input {
+  .boxshadow & {
+    box-shadow: none !important;
+  }
+}
+
+.field__input-wrapper {
+
+}
+
+.field__input--iframe-container {
+}
+
+.field__input-wrapper--select {
+  // Hide the down caret from checkout since we already have our own
+  &:before {
+    display: none;
+  }
+}
+
+.element-toggler {
+  overflow: visible; // default cuts off checkbox / radio button shadows
+}
+
+.fieldset-description {
+  margin-top: 1.5em;
+}
+
+.floating-labels {
+
+  .field__label {
+    position: static;
+    padding-left: 0;
+    padding-right: 0;
+    opacity: 1;
+    font-weight: bold !important;
+    @include translateY(0px);
+  }
+
+  .main .field__label {
+
+  }
+
+  .field--show-floating-label {
+
+    .field__label--visible {
+    }
+    .field__input {
+
+    }
+  }
+}
+
+.checkbox__label,
+.radio__label {
+
+}
+
+.field__message--error {
+
+}

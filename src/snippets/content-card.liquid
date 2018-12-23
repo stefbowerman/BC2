@@ -1,0 +1,39 @@
+{%- comment %}
+
+  Content Card 
+  ------------------------------------------------------------------------------
+
+  Usage:
+
+  {% include 'content-card',
+              title: { string } - optional
+              subtitle: { string } - optional
+              text: { string } - optional
+              cta_text: { string } - optional
+              cta_url: { url } - optional
+  %}
+
+{% endcomment -%}
+
+<div class="content-card">
+
+  {% if title != blank or subtitle != blank %}
+    <div class="content-card__header">
+      {% if title != blank %}
+        <h3 class="content-card__title">{{ title }}</h3>
+      {% endif %}
+      {% if subtitle != blank %}
+        <h5 class="content-card__subtitle">{{ subtitle }}</h5>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  {% if text != blank %}
+    <div class="content-card__body">{{ text }}</div>
+  {% endif %}
+
+  {% if cta_text != blank and cta_url != blank %}
+    <a href="{{ cta_url }}" class="btn btn-primary btn-block">{{ cta_text }}</a>
+  {% endif %}
+
+</div>

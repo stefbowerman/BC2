@@ -1,0 +1,108 @@
+<div data-section-id="{{ section.id }}" 
+     data-section-type="subscription-slideup"
+     data-enabled="{{ section.settings.enabled }}"
+     data-delay="{{ section.settings.delay }}"
+     data-seen-expiration="{{ section.settings.seen_expiration }}">
+
+  <div class="slideup" data-subscription-slideup>
+    <div class="container">
+      <a href="#" class="slideup__close" data-slideup-close>{% include 'icon-close' %}</a>
+      <div class="slideup__content">
+
+        {% if settings.newsletter_form_action == blank %}
+          <div class="alert alert-danger small">A valid newsletter form action URL is required for this section.  Please go to <strong>General Settings -> Mailing List</strong> in the theme editor to add this information</div>
+        {% endif %}
+
+        <div class="slideup__form-content" data-subscription-slideup-form-content>
+          <form action="{{ settings.newsletter_form_action }}" method="post" class="slideup__form">
+            {% if section.settings.title != blank %}
+              <h4 class="slideup__title">{{ section.settings.title }}</h4>
+            {% endif %}
+            <div class="form-group">
+              <input type="email" value="{% if customer %}{{ customer.email }}{% endif %}" required="required" placeholder="{{ section.settings.placeholder_text }}" class="form-control">
+            </div>
+            <button type="submit" name="submit" class="btn btn-primary btn-block">{{ section.settings.button_text | default: "Subscribe" }}</button>                
+          </form>
+
+          {% capture success_message %}
+            <h4 class="slideup__title">
+              {% if section.settings.success_message != blank %}
+                {{ section.settings.success_message | escape | newline_to_br }}
+              {% else %}
+                Thank you for subscribing!
+              {% endif %}
+            </h4>
+          {% endcapture %}
+
+          {% capture fail_message %}
+            <h4 class="slideup__title">Please check your email and try again.</h4>
+          {% endcapture %}
+
+          <div class="slideup__form-message" data-subscription-slideup-form-message data-message-success="{{ success_message | strip | escape }}" data-message-fail="{{ fail_message | strip | escape }}"></div>
+
+        </div>            
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "Subscription Slideup",
+    "settings": [
+      {
+         "type": "header",
+         "content": "Logic"
+      },
+      {
+        "type": "checkbox",
+        "id": "enabled",
+        "label": "Enabled?",
+        "default": true
+      },
+      {
+        "type": "range",
+        "id": "delay",
+        "min":  0,
+        "max":  10,
+        "step": 1,
+        "unit": "s",
+        "label": "Seconds to wait before displaying",
+        "default": 3
+      },
+      {
+        "type": "range",
+        "id": "seen_expiration",
+        "min":  0,
+        "max":  60,
+        "step": 1,
+        "unit": "d",
+        "label": "Days before showing again",
+        "default": 30,
+        "info": "If a user submits their email or closes the form, this is how long we wait before showing again.  Set to '0' to never show again."
+      },
+      {
+         "type": "header",
+         "content": "Content",
+         "info": "Changing these settings will clear cookies and cause all users to see this again."
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title"
+      },
+      {
+        "type": "text",
+        "id": "placeholder_text",
+        "label": "Input placeholder text",
+        "default": "Enter your email"
+      },
+      {
+        "type": "textarea",
+        "id": "success_message",
+        "label": "Success Message",
+        "info": "Text displayed when someone signs up successfully.  Leave blank for a generic message."
+      }
+    ]
+  }
+{% endschema %}

@@ -1,0 +1,26 @@
+{%- comment %}
+
+  Content Header
+  ------------------------------------------------------------------------------
+
+  Usage:
+
+  {% include 'content-header',
+              title: { string } - optional
+              subtitle: { string } - optional
+  %}
+
+{% endcomment -%}
+
+{% if title != blank or subtitle != blank %}
+
+  <div class="content-header">
+    {% if title != blank %}
+      <h3 class="content-header__title">{{ title | strip }}</h3>
+    {% endif %}
+    {% if subtitle != blank %}
+      <div class="content-header__subtitle">{{ subtitle | strip }}</div>
+    {% endif %}
+  </div>
+
+{% endif %}

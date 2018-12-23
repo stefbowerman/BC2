@@ -1,0 +1,27 @@
+{%- comment %}
+
+  Page Header
+  ------------------------------------------------------------------------------
+
+  Usage:
+
+  {% include 'page-header',
+              title: { string } - optional
+              subtitle: { string } - optional
+              alignment: { string } - optional - must be "left" or "right"
+  %}
+
+{% endcomment -%}
+
+{% if title != blank or subtitle != blank %}
+
+  <div class="page-header {% if alignment == 'left' or alignment == 'right' %}page-header--{{ alignment }}{% endif %}">
+    {% if title != blank %}
+      <h1 class="page-header__title">{{ title | strip }}</h1>
+    {% endif %}
+    {% if subtitle != blank %}
+      <p class="page-header__subtitle">{{ subtitle | strip }}</p>
+    {% endif %}
+  </div>
+
+{% endif %}

@@ -1,0 +1,64 @@
+<div data-section-id="{{ section.id }}" data-section-type="swatches">
+  {% if section.blocks.size > 0 %}
+    {% for block in section.blocks %}
+      {% if block.settings.color != blank %}
+        {% assign color_hsl_parts = block.settings.color | color_to_hsl | remove_first: 'hsl(' | remove_first : ')' | split: ',' %}
+        {% assign hue        = color_hsl_parts[0] | strip | times: 1 %}
+        {% assign saturation = color_hsl_parts[1] | remove: '%' | strip | times: 1 %}
+        {% assign lightness  = color_hsl_parts[2] | remove: '%' | strip | times: 1 %}
+      {% endif %}
+      <style type="text/css">
+        .dot.dot--{{ block.settings.title | handle }} .dot__inner {
+          {% if block.settings.color != blank %}
+            background-color: {{ block.settings.color }} !important;
+            {% if lightness and lightness >= 90 %}
+              border-color: {{ block.settings.color | color_darken: 7 }} !important;
+            {% else %}
+              border-color: {{ block.settings.color }} !important;
+            {% endif %}
+          {% endif %}
+          {% if block.settings.image %}
+            background-image:url({{ block.settings.image | img_url: '50x50', crop: 'center' }}) !important;
+            border: none !important;
+          {% endif %}
+        }
+      </style>
+    {% endfor %}    
+  {% endif %}
+</div>
+
+{% schema %}
+  {
+    "name": "Swatches",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Swatches",
+        "info": "Use this section to define swatch colors / images to be used throughout the site.  If a swatch image is set at the product level, that will override the color / image set here.  The 'title' of the swatch must match the value of the associated product color tag.  For instance, if you are tagging products with 'color:Dark Blue', you must name the swatch 'Dark Blue'.  You can also hover over a swatch to reveal it's name."
+      }
+    ],
+    "blocks": [
+      {
+        "type": "swatch",
+        "name": "Swatch",
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title"
+          },
+          {
+            "type": "color",
+            "id": "color",
+            "label": "Color"
+          },
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Image"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

@@ -1,0 +1,620 @@
+//
+//  Variables
+// --------------------------------------------------
+
+/*================ Color Variables ================*/
+
+/* NOTE: As you add more colors here, update utilities.scss with matching text / background color utility classes */
+
+// Greyscale
+$color-black:       #000;
+$color-dark-grey:   #333;
+$color-grey:        #CCC;
+$color-white:       #FFF;
+
+// Main Colors
+$color-emerald:     #049271;     
+
+// Theme Colors
+$text-color:        $color-dark-grey;
+$body-bg:           $color-white;
+$color-primary:     $color-emerald;
+
+// Dot Colors
+$color-dot-white:   $color-white;
+$color-dot-black:   $color-black;
+$color-dot-grey:    $color-grey;
+$color-dot-khaki:   #C0B095;
+$color-dot-pink:    #D885C1;
+$color-dot-orange:  #F48D52;
+$color-dot-purple:  #8174CD;
+$color-dot-brown:   #816960;
+$color-dot-tan:     #D3B69F;
+$color-dot-red:     #C13242;
+$color-dot-green:   #00A465;
+$color-dot-yellow:  #EEE57A;
+$color-dot-blue:    #4E85E6;
+
+/*================ Typography Variables ================*/
+
+$font-family-sans-serif:    -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI", Roboto,  Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !default;
+$font-family-monospace:     "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !default;
+$font-family-base:          $font-family-sans-serif !default;
+
+$font-size-base:            1rem !default; // set to `16px`
+$font-size-large:           $font-size-base * 1.25;
+$font-size-medium:          $font-size-base * 1.125;
+$font-size-small:           $font-size-base * 0.875;
+$font-size-xsmall:          $font-size-base * 0.75;
+$font-size-h1:              $font-size-base * 2.5;
+$font-size-h2:              $font-size-base * 2;
+$font-size-h3:              $font-size-base * 1.75;
+$font-size-h4:              $font-size-base * 1.5;
+$font-size-h5:              $font-size-base * 1.25;
+$font-size-h6:              $font-size-base;
+$font-size-p1:              $font-size-base * 1.5;
+$font-size-p2:              $font-size-base;
+$font-size-p3:              $font-size-small;
+
+$font-weight-normal:        400;
+$font-weight-medium:        500;
+$font-weight-bold:          700;
+$font-weight-base:          $font-weight-normal !default;
+$font-weight-p1:            $font-weight-normal;
+$font-weight-p2:            $font-weight-normal;
+$font-weight-p3:            $font-weight-normal;
+
+$letter-spacing-base:       0.015em;
+$letter-spacing-h1:         0em;
+$letter-spacing-h2:         0em;
+$letter-spacing-h3:         0em;
+$letter-spacing-h4:         0em;
+$letter-spacing-h5:         0em;
+$letter-spacing-h6:         0em;
+$letter-spacing-p1:         0em;
+$letter-spacing-p2:         0em;
+$letter-spacing-p3:         0em;
+
+$line-height-base:          1.5; //** Unit-less `line-height` for use in components like buttons.
+$line-height-computed:      $font-size-base * $line-height-base !default; //** Computed "line-height" (`font-size` * `line-height`) for use with `margin`, `padding`, etc.
+$line-height-h1:            1.2;
+$line-height-h2:            1.2;
+$line-height-h3:            1.2;
+$line-height-h4:            1.2;
+$line-height-h5:            1.2;
+$line-height-h6:            1.2;
+$line-height-p1:            1.4;
+$line-height-p2:            1.4;
+$line-height-p3:            1.4;
+
+//** By default, this inherits from the `<body>`.
+$headings-font-family:      inherit !default;
+$headings-font-weight:      $font-weight-bold !default;
+$headings-color:            $text-color !default;
+$headings-text-transform:   none;
+$headings-margin-bottom:    1rem;
+
+$link-color:                $color-black !default;
+$link-decoration:           none !default;
+$link-hover-color:          lighten($link-color, 9%) !default;
+$link-hover-decoration:     none !default;
+
+$selection-color:           $color-white;
+$selection-bg:              $color-primary;
+
+/*================ Spacing Variables ================*/
+$spacer:                    1rem;
+$headings-margin-bottom:    $spacer * 1.5;
+$paragraph-margin-bottom:   0.8rem; // Paragraphs (styles the p element)
+
+//== Components
+//
+//## Define common padding and border radius sizes and more.
+
+$padding-base-vertical:     0.375rem;
+$padding-base-horizontal:   0.75rem;
+
+$padding-large-vertical:    0.625rem;
+$padding-large-horizontal:  1rem;
+
+$padding-small-vertical:    0.3125rem;
+$padding-small-horizontal:  0.625rem;
+
+$padding-xs-vertical:       0.0625rem;
+$padding-xs-horizontal:     0.3125rem;
+
+$line-height-large:         1.3333333; // extra decimals for Win 8.1 Chrome
+$line-height-small:         1.5;
+
+$border-radius-base:        4px;
+$border-radius-large:       6px;
+$border-radius-small:       3px;
+
+//== Tables
+//
+//## Customizes the `.table` component with basic values, each used across all table variations.
+
+$table-cell-padding:            .75rem !default;
+$table-condensed-cell-padding:  .3rem !default;
+$table-font-size:               $font-size-base;
+
+$table-bg:                      transparent !default;
+$table-bg-accent:               #f9f9f9 !default; //** Background color used for `.table-striped`.
+$table-bg-hover:                #f5f5f5 !default; //** Background color used for `.table-hover`.
+$table-bg-active:               $table-bg-hover !default;
+
+//** Border color for table and cell borders.
+$table-border-color:            #ddd !default;
+
+//== Buttons
+//
+//## For each of Bootstrap's buttons, define text, background and border color.
+
+$btn-font-weight:                $font-weight-bold !default;
+
+$btn-default-color:              $color-black !default;
+$btn-default-bg:                 $color-white !default;
+$btn-default-border:             $color-black !default;
+$btn-default-hover-color:        $color-black !default;
+$btn-default-hover-bg:           darken($color-white, 9%) !default;
+$btn-default-hover-border:       $color-black !default;
+
+$btn-primary-color:              $color-white !default;
+$btn-primary-bg:                 $color-primary !default;
+$btn-primary-border:             $color-primary !default;
+$btn-primary-hover-color:        $color-white !default;
+$btn-primary-hover-bg:           darken($color-primary, 9%) !default;
+$btn-primary-hover-border:       $color-primary !default;
+
+$btn-secondary-color:            $color-white !default;
+$btn-secondary-bg:               $color-black !default;
+$btn-secondary-border:           $color-black !default;
+$btn-secondary-hover-color:      $color-black !default;
+$btn-secondary-hover-bg:         $color-white !default;
+$btn-secondary-hover-border:     $color-black !default;
+
+$btn-link-disabled-color:        $color-grey !default;
+
+// Allows for customizing button radius independently from global border radius
+$btn-border-radius-base:         0 !default;
+$btn-border-radius-large:        0 !default;
+$btn-border-radius-small:        0 !default;
+
+$btn-padding-base-vertical:      0.75rem !default;
+$btn-padding-base-horizontal:    3rem !default;
+
+/*================ Forms ================*/
+
+//** `<input>` background color
+$input-bg:                       #fff !default;
+//** `<input disabled>` background color
+$input-bg-disabled:              $color-white !default;
+
+//** Text color for `<input>`s
+$input-color:                    $color-black !default;
+//** Text color for `<input>`s when focused
+$input-focus-color:              $color-black;
+//** `<input>` border color
+$input-border:                   $color-grey !default;
+
+//** Default `.form-control` border radius
+// This has no effect on `<select>`s in some browsers, due to the limited stylability of `<select>`s in CSS.
+$input-border-radius:            0 !default;
+//** Large `.form-control` border radius
+$input-border-radius-large:      0 !default;
+//** Small `.form-control` border radius
+$input-border-radius-small:      0 !default;
+
+//** Border color for inputs on focus
+$input-border-focus:             $color-black !default;
+
+//** Placeholder text color
+$input-color-placeholder:        $color-grey !default;
+
+//** Default `.form-control` height
+$input-height-base:              2.8rem; // ($line-height-computed + ($padding-base-vertical * 2) + 2) !default;
+//** Large `.form-control` height
+$input-height-large:             (($font-size-large * $line-height-large) + ($padding-large-vertical * 2) + 2) !default;
+//** Small `.form-control` height
+$input-height-small:             (($font-size-small * $line-height-small) + ($padding-small-vertical * 2) + 2) !default;
+
+//** `.form-group` margin
+$form-group-margin-bottom:       15px !default;
+
+$legend-color:                   $color-grey !default;
+$legend-border-color:            #e5e5e5 !default;
+
+//** Background color for textual input addons
+$input-group-addon-bg:           $color-white !default;
+//** Border color for textual input addons
+$input-group-addon-border-color: $input-border !default;
+
+$label-font-size:                $font-size-small;
+$label-font-weight:              bold;
+$label-text-transform:           uppercase;
+
+//** Disabled cursor for form controls and buttons.
+$cursor-disabled:                not-allowed !default;
+
+//== Alerts
+$alert-padding-y:                10px;
+$alert-padding-x:                20px;
+$alert-margin-bottom:            $spacer;
+$alert-border-width:             1px;
+
+$alert-success-bg:               #e1f7e1;
+$alert-success-border:           #DAF0DA;
+$alert-success-text:             $text-color;
+
+$alert-danger-bg:                #f7e5e1;
+$alert-danger-border:            #f0ddda;
+$alert-danger-text:              $text-color;
+
+$alert-info-bg:                  #d9edf7;
+$alert-info-border:              darken(adjust-hue(#d9edf7, -10), 7%);
+$alert-info-text:                $text-color;
+
+/*================ Media Query Breakpoints ================*/
+//** Deprecated `$screen-xs-min` as of v3.2.0
+$screen-xs-min:              576px; // 480px !default;
+// Small screen / tablet
+$screen-sm-min:              768px !default;
+// Medium screen / desktop
+$screen-md-min:              992px !default;
+// Large screen / wide desktop
+$screen-lg-min:              1200px !default;
+// Widescreen
+$screen-xl-min:              1480px !default;
+
+// So media queries don't overlap when required, provide a maximum
+$screen-xs-max:              ($screen-sm-min - 1) !default;
+$screen-sm-max:              ($screen-md-min - 1) !default;
+$screen-md-max:              ($screen-lg-min - 1) !default;
+$screen-lg-max:              ($screen-xl-min - 1) !default;
+
+/*================ Bootstrap Grid ================*/
+
+$grid-columns:               12 !default;
+$grid-gutter-width:          30px !default; //** Padding between columns. Gets divided in half for the left and right.
+
+// Navbar collapse
+
+//** Point at which the navbar becomes uncollapsed.
+$grid-float-breakpoint:      $screen-sm-min !default;
+//** Point at which the navbar begins collapsing.
+$grid-float-breakpoint-max:  $screen-xs-max !default;
+
+
+/*================ Bootstrap Container Sizes ================*/
+
+//## Define the maximum width of `.container` for different screen sizes.
+
+// Small screen / tablet
+$container-tablet:             (720px + $grid-gutter-width) !default;
+//** For `$screen-sm-min` and up.
+$container-sm:                 $container-tablet !default;
+
+// Medium screen / desktop
+$container-desktop:            (940px + $grid-gutter-width) !default;
+//** For `$screen-md-min` and up.
+$container-md:                 $container-desktop !default;
+
+// Large screen
+$container-large:              (1140px + $grid-gutter-width) !default;
+//** For `$screen-lg-min` and up.
+$container-lg:                 $container-large !default;
+
+// X-Large screen / widescreen
+$container-xlarge:             $screen-xl-min - $grid-gutter-width; // (1140px + $grid-gutter-width) !default;
+//** For `$screen-xl-min` and up.
+$container-xl:                 $container-xlarge !default;
+
+
+/*================ Z-Index ================*/
+$z-index-slideup: 140;
+$z-index-dropdown: 149;
+$z-index-product-sticky-bar: 149;
+$z-index-header: 150;
+$z-index-pencil-banner: 151;
+$z-index-drawer-backdrop: 199;
+$z-index-drawer: 200;
+$z-index-ajax-cart-backdrop: 200;
+$z-index-ajax-cart: 201;
+$z-index-overlay-backdrop: 299;
+$z-index-overlay: 300;
+$z-index-modal-background:  1049 !default;
+$z-index-modal:  1050;
+$z-index-skip-to-content: 10000; // really high to be safe of app markup
+
+/*================ SVG ================*/
+$svg-select-icon: #{'{{ "ico-select.svg" | asset_url }}'};
+
+//== Form states and alerts
+//
+//## Define colors for form feedback states and, by default, alerts.
+
+$state-danger-text:              #F00 !default;
+$state-danger-bg:                #F00 !default;
+$state-danger-border:            darken(adjust-hue($state-danger-bg, -10), 5%) !default;
+
+//== Type
+//
+//##
+
+//** Horizontal offset for forms and lists.
+$component-offset-horizontal: 180px !default;
+//** Text muted color
+$text-muted:                  $color-grey !default;
+//** Abbreviations and acronyms border color
+$abbr-border-color:           $color-grey !default;
+//** Headings small color
+$headings-small-color:        $color-grey !default;
+//** Blockquote small color
+$blockquote-small-color:      $color-grey !default;
+//** Blockquote font size
+$blockquote-font-size:        ($font-size-base * 1.25) !default;
+//** Blockquote border color
+$blockquote-border-color:     $color-grey !default;
+//** Width of horizontal description list titles
+$dl-horizontal-offset:        $component-offset-horizontal !default;
+//** Point at which .dl-horizontal becomes horizontal
+$dl-horizontal-breakpoint:    $grid-float-breakpoint !default;
+//** Horizontal line color.
+$hr-border-color:             $color-black !default;
+$hr-border-width:             2px;
+$hr-margin-y:                 2rem;
+
+$breadcrumb-separator:        "\007c";
+
+//== Transitions
+//
+// Keep all transition functions / durations as variables for consistency.
+// If you change any of these values, please be sure to update the slate/animations.js file
+
+$transition-duration-none:    0s;
+$transition-duration-fastest: 0.05s;
+$transition-duration-fast:    0.15s;
+$transition-duration-base:    0.3s;
+$transition-duration-medium:  0.4s;
+$transition-duration-slow:    0.6s;
+
+ /*
+  *  Names are a little confusing but - 
+  *  $transition-timing-function-in should be used on the `active` state that you're transitioning *to*
+  *  $transition-timing-function-out should be used on the `active` state that you're transitioning *from*
+  *
+  *  Usage - 
+  *  .element {
+  *     transition: all $transition-timing-function-out;
+  *     &:hover,
+  *     &:focus {
+  *      transition: all $transition-timing-function-in;
+  *     }
+  *   }
+  *
+  */
+
+$transition-timing-function-base:         ease-in-out;
+$transition-timing-function-in:           ease-out;
+$transition-timing-function-out:          ease-in;
+$transition-timing-function-in-out-ui:    cubic-bezier(0.42, 0, 0.13, 1.04);
+$transition-timing-function-hard-in:      cubic-bezier(0, 0, 0, 1);
+$transition-timing-function-hard-out:     cubic-bezier(1, 0, 1, 1);
+
+// Header + dropdowns
+$transition-duration-dropdown:            $transition-duration-base;
+$transition-timing-function-dropdown-in:  $transition-timing-function-in;
+$transition-timing-function-dropdown-out: $transition-timing-function-out;
+
+// slide - (ajaxcart / mobile menu / slideup)
+$transition-duration-slide:               $transition-duration-medium;
+$transition-timing-function-slide-in:     cubic-bezier(0.34, 0.75, 0.6, 1);
+$transition-timing-function-slide-out:    cubic-bezier(0.4, 0.5, 0.5, 1);
+
+$transition-duration-overlay:             $transition-duration-slow;
+$transition-timing-function-overlay-in:   cubic-bezier(0, 0, 0.23, 1.43);
+$transition-timing-function-overlay-out:  $transition-timing-function-out;
+$transition-timing-function-overlay-opacity-in: $transition-timing-function-hard-in;
+$transition-timing-function-overlay-opacity-out: $transition-timing-function-hard-out;
+
+//== Modals
+//
+//##
+
+//** Padding applied to the modal body
+$modal-inner-padding:         30px !default;
+//** 
+$modal-dialog-margin:         30px;
+//** Padding applied to the modal title
+$modal-title-padding:         30px !default;
+//** Modal title line-height
+$modal-title-line-height:     $line-height-base !default;
+//** Background color of modal content area
+$modal-content-bg:            $color-white !default;
+//** Modal content border color
+$modal-content-border-color:  rgba(0,0,0,.2) !default;
+//** Modal content border color **for IE8**
+$modal-content-fallback-border-color: #999 !default;
+
+//** Modal backdrop background color
+$modal-backdrop-bg:           $color-black !default;
+//** Modal backdrop opacity
+$modal-backdrop-opacity:      .3 !default;
+
+$modal-lg:                    900px !default;
+$modal-md:                    600px !default;
+$modal-sm:                    300px !default;
+
+/*================ Module Variables ================*/
+
+// #Pencil Banner
+$pencil-banner-padding-vertical:        8px;
+$pencil-banner-bg:                      $color-black;
+$pencil-banner-text-color:              $color-white;
+
+// #Header
+$header-bp-min:                         $screen-md-min; // Above this breakpoint, switch to the full desktop nav
+$header-height-small:                   65px;
+$header-height-base:                    75px;
+$header-bg:                             $color-white;
+$header-text-color:                     $text-color;
+
+$header-logo-width:                     120px;
+
+$header-dropdown-bg:                    $header-bg;
+$header-dropdown-box-shadow:            0px 8px 15px -10px transparentize($color-black, 0.85);
+$header-dropdown-menu-spacing:          25px; // Horizontal spacing between dropdown menus
+
+// #Drawer
+$drawer-max-width:                      400px;
+$drawer-bg:                             $color-white;
+$drawer-border-color:                   darken($drawer-bg, 5%);
+$drawer-padding-vertical:               $grid-gutter-width;
+$drawer-padding-horizontal:             $grid-gutter-width;
+$drawer-backdrop-color:                 #888;
+$drawer-backdrop-opacity:               0.6;
+$drawer-header-font-size:               $font-size-h5;
+$drawer-header-border-color:            $color-black;
+
+// #AJAX Cart
+$ajax-cart-width:                       400px;
+$ajax-cart-bg:                          $color-white;
+$ajax-cart-border-color:                darken($ajax-cart-bg, 5%);
+$ajax-cart-padding-vertical:            $grid-gutter-width;
+$ajax-cart-padding-horizontal:          $grid-gutter-width;
+$ajax-cart-backdrop-color:              $drawer-backdrop-color;
+$ajax-cart-backdrop-opacity:            $drawer-backdrop-opacity;
+
+// #Footer
+$footer-bp-min:                         $screen-md-min;
+$footer-bg:                             $color-black;
+$footer-text-color:                     $color-white;
+$footer-padding-top:                    50px;
+$footer-padding-bottom:                 20px;
+$footer-block-spacing:                  45px; // Vertical spacing between footer blocks on mobile
+$footer-menu-font-size:                 $font-size-small;
+$footer-menu-text-color:                $color-white;
+$footer-social-icon-width:              20px;
+
+// #Product Card
+$product-card-title-size:               $font-size-large;
+$product-card-price-size:               $font-size-small;
+$product-card-text-align:               center;
+
+// #Content Card
+$content-card-padding-vertical:         $grid-gutter-width * 2;
+$content-card-padding-horizontal:       $grid-gutter-width;
+
+// #Overlay Card
+$overlay-card-padding-vertical:         $grid-gutter-width;
+$overlay-card-padding-horizontal:       $grid-gutter-width;
+$overlay-card-border-radius:            0;
+$overlay-card-bg-overlay-light-color:   transparentize($color-white, 0.6);
+$overlay-card-bg-overlay-dark-color:    transparentize($color-black, 0.7);
+$overlay-card-light-text-color:         $color-white;
+$overlay-card-content-max-width:        30em;
+
+// #Banner Panel
+$banner-panel-padding-vertical:         150px; // Default vertical padding.  Can be overwritten via snippet options
+$banner-panel-padding-vertical-small:   50px;
+$banner-panel-padding-vertical-large:   $banner-panel-padding-vertical * 2;
+$banner-panel-overlay-light-color:      transparentize($color-white, 0.7);
+$banner-panel-overlay-dark-color:       transparentize($color-black, 0.5);
+
+
+// #Minimal Input
+$minimal-input-height:                  33px;
+$minimal-input-height-large:            60px;
+
+// #Quick View
+$quick-view-margin-vertical:            60px;
+$quick-view-padding-vertical:           60px;
+$quick-view-border-width:               2px;
+$quick-view-border-color:               $color-black;
+$quick-view-background:                 $body-bg;
+
+// #Dots
+$dot-border-width:                      1px;
+$dot-border-radius:                     0;
+$dot-border-color:                      transparent;
+$dot-active-border-color:               $color-black;
+$dot-size:                              30px;
+$dot-spacing:                           6px;
+$dot-padding:                           2px;
+$dot-bottom-margin:                     $dot-spacing;
+
+// small dots
+$dot-small-border-width:                1px;
+$dot-small-border-radius:               0;
+$dot-small-border-color:                $dot-border-color;
+$dot-small-active-border-color:         $color-black;
+$dot-small-size:                        22px;
+$dot-small-spacing:                     0px;
+$dot-small-padding:                     0px;
+$dot-small-bottom-margin:               $dot-spacing;
+$dot-small-font-size:                   $font-size-xsmall;
+
+// #Page Hero
+$page-hero-padding-vertical:            150px;
+$page-hero-padding-small-vertical:      120px;
+$page-hero-margin-bottom:               $grid-gutter-width;
+$page-hero-light-text-color:            $color-white;
+
+// #Spacer
+$spacer-height-small:                   $spacer * 2;
+$spacer-height-medium:                  $spacer * 4;
+$spacer-height-large:                   $spacer * 8;
+$spacer-height-xlarge:                  $spacer * 12;
+$spacer-height-huge:                    $spacer * 16;
+
+// #Slideup
+$slideup-bg:                            #EDEDED;
+$slideup-content-max-width:             500px;
+$slideup-padding-vertical:              $grid-gutter-width;
+
+// #Arrows
+$arrow-dimension:                       50px;
+$arrow-padding:                         8px;
+$arrow-border-radius:                   50%;
+$arrow-bg:                              transparentize(#DDD, 0.5);
+$arrow-bg-hover:                        transparentize(#DDD, 0.3);
+$arrow-icon-length:                     ($arrow-dimension - $arrow-padding * 2)/2;
+$arrow-icon-width:                      2px;
+$arrow-icon-color:                      red;
+$arrow-icon-tip-length:                 12px;
+$arrow-icon-tip-skew:                   45deg;
+
+// #Slideshow
+$slideshow-dot-size:                    10px;
+$slideshow-dot-color:                   $color-white;
+$slideshow-dot-active-color:            red;
+
+// #Panel
+$panel-padding-vertical:                $grid-gutter-width/2;
+$panel-padding-horizontal:              $grid-gutter-width;
+$panel-margin-vertical:                 $grid-gutter-width;
+$panel-border:                          1px solid #EFEFEF;
+$panel-expand-icon-size:                20px;
+$panel-expand-icon-stroke-width:        2px;
+
+// #Expandable List
+$expandable-list-item-padding-vertical: 12px;
+$expandable-list-item-border:           1px solid #EFEFEF;
+
+// #Overlays
+$overlay-bg-color:                     $body-bg;
+$overlay-transition-duration:          $transition-duration-base;
+
+// #Quantity Adjuster
+$quantity-adjuster-height:             40px;
+$quantity-adjuster-font-size:          $font-size-base;
+$quantity-adjuster-border-width:       1px;
+$quantity-adjuster-border-color:       $color-grey;
+$quantity-adjuster-inner-height:       $quantity-adjuster-height - (2*$quantity-adjuster-border-width);
+
+// #Yotpo
+// $yotpo-icon-star:                     #{'{{ "icon-star.svg" | asset_url }}'};
+// $yotpo-icon-star-half:                #{'{{ "icon-star-half.svg" | asset_url }}'};
+// $yotpo-icon-star-empty:               #{'{{ "icon-star-empty.svg" | asset_url }}'};
+// $yotpo-icon-thumbs-up:                #{'{{ "icon-thumbs-up.svg" | asset_url }}'};
+// $yotpo-icon-thumbs-down:              #{'{{ "icon-thumbs-down.svg" | asset_url }}'};

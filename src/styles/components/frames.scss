@@ -1,0 +1,91 @@
+.frame {
+  position: relative;
+  
+  background: {
+    size: cover;
+    position: center;
+  }
+
+  .frame__inner {
+    @include stretch-within;
+  }
+}
+
+.frame--1x1 {
+  @include aspect-ratio(1, 1);
+}
+
+.frame--16x9 {
+  @include aspect-ratio(16, 9);
+}
+
+.frame--9x16 {
+  @include aspect-ratio(9, 16);
+}
+
+.frame--4x3 {
+  @include aspect-ratio(4, 3);
+}
+
+.frame--3x4 {
+  @include aspect-ratio(3, 4);
+}
+
+.frame--4x6 {
+  @include aspect-ratio(4, 6);
+}
+
+.frame--6x4 {
+  @include aspect-ratio(6, 4);
+}
+
+// Responsive frame sizing
+@media (max-width: $screen-xs-max) {
+  .frame--xs-16x9 { @include aspect-ratio(16, 9); }
+  .frame--xs-9x16 { @include aspect-ratio(9, 16); }
+  .frame--xs-4x3 { @include aspect-ratio(4, 3); }
+  .frame--xs-1x1 { @include aspect-ratio(1, 1); }
+  .frame--xs-3x4 { @include aspect-ratio(3, 4); }
+  .frame--xs-4x6 { @include aspect-ratio(4, 6); }
+  .frame--xs-6x4 { @include aspect-ratio(6, 4); }
+}
+
+@media (min-width: $screen-sm-min) and (max-width: $screen-sm-max) {
+  .frame--sm-16x9 { @include aspect-ratio(16, 9); }
+  .frame--sm-9x16 { @include aspect-ratio(9, 16); }
+  .frame--sm-4x3 { @include aspect-ratio(4, 3); }
+  .frame--sm-1x1 { @include aspect-ratio(1, 1); }
+  .frame--sm-3x4 { @include aspect-ratio(3, 4); }
+  .frame--sm-4x6 { @include aspect-ratio(4, 6); }
+  .frame--sm-6x4 { @include aspect-ratio(6, 4); }
+}
+
+@media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
+  .frame--md-16x9 { @include aspect-ratio(16, 9); }
+  .frame--md-9x16 { @include aspect-ratio(9, 16); }
+  .frame--md-4x3 { @include aspect-ratio(4, 3); }
+  .frame--md-1x1 { @include aspect-ratio(1, 1); }
+  .frame--md-3x4 { @include aspect-ratio(3, 4); }
+  .frame--md-4x6 { @include aspect-ratio(4, 6); }
+  .frame--md-6x4 { @include aspect-ratio(6, 4); }
+}
+
+@media (min-width: $screen-lg-min) and (max-width: $screen-lg-max) {
+  .frame--lg-16x9 { @include aspect-ratio(16, 9); }
+  .frame--lg-9x16 { @include aspect-ratio(9, 16); }
+  .frame--lg-4x3 { @include aspect-ratio(4, 3); }
+  .frame--lg-1x1 { @include aspect-ratio(1, 1); }
+  .frame--lg-3x4 { @include aspect-ratio(3, 4); }
+  .frame--lg-4x6 { @include aspect-ratio(4, 6); }
+  .frame--lg-6x4 { @include aspect-ratio(6, 4); }
+}
+
+@media (min-width: $screen-xl-min) {
+  .frame--xl-16x9 { @include aspect-ratio(16, 9); }
+  .frame--xl-9x16 { @include aspect-ratio(9, 16); }
+  .frame--xl-4x3 { @include aspect-ratio(4, 3); }
+  .frame--xl-1x1 { @include aspect-ratio(1, 1); }
+  .frame--xl-3x4 { @include aspect-ratio(3, 4); }
+  .frame--xl-4x6 { @include aspect-ratio(4, 6); }
+  .frame--xl-6x4 { @include aspect-ratio(6, 4); }
+}

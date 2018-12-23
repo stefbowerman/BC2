@@ -1,0 +1,28 @@
+// -----------------------------------------------------------------------------
+// Breadcrumbs
+// -----------------------------------------------------------------------------
+
+.breadcrumbs {
+  @include display-flex;
+
+  @media screen and (min-width: $screen-xs-min) {
+    display: block;
+  }
+}
+
+.breadcrumbs__crumb {
+  display: inline-block;
+
+  &:not(:last-child) {
+    &:after {
+      display: inline-block;
+      content: $breadcrumb-separator;
+      padding: 0 5px;
+    }
+  }
+
+  &:last-child:not(:only-child) {
+
+  }
+}
+

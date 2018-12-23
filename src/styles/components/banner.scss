@@ -1,0 +1,129 @@
+// -----------------------------------------------------------------------------
+// Banners
+// -----------------------------------------------------------------------------
+
+
+.banner {
+  position: relative;
+  @include display-flex;
+  @include flex-direction(column); 
+  
+  @media (min-width: $screen-md-min) {
+    @include flex-direction(row);
+  }
+
+  // For banners inside sliders, make sure they are all equal height
+  .slick-slide & {
+    height: 100%;
+
+    .banner__panel {
+      min-height: 100%;
+    }
+  }
+}
+
+.banner__panel {
+  position: relative;
+  @include display-flex();
+  @include align-items(center); // Vertically center stuff
+  @include justify-content(center); // Horizontally center stuff
+
+  padding-top:    $banner-panel-padding-vertical;
+  padding-bottom: $banner-panel-padding-vertical;
+
+  @media (min-width: $screen-md-min) {
+    @include flex(1 1 0); // Make all panels equal width
+  }
+
+  &.banner__panel--light {
+
+    &, a,
+    .banner__title,
+    .banner__text {
+      color: $color-white;
+    }
+  }
+
+  // Modifier classes to make tall + short banners
+  .banner--small > & {
+    padding-top:    $banner-panel-padding-vertical-small;
+    padding-bottom: $banner-panel-padding-vertical-small;
+  }
+
+  .banner--large > & {
+    padding-top:    $banner-panel-padding-vertical-large;
+    padding-bottom: $banner-panel-padding-vertical-large;
+  }
+}
+
+.banner__bg-container,
+.banner__bg-image {
+  @include stretch-within;
+  z-index: -1;
+}
+
+.banner__bg-image {
+  background: {
+    size: cover;
+    position: center;
+  }
+}
+
+.banner__overlay {
+  @include stretch-within;
+
+  &.banner__overlay--light {
+    background-color: $banner-panel-overlay-light-color;
+  }
+
+  &.banner__overlay--dark {
+    background-color: $banner-panel-overlay-dark-color;
+  }
+}
+
+.banner__content-container {
+  position: relative;
+  @include center-block;
+  text-align: center;
+  max-width: 400px;
+
+  // Center everything on mobile
+  // Apply these justification classes above medium
+  @media (min-width: $screen-md-min) {
+
+    &.banner__content-container--left {
+      margin-left: 0;
+    }
+
+    &.banner__content-container--right {
+      margin-right: 0;
+    }
+    
+    &.banner__content-container--center {
+      //
+    }
+  }
+}
+
+.banner__title,
+.banner__text {
+  margin-top: ($spacer * 1.5);
+  margin-bottom: ($spacer * 1.5);
+}
+
+.banner__title {
+  line-height: 1.1;
+  text-transform: none; // Undo the default heading text transformation to allow them to type upper / lowercase
+}
+
+.banner__text {
+  p:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.banner {
+  .cta-group {
+    margin-top: 45px;
+  }
+}

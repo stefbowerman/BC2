@@ -1,0 +1,24 @@
+// -------------------------
+// Pencil Banner
+// -------------------------
+
+
+.pencil-banner {
+  position: relative;
+  z-index: $z-index-pencil-banner;  
+  padding: $pencil-banner-padding-vertical 0;
+  background-color: $pencil-banner-bg;
+  text-align: center;
+
+  &, a {
+    color: $pencil-banner-text-color;
+  }
+
+  p:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.pencil-banner__close {
+  
+}

@@ -1,0 +1,216 @@
+<div data-section-id="{{ section.id }}" data-section-type="slideshow">
+  {% if section.blocks.size > 0 %}
+    <div class="slideshow" 
+         id="slideshow-{{ section.id }}" 
+         data-autoplay="{{ section.settings.autoplay }}" 
+         data-speed="{{ section.settings.autoplay_speed }}"
+         data-dots="{{ section.settings.dots }}"
+         data-fade="{{ section.settings.fade }}"
+         data-equal-heights="true"
+         data-slideshow>
+      {% for block in section.blocks %}
+        <div class="slideshow__slide" {{ block.shopify_attributes }} data-slideshow-slide data-block-id="{{ block.id }}">
+          <div class="banner">
+            {% include 'banner-panel',
+              id: block.id,
+              content_alignment: block.settings.content_alignment,
+              content_max_width: block.settings.content_max_width,
+              background_image: block.settings.background_base,
+              background_image_vertical_alignment: block.settings.background_image_vertical_alignment,
+              background_image_medium: block.settings.background_medium,
+              background_image_medium_vertical_alignment: block.settings.background_medium_vertical_alignment,
+              background_image_small: block.settings.background_small,
+              background_image_small_vertical_alignment: block.settings.background_small_vertical_alignment,
+              light_text: block.settings.light_text,
+              title: block.settings.title,
+              text: block.settings.text,
+              cta_url: block.settings.cta_url,
+              cta_text: block.settings.cta_text
+            %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+
+    {% include 'no-blocks' %}
+
+  {% endif %}
+</div>
+
+{% schema %}
+  {
+    "name": "Banner Slideshow",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "dots",
+        "label": "Dots enabled",
+        "default": true
+      }, 
+      {
+        "type": "select",
+        "id": "fade",
+        "label": "Animation",
+        "options": [
+          { "value": "true", "label": "Fade" },
+          { "value": "false", "label": "Slide" }
+        ],
+        "default": "true"
+      },         
+      {
+        "type": "checkbox",
+        "id": "autoplay",
+        "label": "Auto-play",
+        "default": true
+      },   
+      {
+        "type": "select",
+        "id": "autoplay_speed",
+        "label": "Change slides every",
+        "options": [
+          { "value": "5000", "label": "5 seconds" },
+          { "value": "6000", "label": "6 seconds" },
+          { "value": "7000", "label": "7 seconds" },
+          { "value": "8000", "label": "8 seconds" },
+          { "value": "9000", "label": "9 seconds" },
+          { "value": "10000", "label": "10 seconds" }
+        ],
+        "default": "7000"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "banner_panel",
+        "name": "Banner",
+        "settings": [
+          {
+            "type": "header",
+            "content": "Content"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title"
+          },
+          {
+            "type": "text",
+            "id": "text",
+            "label": "Text"
+          },
+          {
+            "type": "text",
+            "id": "cta_text",
+            "label": "CTA Text"
+          },
+          {
+            "type": "url",
+            "id": "cta_url",
+            "label": "CTA Link"
+          },
+          {
+            "type": "header",
+            "content": "Design"
+          },
+          {
+            "type": "checkbox",
+            "id" : "light_text",
+            "label": "Light Text",
+            "default": false
+          },
+          {
+            "type":      "select",
+            "id":        "content_alignment",
+            "label":     "Content Alignment",
+            "options": [
+              { "value": "left", "label": "Left" },
+              { "value": "center", "label": "Center" },
+              { "value": "right", "label": "Right" }
+            ],
+            "default":   "center"
+          },
+          {
+            "type": "range",
+            "id":   "content_max_width",
+            "min":  300,
+            "max":  850,
+            "step": 25,
+            "unit": "px",
+            "label": "Max Content Width",
+            "default": 450
+          },
+          {
+            "type": "header",
+            "content": "Background - Desktop",
+            "info": "Main image will always be used.  Tablet and mobile images will be displayed if they are set."
+          },
+          {
+            "type": "select",
+            "id": "background_image_vertical_alignment",
+            "label": "Vertical Alignment",
+            "options": [
+              { "value": "center", "label": "Center" },
+              { "value": "top", "label": "Top" },
+              { "value": "bottom", "label": "Bottom" }
+            ],
+            "default": "center"
+          },
+          {
+            "type": "image_picker",
+            "id": "background_base",
+            "label": "Main Image"
+          },
+          {
+            "type": "header",
+            "content": "Background - Tablet"
+          },
+          {
+            "type": "select",
+            "id": "background_medium_vertical_alignment",
+            "label": "Vertical Alignment",
+            "options": [
+              { "value": "center", "label": "Center" },
+              { "value": "top", "label": "Top" },
+              { "value": "bottom", "label": "Bottom" }
+            ],
+            "default": "center"
+          },
+          {
+            "type": "image_picker",
+            "id": "background_medium",
+            "label": "Main Image"
+          },
+          {
+            "type": "header",
+            "content": "Background - Mobile"
+          },
+          {
+            "type": "select",
+            "id": "background_small_vertical_alignment",
+            "label": "Vertical Alignment",
+            "options": [
+              { "value": "center", "label": "Center" },
+              { "value": "top", "label": "Top" },
+              { "value": "bottom", "label": "Bottom" }
+            ],
+            "default": "center"
+          },
+          {
+            "type": "image_picker",
+            "id": "background_small",
+            "label": "Main Image"
+          }
+        ]
+      }
+    ],
+    "presets": [{
+      "name": "Banner Slideshow",
+      "category": "Image",
+      "settings": {
+        "autoplay": true,
+        "autoplay_speed": "5000"
+      },
+      "blocks": []
+    }]
+  }
+{% endschema %}

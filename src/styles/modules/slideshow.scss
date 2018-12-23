@@ -1,0 +1,100 @@
+// -------------------------
+// Slideshow Module
+// -------------------------
+
+// Slideshow Slide styling
+.slideshow {
+}
+
+.slideshow-slide {
+
+}
+
+.slideshow-slide__inner {
+
+}
+
+.slideshow-slide__link {
+
+}
+
+.slideshow-slide__image {
+
+}
+
+.slideshow-slide__text-content {
+  margin: $spacer*2 0;
+}
+
+.slideshow-slide__title {
+  @media (max-width: $screen-sm-max) {
+    font-size: $font-size-h4;
+  }
+}
+
+.slideshow-slide__subtitle {
+  
+}
+
+// Slick specific styling - we don't use one of their default themes
+
+.slick-slider {
+  .slick-arrow {
+    position: absolute;
+    z-index: 1;
+    top: 50%;
+    @include translateY(-50%);
+
+    &.slick-arrow--prev {
+      left: $grid-gutter-width/2;
+    }
+    &.slick-arrow--next {
+      right: $grid-gutter-width/2;
+    }
+  }
+
+  &.has-equal-height-slides {
+    .slick-track {
+      @include display-flex;
+    }
+
+    &.slick-initialized .slick-slide {
+      @include display-flex;
+      @include flex-direction(column);
+      height: auto;
+    }
+  }
+}
+
+.slick-dots {
+  @include display-flex;
+  @include justify-content(center);
+  @include align-items(center);
+  @include list-unstyled;
+  height: 3*$slideshow-dot-size;
+  margin-top: -3*$slideshow-dot-size;
+  margin-bottom: 0;
+
+  li {
+    position: relative;
+    height: $slideshow-dot-size;
+    width: $slideshow-dot-size;
+    margin: 0 $slideshow-dot-size/2;
+    border-radius: 50%;
+    background-color: $slideshow-dot-color;
+    cursor: pointer;
+    vertical-align: middle;
+    @include transition(background-color $transition-duration-base $transition-timing-function-out);
+
+    &:hover,
+    &:focus,
+    &.slick-active {
+      background-color: $slideshow-dot-active-color;
+      @include transition(background-color $transition-duration-base $transition-timing-function-in);
+    }
+
+    button {
+      display: none !important;
+    }    
+  }
+}

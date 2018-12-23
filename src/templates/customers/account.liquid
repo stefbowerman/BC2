@@ -1,0 +1,126 @@
+{% capture page_sidebar_html %}
+  {% include 'page-sidebar' %}
+{% endcapture %}
+
+{% assign has_sidebar = false %}
+{% if page_sidebar_html != blank %}
+  {% assign has_sidebar = true %}
+{% endif %}
+
+{% capture title %}
+  {% if customer.first_name %}
+    {{ 'Welcome, ' | append: customer.first_name | append: '!' }}
+  {% else %}
+    {{ 'customer.account.title' | t }}
+  {% endif %}
+{% endcapture %}
+
+{% paginate customer.orders by 5 %}
+
+  <div class="layout-content-wrapper">
+    <div class="container">
+      
+      {% include 'page-header', title: title %}
+
+      <div class="row">
+
+        <div class="page-content{% if has_sidebar %} page-content--has-sidebar{% endif %}">
+
+          {% if customer.orders.size != 0 %}
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>{{ 'customer.orders.order_number' | t }}</th>
+                    <th>{{ 'customer.orders.date' | t }}</th>
+                    <th>{{ 'customer.orders.payment_status' | t }}</th>
+                    <th>{{ 'customer.orders.fulfillment_status' | t }}</th>
+                    <th>{{ 'customer.orders.total' | t }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for order in customer.orders %}
+                    <tr>
+                      <td>{{ order.name | link_to: order.customer_url }}</td>
+                      <td>{{ order.created_at | date: format: 'month_day_year' }}</td>
+                      <td>{{ order.financial_status_label }}</td>
+                      <td>{{ order.fulfillment_status_label }}</td>
+                      <td>{{ order.total_price | money }}</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          {% else %}
+            <p>{{ 'customer.orders.none' | t }}</p>
+          {% endif %}
+
+          {% if paginate.pages > 1 %}
+            <div class="u-ta-right">
+              {% include 'pagination' %}
+            </div>
+          {% endif %}
+
+          {% if customer.default_address %}
+            <hr />
+            <h6>Billing &amp; Shipping Information</h6>
+            {{ customer.default_address | format_address }}
+            <p class="small"><a href="/account/addresses">Edit</a></p>
+          {% endif %}
+
+          <hr />
+          <a href="#recover" id="RecoverPassword" class="btn btn-primary">{{ 'customer.recover_password.title' | t }}</a>
+
+          <div class="form-success hide" id="ResetSuccess">
+            {{ 'customer.recover_password.success' | t }}
+          </div>
+
+          {% if form.posted_successfully? %}
+            {% assign resetPassword = true %}
+          {% endif %}
+
+          <div id="RecoverPasswordForm" class="hide">
+            <h4>{{ 'customer.recover_password.title' | t }}</h4>
+            <p>{{ 'customer.recover_password.subtext' | t }}</p>
+
+            {% form 'recover_customer_password' %}
+              {{ form.errors | default_errors }}
+
+              {% if form.posted_successfully? %}
+                <span class="hide reset-password-success"></span>
+              {% endif %}
+
+              <div class="form-group">
+                <label for="RecoverEmail" class="control-label">
+                  {{ 'customer.recover_password.email' | t }}
+                </label>
+                <input type="email"
+                  name="email"
+                  id="RecoverEmail"
+                  class="form-control"
+                  placeholder="{{ 'customer.recover_password.email' | t }}"
+                  spellcheck="false"
+                  autocomplete="off"
+                  autocapitalize="off">
+              </div>
+
+              <div class="form-group">
+                <input type="submit" class="btn btn-primary" value="{{ 'customer.recover_password.submit' | t }}">
+                <button type="button" class="btn btn-link" id="HideRecoverPasswordLink">
+                  {{ 'customer.recover_password.cancel' | t }}
+                </button>
+              </div>
+
+            {% endform %}
+
+          </div>
+        </div>
+
+        {{ page_sidebar_html }}
+        
+      </div>
+    </div>
+  </div>
+
+{% endpaginate %}
+

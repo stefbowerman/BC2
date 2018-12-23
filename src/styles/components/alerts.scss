@@ -1,0 +1,47 @@
+// -----------------------------------------------------------------------------
+// Alerts
+// -----------------------------------------------------------------------------
+
+//
+// Base styles
+//
+
+.alert,
+%alert {
+  position: relative;
+  padding: $alert-padding-y $alert-padding-x;
+  margin-bottom: $alert-margin-bottom;
+  border: $alert-border-width solid transparent;
+
+  p:last-child,
+  ul:last-child {
+    margin-bottom: 0;
+  }
+}
+
+// Alternate styles
+//
+// Generate contextual modifier classes for colorizing the alert.
+
+.alert-success {
+  @include alert-variant($alert-success-bg, $alert-success-border, $alert-success-text);
+}
+
+.alert-danger,
+%alert-danger {
+  @include alert-variant($alert-danger-bg, $alert-danger-border, $alert-danger-text);
+}
+
+// Shopify alert/error overrides
+//
+// Gives default alert styles to Shopify-returned form errors
+
+.errors {
+  @extend %alert;
+  @extend %alert-danger;
+
+  ul {
+    list-style-type: none;
+    padding-left: 0;
+  }
+}

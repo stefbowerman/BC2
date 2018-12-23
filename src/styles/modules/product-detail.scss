@@ -1,0 +1,181 @@
+// --------------------------------------------------------
+// Product Detail
+// --------------------------------------------------------
+
+// Sticky bar that fixes to the top of the screen on scroll
+// --------------------------------------------------------
+
+.product-sticky-bar {
+  position: fixed;
+  z-index: $z-index-product-sticky-bar;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 10px 0;
+  background: transparentize($color-white, 0.2);
+  box-shadow: inset 0 8px 10px -6px transparentize($color-black, 0.95),
+                    0 8px 10px -6px transparentize($color-black, 0.95);
+
+  // If we have a fixed header, position it below the header
+  .site-fixed-header & {
+    top: $header-height-small;
+
+    @media (min-width: $screen-md-min) {
+      top: $header-height-base;
+    }
+  }                    
+
+  // Make sure this doesn't show on xs -> sm screens no matter what
+  @media (max-width: $screen-sm-max) {
+    display: none !important;
+  }
+
+  pointer-events: none;
+  opacity: 0;
+  @include translateY(-110%); // hide the element itself + a little extra for the box-shadow
+  @include transition(transform $transition-duration-dropdown $transition-timing-function-dropdown-out, opacity $transition-duration-dropdown step-end);
+
+  &.is-visible {
+    pointer-events: auto;
+    opacity: 1;
+    @include translateY(0);
+    @include transition(transform $transition-duration-dropdown $transition-timing-function-dropdown-in, opacity $transition-duration-dropdown step-start);
+  }  
+
+  h4 {
+    margin-bottom: 0;
+  }
+
+  .product-price-wrapper {
+    margin-bottom: 0;
+  }
+
+  // Hide all labels
+  label {
+    display: none;
+  }
+
+  .product-detail__form-variants,
+  .product-detail__form-row,
+  .selector-wrapper {
+    display: inline-block;
+    vertical-align: top;
+  }
+
+  .selector-wrapper {
+    margin-bottom: 0;
+    margin-right: 11px;
+    min-width: 80px;
+
+    @media (min-width: $screen-md-min) {
+      min-width: 180px;
+      margin-right: 20px;
+    }
+    @media (min-width: $screen-lg-min) {
+      min-width: 260px;
+    }
+  }
+}
+
+
+// Slideshow / Zoom
+// --------------------------------------------------------
+
+.product-galleries { position: relative; }
+
+// Make these go flush on mobile
+.product-gallery {
+  margin-left: -($grid-gutter-width / 2);
+  margin-right: -($grid-gutter-width / 2);
+
+  @media (min-width: $screen-sm-min) {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+.product-gallery__slideshow {
+  margin: 0 auto;
+  max-width: 500px;
+  list-style: none;
+  padding: 0;
+
+  &.slick-initialized { padding: 0; } // normalize the <ul>
+
+  @media (min-width: $screen-xs-min) { max-width: none; }
+}
+
+.product-gallery__slideshow-slide {
+
+  // Because we want the gallery to be flush, add back the grid padding here - see .product-gallery above
+  padding: 0 $grid-gutter-width / 2;
+  @media (min-width: $screen-sm-min) {
+    padding: 0;
+  }
+
+  position: relative; // zoom trigger is a direct child
+  display: none; // hide the featured image until slideshow has loaded
+
+  .slick-initialized & {
+    display: block; // reveal the featured image when slideshow is initialized
+
+    img {
+      width: 100%;
+
+      &:focus { outline: 0; }
+    }
+  }
+  &:focus { outline: 0; }
+}
+
+.product-gallery__zoom-trigger {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+
+  &:hover,
+  &:active,
+  &:focus {
+    outline: 0;
+  }
+}
+
+.product-gallery__arrow-wrapper {
+  position: absolute;
+  top: 50%;
+  @include translateY(-50%);
+  @include display-flex;
+  @include align-items(center);
+
+  &.product-gallery__arrow-wrapper--left {
+    left: $grid-gutter-width/2;
+
+    @media (min-width: $screen-sm-min) {
+      left: 0;
+    }
+  }
+
+  &.product-gallery__arrow-wrapper--right {
+    right: $grid-gutter-width/2;
+
+    @media (min-width: $screen-sm-min) {
+      right: 0;
+    }
+  }
+}
+
+// Target for zoom
+.product-gallery__slideshow-slide {
+  display: inline-block;
+
+  &.is-zoomable {
+    cursor: zoom-in;
+    cursor: -webkit-zoom-in;
+  }
+
+  &.is-zoomed {
+    cursor: zoom-out;
+    cursor: -webkit-zoom-out;
+    border: 1px solid #CCC;
+  }
+}

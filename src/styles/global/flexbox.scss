@@ -1,0 +1,237 @@
+// -------------------------
+// Flexbox
+// -------------------------
+
+.flex,
+.flex-row {
+  @include display-flex;
+  @include flex-direction(row);
+}
+
+.flex-column,
+.flex-col {
+  @include display-flex;
+  @include flex-direction(column);
+}
+
+.flex0 {
+  @include flex(0,0,auto);
+}
+
+.flex1-0 {
+  @include flex(1,1,0);
+}
+
+// -------------------------
+// Responsive Flexbox!!
+//
+// https://v4-alpha.getbootstrap.com/utilities/flexbox/
+// -------------------------
+
+@for $i from 1 through 20 {
+  .flex-ps-#{i}:after {
+    content: '';
+    display: block;
+    @include flex(#{$i});
+  }
+}
+
+@for $i from 1 through 20 {
+  .flex#{$i} {
+    @include flex(#{$i});
+  }
+  .flex-#{$i} {
+    @include flex(#{$i});
+  }
+}
+
+@media screen and (min-width: $screen-xs-min) {
+  @for $i from 1 through 20 {
+    .flex-xs-#{$i} {
+      @include flex(#{$i});
+    }
+  }
+}
+
+@media screen and (min-width: $screen-sm-min) {
+  @for $i from 1 through 20 {
+    .flex-sm-#{$i} {
+      @include flex(#{$i});
+    }
+  }
+}
+
+@media screen and (min-width: $screen-md-min) {
+  @for $i from 1 through 20 {
+    .flex-md-#{$i} {
+      @include flex(#{$i});
+    }
+  }
+}
+
+@media screen and (min-width: $screen-lg-min) {
+  @for $i from 1 through 20 {
+    .flex-lg-#{$i} {
+      @include flex(#{$i});
+    }
+  }
+}
+
+@media screen and (min-width: $screen-xl-min) {
+  @for $i from 1 through 20 {
+    .flex-xl-#{$i} {
+      @include flex(#{$i});
+    }
+  }
+}
+
+.flex-spacer {} // just a dummy class
+
+.flex-auto {
+  @include flex(0, 0, auto);
+}
+
+.flex-vCenter {
+  @include display-flex;
+  @include flex-direction(column);
+  &:before,
+  &:after {
+    @include flex(1);
+    content: '';
+    display: block;
+  }
+}
+
+.flex-pseudo-vertical-center {
+  &:after,
+  &:before {
+    @include flex-pseudo-space;
+  }
+}
+
+.flex-pseudo-before {
+  &:before {
+    @include flex-pseudo-space;
+  }
+}
+.flex-pseudo-after {
+  &:after {
+    @include flex-pseudo-space;
+  }
+}
+
+.flex-direction--row-reverse {
+  @include flex-direction(row-reverse);
+}
+
+.flex-direction--column-reverse {
+  @include flex-direction(column-reverse);
+}
+
+// -------------------------
+// Align Self
+// -------------------------
+
+.flex-align-self-end { @include align-self(flex-end); }
+.flex-align-self-center { @include align-self(center); }
+.flex-align-self-start { @include align-self(flex-start); }
+
+// -------------------------
+// Align Items
+// -------------------------
+
+.flex-align-items-start {
+  @include align-items(flex-start);
+  @include display-flex;
+}
+
+.flex-align-items-center {
+  @include display-flex;
+  @include align-items(center);
+}
+
+.flex-align-right,
+.flex-align-items-end {
+  @include display-flex;
+  @include align-items(flex-end);
+}
+
+
+// -------------------------
+// Justify Content
+// -------------------------
+
+.flex-justify-left {
+  @include display-flex;
+  @include justify-content(flex-start);
+}
+
+.flex-justify-right {
+  @include display-flex;
+  @include justify-content(flex-end);
+}
+
+.flex-justify-center {
+  @include display-flex;
+  @include justify-content(center);
+}
+
+.u-justifyContent--between,
+.flex-justify-between {
+  @include justify-content(space-between);
+}
+
+.flex-justify-around {
+  @include justify-content(space-around);
+}
+
+.flex-wrap { flex-wrap: wrap; }
+
+// --------------------------------------------------------
+// Flex Responsive Reflow
+// --------------------------------------------------------
+
+.flex-col-xsmall-down { // min-width: 586px
+  @include display-flex;
+  @media screen and (min-width: $screen-xs-min) { @include flex-direction(row); }
+  @media screen and (max-width: $screen-xs-min - 1) { @include flex-direction(column); }
+
+  &.flex-col-reverse {
+    @media screen and (max-width: $screen-xs-min - 1) { @include flex-direction(column-reverse); }
+  }
+}
+
+.flex-col-small-down { // flex rows starting @ 768px
+  @include display-flex;
+  @media screen and (min-width: $screen-sm-min) { @include flex-direction(row); }
+  @media screen and (max-width: $screen-xs-max) { @include flex-direction(column); }
+
+  &.flex-col-reverse {
+   @media screen and (max-width: $screen-xs-max) { @include flex-direction(column-reverse); }
+  }
+}
+
+.flex-col-medium-down { // min-width: 992px
+  @include display-flex;
+  @media screen and (min-width: $screen-md-min) { @include flex-direction(row); }
+  @media screen and (max-width: $screen-sm-max) { @include flex-direction(column); }
+
+  &.flex-col-reverse {
+    @media screen and (max-width: $screen-sm-max) { @include flex-direction(column-reverse); }
+  }
+}
+
+.flex-col-large-down { // min-width: 992px
+  @include display-flex;
+  @media screen and (min-width: $screen-lg-min) { @include flex-direction(row); }
+  @media screen and (max-width: $screen-md-max) { @include flex-direction(column); }
+
+  &.flex-col-reverse {
+    @media screen and (max-width: $screen-md-max) { @include flex-direction(column-reverse); }
+  }
+}
+
+
+.flex-col-reverse { @include flex-direction(column-reverse); }
+.flex-row-reverse { @include flex-direction(row-reverse); }
+

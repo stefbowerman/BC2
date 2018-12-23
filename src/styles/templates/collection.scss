@@ -1,0 +1,36 @@
+// -------------------------
+// Collection page
+// -------------------------
+
+.collection-filter-bar {
+  margin-bottom: $grid-gutter-width;
+  @include clearfix;
+}
+
+.collection-filter-bar__grouping {
+  display: inline-block;
+}
+
+.collection-filter-bar__entry {
+  display: inline-block;
+  width: 180px;
+
+  &:not(:last-child) {
+    margin-right: $grid-gutter-width/2;
+  }
+
+  // Hide labels on small screens
+  label {
+    @media (max-width: $screen-sm-max) {
+      display: none;
+    }
+  }
+
+  @media (min-width: $screen-lg-min) {
+    width: 220px;
+
+    &:not(:last-child) {
+      margin-right: $grid-gutter-width;
+    }
+  }
+}

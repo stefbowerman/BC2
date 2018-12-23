@@ -1,0 +1,26 @@
+.four04 {
+  @include display-flex;
+  @include align-items(center);
+}
+
+.four04__content-wrapper {
+  width: 85%;
+  @include center-block;
+  text-align: center;
+}
+
+.four04__heading {
+  margin-bottom: 45px;
+}
+
+.four04__content {
+  
+  p {
+    margin-bottom: $paragraph-margin-bottom*2;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
