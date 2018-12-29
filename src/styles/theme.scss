@@ -34,26 +34,22 @@
 @import url('components/pagination.scss');
 @import url('components/filters.scss');
 @import url('components/tables.scss');
-@import url('components/social-sharing.scss');
 @import url('components/alerts.scss');
 @import url('components/chosen.scss');
 @import url('components/content.scss');
 @import url('components/cards.scss');
-@import url('components/quick-view.scss');
 @import url('components/docs.scss');
 @import url('components/banner.scss');
 @import url('components/minimal-input.scss');
 @import url('components/dots.scss');
 @import url('components/promo.scss');
 @import url('components/frames.scss');
-@import url('components/spacer.scss');
 @import url('components/slideup.scss');
 @import url('components/arrows.scss');
 @import url('components/drawer.scss');
 @import url('components/panels.scss');
 @import url('components/expandable-list.scss');
 @import url('components/overlays.scss');
-@import url('components/yotpo.scss');
 
 /*================ MODULES ================*/
 // Modules are larger pieces of functionality that consume components
@@ -61,7 +57,6 @@
 @import url('modules/header.scss');
 @import url('modules/footer.scss');
 @import url('modules/gift-card-template.scss');
-@import url('modules/pencil-banner.scss');
 @import url('modules/ajax-cart.scss');
 @import url('modules/product-detail.scss');
 @import url('modules/slideshow.scss');
@@ -73,7 +68,6 @@
 // Try to use the body template class as a CSS hook
 @import url('templates/cart.scss');
 @import url('templates/collection.scss');
-@import url('templates/404.scss');
 @import url('templates/gift-card.scss');
 
 // Necessary bottom placement for specificity w/o `!important`
@@ -83,3 +77,13 @@
 // DEV: Don't display Shopify's admin preview bar
 .shopify-preview-bar, 
 #preview-bar-iframe { display: none; }
+
+#MainContent {
+  opacity: 1;
+  transform: translateY(0px);
+  @include transition(all 500ms cubic-bezier(0.54, 0.09, 0.29, 0.99));
+  &.go-away {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}

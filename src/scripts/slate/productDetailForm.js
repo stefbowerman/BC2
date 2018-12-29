@@ -36,8 +36,7 @@ slate.ProductDetailForm = (function($, Modernizr, slate) {
     singleOptionSelector: '[data-single-option-selector]',
     variantOptionValueList: '[data-variant-option-value-list][data-option-position]',
     variantOptionValue: '[data-variant-option-value]',
-    quantitySelect: '[data-product-quantity-select]',
-    fullDetailsLink: '[data-full-details-link]'
+    quantitySelect: '[data-product-quantity-select]'
   };
 
 
@@ -258,7 +257,6 @@ slate.ProductDetailForm = (function($, Modernizr, slate) {
       this.updateAddToCartState(variant);
       this.updateQuantityDropdown(variant);
       this.updateVariantOptionValues(variant);
-      this.updateFullDetailsLink(variant);
       this.updateGalleries(variant);
 
       $(selectors.singleOptionSelector, this.$container).trigger('chosen:updated');
@@ -360,21 +358,6 @@ slate.ProductDetailForm = (function($, Modernizr, slate) {
           $variantOptionValueUI.addClass( classes.variantOptionValueActive );
           $variantOptionValueUI.siblings().removeClass( classes.variantOptionValueActive );
         }
-      }
-    },
-
-    /**
-     * Used on quick view, updates the "view full details" link to point to the currently selected variant
-     *
-     * @param {Object} variant - Shopify variant object
-     */
-    updateFullDetailsLink: function(variant) {
-      var $fullDetailsLink = $(selectors.fullDetailsLink, this.$container);
-      var updatedUrl;
-
-      if(variant && $fullDetailsLink.length) {
-        updatedUrl = slate.utils.getUrlWithUpdatedQueryStringParameter('variant', variant.id, $fullDetailsLink.attr('href'));
-        $fullDetailsLink.attr('href', updatedUrl);
       }
     },
 

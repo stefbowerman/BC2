@@ -1,6 +1,3 @@
-{% comment %} Changing this will turn on / off the fixed header behavior {% endcomment %}
-{% assign FIXED_HEADER = true %}
-
 <!doctype html>
 <!--[if IE 9]> <html class="ie9 no-js supports-no-cookies" lang="{{ shop.locale }}"> <![endif]-->
 <!--[if (gt IE 9)|!(IE)]><!--> <html class="no-js supports-no-cookies" lang="{{ shop.locale }}"> <!--<![endif]-->
@@ -50,12 +47,6 @@
       },
       moneyFormat: {{ shop.money_format | json }}
     };
-
-  {% if settings.yotpo_client_id != blank %}
-    window.yotpoConfig = {
-      appKey: '{{ settings.yotpo_client_id }}'
-    };
-  {% endif %}
   </script>
 
   {% if template.directory == 'customers' %}
@@ -72,31 +63,26 @@
   <!--[if (gt IE 9)|!(IE)]><!--><script src="{{ 'theme.js' | asset_url }}" defer="defer"></script><!--<![endif]-->
   <!--[if lt IE 9]><script src="{{ 'theme.js' | asset_url }}"></script><![endif]-->
 
+  <!--[if (gt IE 9)|!(IE)]><!--><script src="{{ 'app.js' | asset_url }}" defer="defer"></script><!--<![endif]-->
+  <!--[if lt IE 9]><script src="{{ 'app.js' | asset_url }}"></script><![endif]-->  
+
   {{ content_for_header }} 
 </head>
 
 {% capture body_class %}
   template-{{ template.name | handle }}
   {% if template.suffix != blank %} template-{{ template.name | append: '-' | append: template.suffix | handle }} {% endif %}
-  {% if FIXED_HEADER == true %} site-fixed-header {% endif %}
 {% endcapture %}
 
 <body id="{{ page_title | handle }}" class="{{ body_class | strip | strip_newlines }}">
 
   <a class="in-page-link visually-hidden skip-link" href="#MainContent">{{ 'general.accessibility.skip_to_content' | t }}</a>
-  
-  {% comment %} Feel free to comment this out / remove this section if not needed.  There is no JS attached to it. {% endcomment %}
-  {% section 'swatches' %} 
-    
-  {% section 'pencil-banner' %}
 
   {% section 'mobile-menu' %}
 
   <div class="layout-wrapper">
 
-    {% comment %} Select the appropriate 'header-*' section for the theme you are building and remove the files for the others {% endcomment %}
-    {% section 'header-logo-center' %}
-    {% comment %}{% section 'header-logo-left' %} {% endcomment %}
+    {% section 'header' %}
 
     <main role="main" id="MainContent">
       <div class="layout-main-content">
@@ -115,9 +101,6 @@
   {% unless template == 'cart' %}
     {% section 'ajax-cart' %}
   {% endunless %}
-
-  {% include 'slideup-template' %}
-  {% include 'search-overlay' %}
 
 </body>
 </html>

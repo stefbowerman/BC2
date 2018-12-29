@@ -11,14 +11,6 @@
   width: 100%;
   margin-bottom: 11px;
   overflow: hidden;
-
-  .product-card__qv-trigger-wrap {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 55px;
-    text-align: center;
-  }
 }
 
 .product-card__gallery-image {
@@ -60,10 +52,6 @@
   text-align: $product-card-text-align;
 }
 
-.product-card__info-swatches {
-  margin-bottom: 15px;
-}
-
 .product-card__info-title,
 .product-card__info-price {
 
@@ -79,22 +67,5 @@
   // Grey out crossed out price
   s {
     color: $color-grey;
-  }
-}
-
-
-.product-card__qv-trigger-wrap {
-  display: none;
-  opacity: 0;
-  @include transition(opacity $transition-timing-function-out $transition-duration-base);
-
-  @media (min-width: $screen-sm-min) {
-    display: block;
-  }
-
-  .product-card:hover &,
-  .product-card:focus & {
-    opacity: 1;
-    @include transition(opacity $transition-timing-function-in $transition-duration-fast);
   }
 }

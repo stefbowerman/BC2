@@ -64,6 +64,7 @@ body {
   text-align: left; // 3
   background-color: $body-bg; // 2
   letter-spacing: $letter-spacing-base;
+  text-transform: $text-transform-base;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
 }

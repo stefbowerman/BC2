@@ -37,10 +37,6 @@
       <div class="row">
         <div class="col-lg-10 col-lg-offset-1 col-xl-8 col-xl-offset-2">
 
-          {% if settings.social_sharing_blog %}
-            {% include 'social-sharing', share_title: article.title, share_permalink: article.url, share_image: article.image %}
-          {% endif %}
-
           {% if article.tags.size > 0 %}
             <ul class="list-inline">
               {% for tag in article.tags %}

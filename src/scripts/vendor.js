@@ -16,11 +16,6 @@
 // =require /../../node_modules/jquery-zoom/jquery.zoom.min.js
 
 /*!
- * instafeed.min.js
- */
-// =require vendor/instafeed.min.js
-
-/*!
  * handlebars v4.0.10
  */
 // =require vendor/handlebars-v4.0.10.js
@@ -67,3 +62,8 @@
  * ImagesLoaded
  */
  // =require /../../node_modules/imagesloaded/imagesloaded.pkgd.min.js
+
+ /*!
+ * Navigo
+ */
+ // =require /../../node_modules/navigo/lib/navigo.min.js

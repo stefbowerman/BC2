@@ -14,20 +14,6 @@
         <a href="/account/addresses">{{ 'customer.account.addresses' | t }}</a>
       </li>
 
-      {% if settings.customer_account_menu != blank %}
-        {% assign customer_account_menu = linklists[settings.customer_account_menu] %}
-
-        {% if customer_account_menu.links.size > 0 %}
-          {% for link in customer_account_menu.links %}
-            <li {% if link.active %}class="is-active"{% endif %}>
-              <a href="{{ link.url }}" >
-                {{ link.title }}
-              </a>
-            </li>
-          {% endfor %}
-        {% endif %}
-      {% endif %}
-
       <li>{{ 'layout.customer.log_out' | t | | customer_logout_link }}</li>
     </ul>
   {% endcapture %}

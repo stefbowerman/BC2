@@ -21,14 +21,9 @@
 theme.Product = (function($, slate) {
 
   var selectors = {
-    stickyBar: '[data-product-sticky-bar]',
-    stickyBarFormSlot: '[data-product-sticky-bar-form-slot]',    
-    addToCartForm: '[data-add-to-cart-form]',
-    addToCartFormWrapper: '[data-add-to-cart-form-wrapper]',
   };
 
   var classes = {
-    stickyBarVisible: 'is-visible',
   };
   
   var $window   = $(window);
@@ -46,20 +41,6 @@ theme.Product = (function($, slate) {
     this.name = 'product';
     this.namespace = '.'+this.name;
 
-    this.events = {
-      RESIZE: 'resize'  + this.namespace,
-      CLICK: 'click'   + this.namespace,
-      SCROLL: 'scroll' + this.namespace
-    };    
-
-    this.stickyFormEnabled = this.$container.data('sticky-form-enabled') || false;
-    this.formIsSticky = false;
-    this.stickyFormMinBreakpoint = slate.breakpoints.getBreakpointMinWidth('md');
-    this.isBelowStickyFormMinBreakpoint = false;
-
-    this.$addToCartFormWrapper = $(selectors.addToCartFormWrapper, this.$container);
-    this.$addToCartForm = $(selectors.addToCartForm, this.$container);
-
     var productDetailForm = new slate.ProductDetailForm({
       $el: this.$container,
       $container: this.$container,
@@ -67,82 +48,10 @@ theme.Product = (function($, slate) {
     });
 
     productDetailForm.initialize();
-
-    if(this.stickyFormEnabled) {
-
-      this.$stickyBar = $(selectors.stickyBar, this.$container);
-      this.$stickyBarFormSlot = $(selectors.stickyBarFormSlot, this.$container);
-
-      $window.on(this.events.SCROLL, $.throttle(50, this.onScroll.bind(this)));
-      $window.on(this.events.RESIZE, $.throttle(100, this.onResize.bind(this)));    
-
-      // hit these one time on init to make sure everything is good
-      this.onScroll();
-      this.onResize();      
-    }
-
   }
 
   Product.prototype = $.extend({}, Product.prototype, {
-
-    /**
-     * Sticks the product form into and displays the header product bar
-     *
-     */
-    stickAddToCartForm: function() {
-      if(!this.stickyFormEnabled) return;
-
-      if(this.formIsSticky == false) {
-        this.$addToCartFormWrapper.css('height', this.$addToCartForm.outerHeight());
-        this.$addToCartForm.fadeOut(50, function(){
-          this.$addToCartForm.detach().appendTo(this.$stickyBarFormSlot);
-          this.$stickyBar.addClass(classes.stickyBarVisible);
-          this.$addToCartForm.fadeIn(150);
-        }.bind(this));
-        this.formIsSticky = true;
-      }
-    },
-
-    /**
-     * Removes the product form from the header product bar and hides the bar.
-     *
-     */
-    unstickAddToCartForm: function() {
-      if(!this.stickyFormEnabled) return;
-      
-      if(this.formIsSticky == true) {
-        // Un stick it
-        this.$stickyBar.removeClass(classes.stickyBarVisible);
-        this.$addToCartForm.fadeOut(50, function(){
-          this.$addToCartForm.detach().appendTo(this.$addToCartFormWrapper);
-          this.$addToCartFormWrapper.css('height', '');
-          this.$addToCartForm.fadeIn(150);
-        }.bind(this));
-        this.formIsSticky = false;
-      }
-    },
-
-    /**
-     * Checks the window size and scroll position to determine if the product form should be stuck or unstuck from the header
-     *
-     */
-    stickyAddToCartFormCheck: function() {
-      if(this.isAboveStickyFormMinBreakpoint) {
-        $window.scrollTop() > this.$addToCartFormWrapper.offset()['top'] ? this.stickAddToCartForm() : this.unstickAddToCartForm();
-      }
-      else {
-        this.unstickAddToCartForm();
-      }
-    },
-
-    onScroll: function(e) {
-      this.stickyAddToCartFormCheck();
-    },
-
-    onResize: function() {
-      this.isAboveStickyFormMinBreakpoint = ( $window.width() >= this.stickyFormMinBreakpoint );
-      this.stickyAddToCartFormCheck();
-    },    
+   
   });
 
   return Product;

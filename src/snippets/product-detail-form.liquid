@@ -15,7 +15,6 @@
   {% include 'product-detail-form',
               product: { product } - required
               current_variant: { variant} - optional
-              show_share_buttons: { boolean } - optional - defaults to true
   %}
 
 {% endcomment -%}
@@ -23,10 +22,6 @@
 {% comment %} Defaults {% endcomment %}
 {% if current_variant == blank %}
   {% assign current_variant = product.selected_or_first_available_variant %}
-{% endif %}
-
-{% if show_share_buttons == blank %}
-  {% assign show_share_buttons = true %}
 {% endif %}
 {% comment %} End Defaults {% endcomment %}
 
@@ -47,7 +42,10 @@
       </div>
       <div class="col-md-6 col-lg-5">
         <h1>{{ product.title }}</h1>
-        <p>{{ product.vendor }}</p>
+
+        <div class="rte">
+          {{ product.description }}
+        </div>        
 
         {% include 'product-detail-price', product: product, current_variant: current_variant %}
 
@@ -64,9 +62,7 @@
                   {% assign option_name_downcase = option.name | downcase %}
 
                   {% capture option_alt_ui %}
-                    {% if option_name_downcase == "color" %}
-                      {% include 'product-dots-color', product: product, selected_color: option.selected_value %}
-                    {% endif %}
+                    {% comment %}{% endcomment %}
                   {% endcapture %}
 
                   <div class="selector-wrapper form-group js">
@@ -165,15 +161,7 @@
           </div>
 
         </div>
-
-        <div class="rte">
-          {{ product.description }}
-        </div>
-
-        {% if is_quick_view %}
-          {% comment %} This link will get updated on variant change.  See productDetailForm.js {% endcomment %}
-          <a href="{{ current_variant.url }}" data-full-details-link>View Full Details</a>
-        {% endif %}        
+       
       </div>
     </div> 
 

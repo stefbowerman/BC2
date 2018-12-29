@@ -1,21 +1,7 @@
 {%- assign current_variant = product.selected_or_first_available_variant -%}
 {%- assign featured_image = current_variant.featured_image | default: product.featured_image -%}
 
-<div data-section-id="{{ section.id }}" data-section-type="product" data-enable-history-state="true" data-sticky-form-enabled="{{ section.settings.sticky_form_enabled }}" itemscope itemtype="http://schema.org/Product">
-
-  {% if section.settings.sticky_form_enabled %}
-    <div class="product-sticky-bar" data-product-sticky-bar>
-      <div class="container">
-        <div class="flex flex-align-items-center flex-justify-between" style="width: 100%;">
-          <div>
-            <h4>{{ product.title }}</h4>
-            {% include 'product-detail-price', product: product, current_variant: current_variant %}
-          </div>
-          <div data-product-sticky-bar-form-slot></div>
-        </div>
-      </div>
-    </div>
-  {% endif %}
+<div data-section-id="{{ section.id }}" data-section-type="product" data-enable-history-state="true" itemscope itemtype="http://schema.org/Product">
 
   <div class="layout-content-wrapper">
 
@@ -28,8 +14,7 @@
     {%- comment %} images, title, price, etc. {% endcomment -%}
     {% include 'product-detail-form',
                 product: product,
-                current_variant: current_variant,
-                show_share_buttons: section.settings.show_share_buttons
+                current_variant: current_variant
     %}
 
     {% if section.settings.size_guide_page %}
@@ -55,19 +40,7 @@
 {% schema %}
   {
     "name": "Product Page",
-    "settings": [
-      {
-        "type": "checkbox",
-        "id": "sticky_form_enabled",
-        "label" : "Sticky form on scroll",
-        "default": true
-      },      
-      {
-        "type": "checkbox",
-        "id": "show_share_buttons",
-        "label": "Show social sharing buttons",
-        "default": true
-      },
+    "settings": [  
       {
         "type": "page",
         "id": "size_guide_page",

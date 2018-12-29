@@ -4,7 +4,6 @@ Sections are one of the most unique features of Shopify.  Slate has provided us 
 
 - [Collection](#collection)
 - [Instagram Feed](#instagram-feed)
-- [Pencil Banner](#pencil-banner)
 - [Product](#product)
 - [Subscription Popup](#subscription-popup)
 
@@ -14,10 +13,6 @@ Sections are one of the most unique features of Shopify.  Slate has provided us 
 ### Instagram Feed
 
 Requires an access token.  Built for the primary use case of needing to show a client's feed.  If you need to show another user's feed or a hashtag / location you'll have to adjust the code.
-
-### Pencil Banner
-
-Small banner to display text, usually pinned to the top of the site.  Comes with a method for generating a unique has code based on the banner contents, useful for setting a cookie associated with the banner that invalidates when the contents are changed.
 
 ### Product
 

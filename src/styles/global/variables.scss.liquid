@@ -7,7 +7,7 @@
 /* NOTE: As you add more colors here, update utilities.scss with matching text / background color utility classes */
 
 // Greyscale
-$color-black:       #000;
+$color-black:       #111;
 $color-dark-grey:   #333;
 $color-grey:        #CCC;
 $color-white:       #FFF;
@@ -16,7 +16,7 @@ $color-white:       #FFF;
 $color-emerald:     #049271;     
 
 // Theme Colors
-$text-color:        $color-dark-grey;
+$text-color:        $color-black;
 $body-bg:           $color-white;
 $color-primary:     $color-emerald;
 
@@ -37,11 +37,11 @@ $color-dot-blue:    #4E85E6;
 
 /*================ Typography Variables ================*/
 
-$font-family-sans-serif:    -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI", Roboto,  Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !default;
+$font-family-sans-serif:    Helvetica, "Segoe UI", Roboto,  Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !default;
 $font-family-monospace:     "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !default;
 $font-family-base:          $font-family-sans-serif !default;
 
-$font-size-base:            1rem !default; // set to `16px`
+$font-size-base:            0.875rem !default; // set to `14px`
 $font-size-large:           $font-size-base * 1.25;
 $font-size-medium:          $font-size-base * 1.125;
 $font-size-small:           $font-size-base * 0.875;
@@ -65,9 +65,9 @@ $font-weight-p2:            $font-weight-normal;
 $font-weight-p3:            $font-weight-normal;
 
 $letter-spacing-base:       0.015em;
-$letter-spacing-h1:         0em;
-$letter-spacing-h2:         0em;
-$letter-spacing-h3:         0em;
+$letter-spacing-h1:         -0.015em;
+$letter-spacing-h2:         -0.015em;
+$letter-spacing-h3:         -0.015em;
 $letter-spacing-h4:         0em;
 $letter-spacing-h5:         0em;
 $letter-spacing-h6:         0em;
@@ -75,7 +75,7 @@ $letter-spacing-p1:         0em;
 $letter-spacing-p2:         0em;
 $letter-spacing-p3:         0em;
 
-$line-height-base:          1.5; //** Unit-less `line-height` for use in components like buttons.
+$line-height-base:          1.65; //** Unit-less `line-height` for use in components like buttons.
 $line-height-computed:      $font-size-base * $line-height-base !default; //** Computed "line-height" (`font-size` * `line-height`) for use with `margin`, `padding`, etc.
 $line-height-h1:            1.2;
 $line-height-h2:            1.2;
@@ -87,11 +87,13 @@ $line-height-p1:            1.4;
 $line-height-p2:            1.4;
 $line-height-p3:            1.4;
 
+$text-transform-base:       uppercase;
+
 //** By default, this inherits from the `<body>`.
 $headings-font-family:      inherit !default;
 $headings-font-weight:      $font-weight-bold !default;
 $headings-color:            $text-color !default;
-$headings-text-transform:   none;
+$headings-text-transform:   uppercase;
 $headings-margin-bottom:    1rem;
 
 $link-color:                $color-black !default;
@@ -100,7 +102,7 @@ $link-hover-color:          lighten($link-color, 9%) !default;
 $link-hover-decoration:     none !default;
 
 $selection-color:           $color-white;
-$selection-bg:              $color-primary;
+$selection-bg:              $color-black;
 
 /*================ Spacing Variables ================*/
 $spacer:                    1rem;
@@ -195,7 +197,7 @@ $input-color:                    $color-black !default;
 //** Text color for `<input>`s when focused
 $input-focus-color:              $color-black;
 //** `<input>` border color
-$input-border:                   $color-grey !default;
+$input-border:                   $color-black !default;
 
 //** Default `.form-control` border radius
 // This has no effect on `<select>`s in some browsers, due to the limited stylability of `<select>`s in CSS.
@@ -209,7 +211,7 @@ $input-border-radius-small:      0 !default;
 $input-border-focus:             $color-black !default;
 
 //** Placeholder text color
-$input-color-placeholder:        $color-grey !default;
+$input-color-placeholder:        $color-black !default;
 
 //** Default `.form-control` height
 $input-height-base:              2.8rem; // ($line-height-computed + ($padding-base-vertical * 2) + 2) !default;
@@ -275,7 +277,7 @@ $screen-lg-max:              ($screen-xl-min - 1) !default;
 /*================ Bootstrap Grid ================*/
 
 $grid-columns:               12 !default;
-$grid-gutter-width:          30px !default; //** Padding between columns. Gets divided in half for the left and right.
+$grid-gutter-width:          50px !default; //** Padding between columns. Gets divided in half for the left and right.
 
 // Navbar collapse
 
@@ -312,10 +314,7 @@ $container-xl:                 $container-xlarge !default;
 
 /*================ Z-Index ================*/
 $z-index-slideup: 140;
-$z-index-dropdown: 149;
-$z-index-product-sticky-bar: 149;
 $z-index-header: 150;
-$z-index-pencil-banner: 151;
 $z-index-drawer-backdrop: 199;
 $z-index-drawer: 200;
 $z-index-ajax-cart-backdrop: 200;
@@ -447,23 +446,10 @@ $modal-sm:                    300px !default;
 
 /*================ Module Variables ================*/
 
-// #Pencil Banner
-$pencil-banner-padding-vertical:        8px;
-$pencil-banner-bg:                      $color-black;
-$pencil-banner-text-color:              $color-white;
-
 // #Header
 $header-bp-min:                         $screen-md-min; // Above this breakpoint, switch to the full desktop nav
-$header-height-small:                   65px;
-$header-height-base:                    75px;
-$header-bg:                             $color-white;
-$header-text-color:                     $text-color;
 
-$header-logo-width:                     120px;
-
-$header-dropdown-bg:                    $header-bg;
-$header-dropdown-box-shadow:            0px 8px 15px -10px transparentize($color-black, 0.85);
-$header-dropdown-menu-spacing:          25px; // Horizontal spacing between dropdown menus
+$header-logo-width:                     220px;
 
 // #Drawer
 $drawer-max-width:                      400px;
@@ -484,17 +470,6 @@ $ajax-cart-padding-vertical:            $grid-gutter-width;
 $ajax-cart-padding-horizontal:          $grid-gutter-width;
 $ajax-cart-backdrop-color:              $drawer-backdrop-color;
 $ajax-cart-backdrop-opacity:            $drawer-backdrop-opacity;
-
-// #Footer
-$footer-bp-min:                         $screen-md-min;
-$footer-bg:                             $color-black;
-$footer-text-color:                     $color-white;
-$footer-padding-top:                    50px;
-$footer-padding-bottom:                 20px;
-$footer-block-spacing:                  45px; // Vertical spacing between footer blocks on mobile
-$footer-menu-font-size:                 $font-size-small;
-$footer-menu-text-color:                $color-white;
-$footer-social-icon-width:              20px;
 
 // #Product Card
 $product-card-title-size:               $font-size-large;
@@ -560,13 +535,6 @@ $page-hero-padding-small-vertical:      120px;
 $page-hero-margin-bottom:               $grid-gutter-width;
 $page-hero-light-text-color:            $color-white;
 
-// #Spacer
-$spacer-height-small:                   $spacer * 2;
-$spacer-height-medium:                  $spacer * 4;
-$spacer-height-large:                   $spacer * 8;
-$spacer-height-xlarge:                  $spacer * 12;
-$spacer-height-huge:                    $spacer * 16;
-
 // #Slideup
 $slideup-bg:                            #EDEDED;
 $slideup-content-max-width:             500px;
@@ -611,10 +579,3 @@ $quantity-adjuster-font-size:          $font-size-base;
 $quantity-adjuster-border-width:       1px;
 $quantity-adjuster-border-color:       $color-grey;
 $quantity-adjuster-inner-height:       $quantity-adjuster-height - (2*$quantity-adjuster-border-width);
-
-// #Yotpo
-// $yotpo-icon-star:                     #{'{{ "icon-star.svg" | asset_url }}'};
-// $yotpo-icon-star-half:                #{'{{ "icon-star-half.svg" | asset_url }}'};
-// $yotpo-icon-star-empty:               #{'{{ "icon-star-empty.svg" | asset_url }}'};
-// $yotpo-icon-thumbs-up:                #{'{{ "icon-thumbs-up.svg" | asset_url }}'};
-// $yotpo-icon-thumbs-down:              #{'{{ "icon-thumbs-down.svg" | asset_url }}'};

@@ -22,46 +22,7 @@
                 subtitle: collection.description
       %}
 
-      {% if collection.products.size > 0 %}
-        <div class="collection-filter-bar">
-          {% comment %}
-            Vertically align groupings.  Space them out horizontally, flush to the edges
-            Make sure you put the if statements *inside* the .collection-filter-bar__grouping elements to always output tags even if they are empty.
-            This will ensure that flex will always space them out appropriately
-          {% endcomment %}
-          <div class="flex-row flex-align-items-center flex-justify-between">
-            <div class="collection-filter-bar__grouping">
-              {% if section.settings.enable_filters %}
-                
-                {% assign mobile_filter_id = 'mobile-filters' %}
-
-                {% include 'collection-mobile-filters', id: mobile_filter_id, filter_types: filter_types %}
-
-                <div class="visible-xs visible-sm">
-                  <a href="#" data-toggle="drawer" data-target="#{{ mobile_filter_id }}" data-backdrop="true">
-                    <span style="margin-right: 6px;">{% include 'icon-filters' %}</span>
-                    Filter By
-                  </a>
-                </div>
-
-                <div class="hidden-xs hidden-sm">
-                  {% include 'collection-filters', filter_types: filter_types %}
-                </div>
-
-              {% endif %}
-            </div>
-            <div class="collection-filter-bar__grouping">
-              {% if section.settings.enable_sort %}
-                {% include 'collection-sort' %}
-              {% endif %}
-            </div>
-          </div>
-        </div>
-
-        <p class="hidden-xs hidden-sm">
-          <small>Showing {{ collection.products.size }} {{ collection.products.size | pluralize: 'Item', 'Items' }}</small>
-        </p>      
-
+      {% if collection.products.size > 0 %}    
         <div class="content-grid">
           {% for product in collection.products %}
 
@@ -72,7 +33,7 @@
             {% endif %}
 
             <div class="content-grid__item">
-              {% include 'product-card', product: product, quick_view: true, lazy_load: lazy_load %}
+              {% include 'product-card', product: product, lazy_load: lazy_load %}
             </div>
           {% endfor %}
         </div>
@@ -87,23 +48,6 @@
       {% endif %}
     </div>
 
-    {% comment %} This JSON is required for filtering and sorting {% endcomment %}
-    {% capture collection_url %}
-      {% if collection.handle == "all" %}
-        /collections/all
-      {% else %}
-        {{ collection.url }}
-      {% endif %}
-    {% endcapture %}
-
-    <script type="application/json" data-collection-json>
-      {
-        "url": {{ collection_url | strip | json }},
-        "sortDefault": {{ collection.default_sort_by | json }},
-        "sortApplied": {{ collection.sort_by | json }}
-      }
-    </script>
-
   </section>
 </div>
 
@@ -113,19 +57,6 @@
   {
     "name": "Collection",
     "settings": [
-      {
-        "id": "enable_filters",
-        "type": "checkbox",
-        "label": "Enable Filters",
-        "default": true,
-        "info": "Filtering is based on product tags."
-      },
-      {
-        "id": "enable_sort",
-        "type": "checkbox",
-        "label": "Enable Sort",
-        "default": true
-      }
     ]
   }
 {% endschema %}

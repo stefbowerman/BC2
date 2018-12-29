@@ -1,0 +1,47 @@
+<div data-section-id="{{ section.id }}" data-section-type="header">
+
+  <header class="header" role="banner" data-header>
+    
+    {% include 'header-logo' %}
+
+    {% if settings.main_menu != blank %}
+      <nav>
+        <ul class="main-menu">
+          {% for link in linklists[settings.main_menu].links %}
+            <li>
+              <a href="{{ link.url }}">{{ link.title }}</a>
+
+              {% if link.links.size > 0 %}
+                <ul class="list-unstyled u-fs-xsmall" style="padding-left: 20px; margin-top: 5px;">
+                  {% for l in link.links %}
+                    <li><a href="{{ l.url }}">{{ l.title }}</a></li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      </nav>
+    {% endif %}
+
+    <div style="display: none;">
+      <a href="/cart" data-ajax-cart-trigger>
+        <div class="header-cart__badge{% if cart.item_count > 0 %} has-items{% endif %}" data-cart-badge>
+          {% include 'icon-cart' %}
+          <span class="header-cart__badge-count" data-cart-badge-count>{{ cart.item_count }}</span>
+        </div>
+      </a>
+      <a href="#" title="Toggle menu" data-mobile-menu-toggle>
+        {% include 'icon-hamburger' %}
+      </a>
+    </div>
+  </header>
+
+</div>
+
+{% schema %}
+  {
+    "name": "Header",
+    "settings": []
+  }
+{% endschema %}

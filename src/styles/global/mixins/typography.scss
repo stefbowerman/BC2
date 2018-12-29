@@ -62,8 +62,6 @@
 
 // RTE styling for long form content
 @mixin article-content {
-  margin-bottom: $grid-gutter-width;
-
   h1, h2, h3, h4, h5, h6 {
     margin: $spacer*2.5 0 $spacer*2;
   }

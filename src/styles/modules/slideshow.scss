@@ -2,40 +2,6 @@
 // Slideshow Module
 // -------------------------
 
-// Slideshow Slide styling
-.slideshow {
-}
-
-.slideshow-slide {
-
-}
-
-.slideshow-slide__inner {
-
-}
-
-.slideshow-slide__link {
-
-}
-
-.slideshow-slide__image {
-
-}
-
-.slideshow-slide__text-content {
-  margin: $spacer*2 0;
-}
-
-.slideshow-slide__title {
-  @media (max-width: $screen-sm-max) {
-    font-size: $font-size-h4;
-  }
-}
-
-.slideshow-slide__subtitle {
-  
-}
-
 // Slick specific styling - we don't use one of their default themes
 
 .slick-slider {

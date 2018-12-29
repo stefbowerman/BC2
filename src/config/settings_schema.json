@@ -1,98 +1,19 @@
 [
   {
     "name": "theme_info",
-    "theme_name": "Z-Theme",
-    "theme_version": "0.1.0",
-    "theme_author": "Zehner Group",
-    "theme_documentation_url": "https://github.com/zehnergroup/z-theme/wiki",
-    "theme_support_url": "https://github.com/zehnergroup/z-theme"
+    "theme_name": "Bianca Chandon",
+    "theme_version": "2.0.0",
+    "theme_author": "Stefan Bowerman",
+    "theme_documentation_url": "https://github.com/stefbowerman/bc2/wiki",
+    "theme_support_url": "https://github.com/stefbowerman/bc2"
   },
   {
-    "name": "Social media",
+    "name": "Main Menu",
     "settings": [
       {
-        "type": "header",
-        "content": "Social sharing options"
-      },
-      {
-        "type": "checkbox",
-        "id": "social_sharing_blog",
-        "label": "Enable sharing for blog articles",
-        "default": true
-      },
-      {
-        "type": "checkbox",
-        "id": "share_facebook",
-        "label": "Share on Facebook",
-        "default": true
-      },
-      {
-        "type": "checkbox",
-        "id": "share_twitter",
-        "label": "Tweet on Twitter",
-        "default": true
-      },
-      {
-        "type": "checkbox",
-        "id": "share_pinterest",
-        "label": "Pin on Pinterest",
-        "default": true
-      },
-      {
-        "type": "checkbox",
-        "id": "share_tumblr",
-        "label": "Share on Tumblr",
-        "default": true
-      },
-      {
-        "type": "checkbox",
-        "id": "share_email",
-        "label": "Share via Email",
-        "default": true
-      },      
-      {
-        "type": "header",
-        "content": "Accounts"
-      },
-      {
-        "type": "text",
-        "id": "social_twitter_link",
-        "label": "Twitter link"
-      },
-      {
-        "type": "text",
-        "id": "social_facebook_link",
-        "label": "Facebook link"
-      },
-      {
-        "type": "text",
-        "id": "social_pinterest_link",
-        "label": "Pinterest link"
-      },
-      {
-        "type": "text",
-        "id": "social_instagram_link",
-        "label": "Instagram link"
-      },
-      {
-        "type": "text",
-        "id": "social_snapchat_link",
-        "label": "Snapchat link"
-      },
-      {
-        "type": "text",
-        "id": "social_tumblr_link",
-        "label": "Tumblr link"
-      },
-      {
-        "type": "text",
-        "id": "social_youtube_link",
-        "label": "Youtube link"
-      },
-      {
-        "type": "text",
-        "id": "social_vimeo_link",
-        "label": "Vimeo link"
+        "type": "link_list",
+        "id": "main_menu",
+        "label": "Main Menu"
       }
     ]
   },
@@ -122,21 +43,6 @@
     ]
   },
   {
-    "name": "Yotpo",
-    "settings": [
-      {
-        "type": "header",
-        "content": "Credentials"
-      },
-      {
-        "type": "text",
-        "id": "yotpo_client_id",
-        "label": "App Key",
-        "info": "See: https://support.yotpo.com/en/article/finding-your-app-key-and-your-secret-key"
-      }    
-    ]
-  },
-  {
     "name": "Favicon",
     "settings": [
       {
@@ -146,28 +52,14 @@
         "info": "Should be at least 180px x 180px"
       }
     ]
-  },
-  {
-    "name": "Customer",
-    "settings": [
-      {
-        "type": "header",
-        "content": "Account Pages"
-      },
-      {
-        "type": "link_list",
-        "id": "customer_account_menu",
-        "label": "Customer Account Menu"
-      }
-    ]
   }, 
   {
-    "name": "Mailing List",
+    "name": "MailChimp",
     "settings": [
       {
         "type": "text",
-        "id": "newsletter_form_action",
-        "label": "Newsletter Form Action URL"
+        "id": "mailchimp_form_url",
+        "label": "Form Action URL"
       }
     ]
   }

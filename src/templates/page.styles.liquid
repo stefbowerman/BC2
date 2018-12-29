@@ -36,7 +36,6 @@
               <li><a href="#docs-arrows">Arrows</a></li>
               <li><a href="#docs-breadcrumbs">Breadcrumbs</a></li>
               <li><a href="#docs-pagination">Pagination</a></li>
-              <li><a href="#docs-social-sharing">Social Sharing</a></li>
               <li><a href="#docs-minimal-input">Minimal Input</a></li>
               <li><a href="#docs-dots">Dots</a></li>
             </ul>
@@ -46,14 +45,14 @@
 
         <h3 id="docs-type" class="docs-title">Type</h3>
         <div class="u-fw-bold" style="font-size: 18px;">
-          <p>SYSTEM / HELVETICA NEUE BOLD</p>
+          <p>HELVETICA BOLD</p>
           <p>ABCDEFGHIJKLMNOPQRSTUVWXYZ</p>
           <p>abcdefghijklmnopqrstuvwxyz</p>
           <p>0123456789</p>
         </div>
         <br />
         <div style="font-size: 18px;">
-          <p>SYSTEM / HELVETICA NEUE</p>
+          <p>HELVETICA</p>
           <p>ABCDEFGHIJKLMNOPQRSTUVWXYZ</p>
           <p>abcdefghijklmnopqrstuvwxyz</p>
           <p>0123456789</p>    
@@ -62,7 +61,7 @@
         <h3 id="docs-colors" class="docs-title">Colors</h3>
 
         {% assign grey_scale_colors = '' %}
-        {% assign grey_scale_colors = grey_scale_colors | append: 'black:Black:#000:$color-black' | append: '|' %}
+        {% assign grey_scale_colors = grey_scale_colors | append: 'black:Black:#111:$color-black' | append: '|' %}
         {% assign grey_scale_colors = grey_scale_colors | append: 'dark-grey:Dark Grey:#333:$color-dark-grey' | append: '|' %}
         {% assign grey_scale_colors = grey_scale_colors | append: 'grey:Grey:#CCC:$color-grey' | append: '|' %}
         {% assign grey_scale_colors = grey_scale_colors | append: 'white:White:#FFF:$color-white' | append: '|' %}
@@ -958,10 +957,7 @@
           <span class="deco">…</span>
           <span class="page"><a href="#" title="">10</a></span>
           <span class="next"><a href="#" title="">Next</a></span>
-        </div>        
-
-        <h4 id="docs-social-sharing" class="docs-subtitle">Social Sharing</h4>
-        {% include 'social-sharing' %}
+        </div>
 
         <h4 id="docs-minimal-input" class="docs-subtitle">Minimal Input</h4>
         <p>Normal</p>

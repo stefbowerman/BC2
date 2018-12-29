@@ -128,6 +128,7 @@ output {
   padding: $padding-base-vertical $padding-base-horizontal;
   font-size: $font-size-small;
   line-height: $line-height-base;
+  text-transform: $text-transform-base;
   color: $input-color;
   background-color: $input-bg;
   background-image: none; // Reset unusual Firefox-on-Android default style; see https://github.com/necolas/normalize.css/issues/214
