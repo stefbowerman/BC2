@@ -11,6 +11,22 @@ var _utils = require('./utils');
 
 var _utils2 = _interopRequireDefault(_utils);
 
+var _sectionManager = require('./sectionManager');
+
+var _sectionManager2 = _interopRequireDefault(_sectionManager);
+
+var _header = require('./sections/header');
+
+var _header2 = _interopRequireDefault(_header);
+
+var _footer = require('./sections/footer');
+
+var _footer2 = _interopRequireDefault(_footer);
+
+var _cart = require('./sections/cart');
+
+var _cart2 = _interopRequireDefault(_cart);
+
 var _product = require('./views/product');
 
 var _product2 = _interopRequireDefault(_product);
@@ -19,7 +35,29 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 (function ($, Navigo) {
 
-  console.log('I have 8 ' + _utils2.default.pluralize(8, 'dog', 'dogs'));
+  // console.log(`I have 8 ${Utils.pluralize(8, 'dog', 'dogs')}`);
+
+  // Sections Stuff 
+  var sectionManager = new _sectionManager2.default();
+
+  sectionManager.register('header', _header2.default);
+  sectionManager.register('footer', _footer2.default);
+  sectionManager.register('cart', _cart2.default);
+
+  // Misc Stuff
+
+  // Chosen JS plugin for select boxes
+  _utils2.default.chosenSelects();
+
+  // Apply UA classes to the document
+  _utils2.default.userAgentBodyClass();
+
+  // Apply a specific class to the html element for browser support of cookies.
+  if (_utils2.default.cookiesEnabled()) {
+    document.documentElement.className = document.documentElement.className.replace('supports-no-cookies', 'supports-cookies');
+  }
+  // END Misc Stuff
+
 
   // Test router
   var $mainContent = $('#MainContent');
@@ -119,7 +157,313 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   });
 })(jQuery, Navigo);
 
-},{"./utils":3,"./views/product":5,"navigo":1}],3:[function(require,module,exports){
+// Views
+
+
+// Sections
+
+},{"./sectionManager":3,"./sections/cart":5,"./sections/footer":6,"./sections/header":7,"./utils":8,"./views/product":10,"navigo":1}],3:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _utils = require('./utils');
+
+var _utils2 = _interopRequireDefault(_utils);
+
+var _base = require('./sections/base');
+
+var _base2 = _interopRequireDefault(_base);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var SectionManager = function () {
+  function SectionManager() {
+    _classCallCheck(this, SectionManager);
+
+    this.constructors = {};
+    this.instances = [];
+
+    $(document).on({
+      'shopify:section:load': this._onSectionLoad.bind(this),
+      'shopify:section:unload': this._onSectionUnload.bind(this),
+      'shopify:section:select': this._onSelect.bind(this),
+      'shopify:section:deselect': this._onDeselect.bind(this),
+      'shopify:section:reorder': this._onReorder.bind(this),
+      'shopify:block:select': this._onBlockSelect.bind(this),
+      'shopify:block:deselect': this._onBlockDeselect.bind(this)
+    });
+  }
+
+  SectionManager.prototype._createInstance = function _createInstance(container, constructor) {
+    var $container = $(container);
+    var id = $container.attr('data-section-id');
+    var type = $container.attr('data-section-type');
+
+    constructor = constructor || this.constructors[type];
+
+    // Need to make sure we're working with actual sections here..
+    if (typeof constructor === 'undefined' || !(constructor.prototype instanceof _base2.default)) {
+      return;
+    }
+
+    var instance = $.extend(new constructor(container), {
+      id: id,
+      type: type,
+      container: container
+    });
+
+    this.instances.push(instance);
+  };
+
+  SectionManager.prototype._triggerFunctionForSectionEvent = function _triggerFunctionForSectionEvent(evt, funcName) {
+    var instance = _utils2.default.findInstance(this.instances, 'id', evt.detail.sectionId);
+
+    if (instance && typeof instance[funcName] == 'function') {
+      instance[funcName](evt);
+    }
+  };
+
+  SectionManager.prototype._onSectionLoad = function _onSectionLoad(evt) {
+    var container = $('[data-section-id]', evt.target)[0];
+    if (container) {
+      this._createInstance(container);
+    }
+  };
+
+  SectionManager.prototype._onSectionUnload = function _onSectionUnload(evt) {
+    var instance = _utils2.default.findInstance(this.instances, 'id', evt.detail.sectionId);
+
+    if (!instance) {
+      return;
+    }
+
+    this._triggerFunctionForSectionEvent(evt, 'onUnload');
+
+    this.instances = _utils2.default.removeInstance(this.instances, 'id', evt.detail.sectionId);
+  };
+
+  SectionManager.prototype._onSelect = function _onSelect(evt) {
+    this._triggerFunctionForSectionEvent(evt, 'onSelect');
+  };
+
+  SectionManager.prototype._onDeselect = function _onDeselect(evt) {
+    this._triggerFunctionForSectionEvent(evt, 'onDeselect');
+  };
+
+  SectionManager.prototype._onReorder = function _onReorder(evt) {
+    this._triggerFunctionForSectionEvent(evt, 'onReorder');
+  };
+
+  SectionManager.prototype._onBlockSelect = function _onBlockSelect(evt) {
+    this._triggerFunctionForSectionEvent(evt, 'onBlockSelect');
+  };
+
+  SectionManager.prototype._onBlockDeselect = function _onBlockDeselect(evt) {
+    this._triggerFunctionForSectionEvent(evt, 'onBlockDeselect');
+  };
+
+  SectionManager.prototype.register = function register(type, constructor) {
+    var _this = this;
+
+    this.constructors[type] = constructor;
+
+    $('[data-section-type=' + type + ']').each(function (i, container) {
+      _this._createInstance(container, constructor);
+    });
+  };
+
+  return SectionManager;
+}();
+
+exports.default = SectionManager;
+
+},{"./sections/base":4,"./utils":8}],4:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var BaseSection = function () {
+  function BaseSection(container) {
+    _classCallCheck(this, BaseSection);
+
+    this.$container = $(container);
+  }
+
+  BaseSection.prototype.onSectionLoad = function onSectionLoad(evt) {};
+
+  BaseSection.prototype.onSectionUnload = function onSectionUnload(evt) {};
+
+  BaseSection.prototype.onSelect = function onSelect(evt) {};
+
+  BaseSection.prototype.onDeselect = function onDeselect(evt) {};
+
+  BaseSection.prototype.onReorder = function onReorder(evt) {};
+
+  BaseSection.prototype.onBlockSelect = function onBlockSelect(evt) {};
+
+  BaseSection.prototype.onBlockDeselect = function onBlockDeselect(evt) {};
+
+  return BaseSection;
+}();
+
+exports.default = BaseSection;
+
+},{}],5:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _base = require('./base');
+
+var _base2 = _interopRequireDefault(_base);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
+
+var selectors = {
+  form: '[data-cart-form]',
+  itemQtySelect: '[data-item-quantity-select]'
+};
+
+var classes = {};
+
+var CartSection = function (_BaseSection) {
+  _inherits(CartSection, _BaseSection);
+
+  function CartSection(container) {
+    _classCallCheck(this, CartSection);
+
+    var _this = _possibleConstructorReturn(this, _BaseSection.call(this, container));
+
+    _this.name = 'cart';
+    _this.namespace = '.' + _this.name;
+
+    var $form = $(selectors.form, _this.$container);
+
+    // Since we have more than 1 quantity select per row (1 for mobile, 1 for desktop)
+    // We need to use single input per row, which is responsible for sending the form data for that line item
+    // Watch for changes on the quantity selects, and then update the input.  These two are tied together using a data attribute
+    _this.$container.on('change', selectors.itemQtySelect, function () {
+      var $itemQtyInput = $('[id="' + $(this).data('item-quantity-select') + '"]'); // Have to do '[id=".."]' instead of '#id' because id is generated using {{ item.key }} which has semi-colons in it - breaks normal id select
+      $itemQtyInput.val($(this).val());
+      $form.submit();
+    });
+    return _this;
+  }
+
+  return CartSection;
+}(_base2.default);
+
+exports.default = CartSection;
+
+},{"./base":4}],6:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _base = require("./base");
+
+var _base2 = _interopRequireDefault(_base);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
+
+var selectors = {};
+
+var FooterSection = function (_BaseSection) {
+  _inherits(FooterSection, _BaseSection);
+
+  function FooterSection(container) {
+    _classCallCheck(this, FooterSection);
+
+    var _this = _possibleConstructorReturn(this, _BaseSection.call(this, container));
+
+    _this.name = 'footer';
+    _this.namespace = "." + _this.name;
+    return _this;
+  }
+
+  return FooterSection;
+}(_base2.default);
+
+exports.default = FooterSection;
+
+},{"./base":4}],7:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _base = require('./base');
+
+var _base2 = _interopRequireDefault(_base);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
+
+var selectors = {
+  header: '[data-header]'
+};
+
+var HeaderSection = function (_BaseSection) {
+  _inherits(HeaderSection, _BaseSection);
+
+  function HeaderSection(container) {
+    _classCallCheck(this, HeaderSection);
+
+    var _this = _possibleConstructorReturn(this, _BaseSection.call(this, container));
+
+    _this.$el = $(selectors.header, _this.$container);
+    _this.name = 'header';
+    _this.namespace = '.' + _this.name;
+
+    setTimeout(function () {
+      _this.$el.find('.main-menu').addClass('is-visible');
+    }, 500);
+    return _this;
+  }
+
+  return HeaderSection;
+}(_base2.default);
+
+exports.default = HeaderSection;
+
+},{"./base":4}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -471,7 +815,7 @@ exports.default = {
   }
 };
 
-},{}],4:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -498,7 +842,7 @@ var BaseView = function () {
 
 exports.default = BaseView;
 
-},{}],5:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -537,4 +881,4 @@ var ProductView = function (_BaseView) {
 
 exports.default = ProductView;
 
-},{"./base":4}]},{},[2]);
+},{"./base":9}]},{},[2]);

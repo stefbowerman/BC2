@@ -35,11 +35,12 @@ nav {
       opacity: 1;
       transform: translateX(0px);
 
-      &:nth-child(2) { transition-delay: 120ms; }
-      &:nth-child(3) { transition-delay: 240ms; }
-      &:nth-child(4) { transition-delay: 360ms; }
-      &:nth-child(5) { transition-delay: 480ms; }
-      &:nth-child(6) { transition-delay: 600ms; }      
+      // Transitions + delays get longer with each element
+      &:nth-child(2) { transition-delay: 120ms; transition-duration: 500ms, 750ms; }
+      &:nth-child(3) { transition-delay: 240ms; transition-duration: 550ms, 775ms; }
+      &:nth-child(4) { transition-delay: 400ms; transition-duration: 600ms, 800ms; }
+      &:nth-child(5) { transition-delay: 600ms; transition-duration: 650ms, 825ms; }
+      &:nth-child(6) { transition-delay: 900ms; transition-duration: 700ms, 850ms; } 
     }
 
     // Temp style until we figure out sublists

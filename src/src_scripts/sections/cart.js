@@ -1,29 +1,23 @@
-/**
- * Cart Section Script
- * ------------------------------------------------------------------------------
- *
- * @namespace - cart
- */
+import BaseSection from "./base";
 
-theme.Cart = (function($) {
+const selectors = {
+  form: '[data-cart-form]',
+  itemQtySelect: '[data-item-quantity-select]'
+};
 
-  var selectors = {
-    form: '[data-cart-form]',
-    itemQtySelect: '[data-item-quantity-select]'
-  };
+const classes = {
 
-  var classes = {
+};
 
-  };
+export default class CartSection extends BaseSection {
 
-  function Cart(container) {
+  constructor(container) {
+    super(container);
 
-    this.$container = $(container);
+    this.name = 'cart';
+    this.namespace = `.${this.name}`;
 
-    this.name = 'footer';
-    this.namespace = '.'+this.name;
-
-    var $form = $(selectors.form, this.$container);
+    const $form = $(selectors.form, this.$container);
 
     // Since we have more than 1 quantity select per row (1 for mobile, 1 for desktop)
     // We need to use single input per row, which is responsible for sending the form data for that line item
@@ -32,13 +26,7 @@ theme.Cart = (function($) {
       var $itemQtyInput = $('[id="' + $(this).data('item-quantity-select') + '"]'); // Have to do '[id=".."]' instead of '#id' because id is generated using {{ item.key }} which has semi-colons in it - breaks normal id select
       $itemQtyInput.val($(this).val());
       $form.submit();
-    });    
-
+    });     
   }
-
-  Cart.prototype = $.extend({}, Cart.prototype, {
-
-  });
-
-  return Cart;
-})(jQuery);
+  
+}

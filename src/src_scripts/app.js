@@ -1,11 +1,40 @@
 import 'navigo';
 import Utils from './utils';
 
+// Sections
+import SectionManager from './sectionManager';
+import HeaderSection from './sections/header';
+import FooterSection from './sections/footer';
+import CartSection from './sections/cart';
+
+// Views
 import ProductView from './views/product';
 
 (($, Navigo) => {
 
-  console.log(`I have 8 ${Utils.pluralize(8, 'dog', 'dogs')}`);
+  // console.log(`I have 8 ${Utils.pluralize(8, 'dog', 'dogs')}`);
+
+  // Sections Stuff 
+  const sectionManager = new SectionManager();
+
+  sectionManager.register('header', HeaderSection);
+  sectionManager.register('footer', FooterSection);
+  sectionManager.register('cart', CartSection);
+
+  // Misc Stuff
+
+  // Chosen JS plugin for select boxes
+  Utils.chosenSelects();
+
+  // Apply UA classes to the document
+  Utils.userAgentBodyClass();    
+
+  // Apply a specific class to the html element for browser support of cookies.
+  if (Utils.cookiesEnabled()) {
+    document.documentElement.className = document.documentElement.className.replace('supports-no-cookies', 'supports-cookies');
+  }
+  // END Misc Stuff
+
 
   // Test router
   const $mainContent = $('#MainContent');
