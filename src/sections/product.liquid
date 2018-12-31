@@ -1,7 +1,7 @@
 {%- assign current_variant = product.selected_or_first_available_variant -%}
 {%- assign featured_image = current_variant.featured_image | default: product.featured_image -%}
 
-<div data-section-id="{{ section.id }}" data-section-type="product" data-enable-history-state="true" itemscope itemtype="http://schema.org/Product">
+<div data-section-id="{{ section.id }}" data-section-type="product" itemscope itemtype="http://schema.org/Product">
 
   <div class="layout-content-wrapper">
 

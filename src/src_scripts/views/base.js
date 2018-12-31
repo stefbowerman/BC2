@@ -1,14 +1,20 @@
 export default class BaseView {
   
-  constructor() {
-
-  }
-
-  create() {
-    console.log('calling create from the baseview');
+  constructor($el) {
+    this.$el = $el;
+    console.log('contructing view');
   }
 
   destroy() {
     console.log('calling destroy from the baseview');
+  }
+
+  transitionIn() {
+    //
+    console.log('transition in!');
+  }
+
+  transitionOut(callback) {
+    callback();
   }
 }

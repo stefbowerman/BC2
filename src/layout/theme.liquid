@@ -78,6 +78,8 @@
 
   <a class="in-page-link visually-hidden skip-link" href="#MainContent">{{ 'general.accessibility.skip_to_content' | t }}</a>
 
+  <div id="loader"></div>
+
   {% section 'mobile-menu' %}
 
   <div class="layout-wrapper">
@@ -93,10 +95,6 @@
     {% section 'footer' %}
 
   </div>
-
-  {% comment %} Select the appropriate 'subscription-*' section for the theme you are building and remove the files for the others {% endcomment %}
-  {% section 'subscription-modal' %}
-  {% comment %}{% section 'subscription-slideup' %}{% endcomment %}
 
   {% unless template == 'cart' %}
     {% section 'ajax-cart' %}

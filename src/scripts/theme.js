@@ -10,7 +10,6 @@ window.views = window.views || {};
 // =require slate/currency.js
 // =require slate/images.js
 // =require slate/variants.js
-// =require slate/ajaxCart.js
 // =require slate/ajaxMailChimpForm.js
 // =require slate/animations.js
 // =require slate/user.js
@@ -26,15 +25,7 @@ window.views = window.views || {};
 // =require slate/models/overlay.js
 
 /*================ Sections ================*/
-// =require sections/product.js
-// =require sections/subscriptionModal.js
-// =require sections/subscriptionSlideup.js
-// =require sections/slideshow.js
-// =require sections/ajaxCart.js
 // =require sections/mobileMenu.js
-
-/*================ Views ================*/
-// =require views/productView.js
 
 /*================ Templates ================*/
 // =require templates/customers-addresses.js
@@ -50,10 +41,6 @@ window.views = window.views || {};
 
   $(document).ready(function() {
     var sections = new slate.Sections();
-    // sections.register('product', theme.Product);
-    // sections.register('subscription-modal', theme.SubscriptionModal);
-    // sections.register('subscription-slideup', theme.SubscriptionSlideup);
-    sections.register('ajax-cart', theme.AjaxCart);
     sections.register('mobile-menu', theme.MobileMenu);
 
     $('.in-page-link').on('click', function(evt) {
