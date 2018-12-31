@@ -1,0 +1,74 @@
+{% assign stockists_blog = blogs[section.settings.blog] %}
+
+{% assign stockists_north_america_html = '' %}
+{% assign stockists_australia_html     = '' %}
+{% assign stockists_europe_html        = '' %}
+{% assign stockists_asia_html          = '' %}
+{% assign stockists_south_america_html = '' %}
+{% assign stockists_africa_html        = '' %}
+{% assign stockists_other_html         = '' %}
+
+{% if stockists_blog != blank and stockists_blog.articles_count > 0 %}
+
+  {% for tag in stockists_blog.all_tags %}
+    
+    {% assign tag_handle = tag | handle %}
+
+    {% capture tag_html %}
+      <div style="margin: 40px 0" class="u-ta-center">
+        <h5>{{ tag }}</h5>
+        {% for article in stockists_blog.articles limit: 200 %}
+          {% if article.tags contains tag %}
+            <div style="margin-bottom: 20px" class="u-fs-small">
+              <strong>{{ article.title }}</strong>
+              <div>{{ article.content }}</div>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endcapture %}
+
+    {% case tag_handle %}
+      {% when 'north-america' %}
+        {% assign stockists_north_america_html = stockists_north_america_html | append: tag_html %}
+      {% when 'australia' %}
+        {% assign stockists_australia_html = stockists_australia_html | append: tag_html %}
+      {% when 'europe' %}
+        {% assign stockists_europe_html = stockists_europe_html | append: tag_html %}
+      {% when 'asia' %}
+        {% assign stockists_asia_html = stockists_asia_html | append: tag_html %}
+      {% when 'south_america' %}
+        {% assign stockists_south_america_html = stockists_south_america_html | append: tag_html %}
+      {% when 'africa' %}
+        {% assign stockists_africa_html = stockists_africa_html | append: tag_html %}        
+      {% else %}
+        {% assign stockists_other_html = stockists_other_html | append: tag_html %}
+    {% endcase %}
+
+  {% endfor %}
+
+  <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; overflow: scroll; display: flex; align-items: center; justify-content: center; padding: 100px 0;">
+    <div>
+      {{ stockists_north_america_html }}
+      {{ stockists_australia_html }}
+      {{ stockists_europe_html }}
+      {{ stockists_asia_html }}
+      {{ stockists_south_america_html }}
+      {{ stockists_africa_html }}
+      {{ stockists_other_html }}      
+    </div>
+  </div>
+{% endif %}
+
+{% schema %}
+  {
+    "name": "Stockists Page",
+    "settings": [  
+      {
+        "type": "blog",
+        "id": "blog",
+        "label": "Stockists Blog"
+      }
+    ]  
+  }
+{% endschema %}

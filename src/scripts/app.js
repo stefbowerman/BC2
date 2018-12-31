@@ -694,6 +694,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   });
   router.on('/cart', function (params) {
     doPageChange('/cart');
+  });
+  router.on('/pages/:slug', function (params) {
+    doPageChange('/pages/' + params.slug, 'page');
   }).on('/', function () {
     doPageChange('/', 'home');
   });

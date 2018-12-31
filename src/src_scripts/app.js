@@ -138,6 +138,9 @@ import CartView    from './views/cart';
   router.on('/cart', (params) => {
     doPageChange('/cart');
   })
+  router.on('/pages/:slug', (params) => {
+    doPageChange('/pages/' + params.slug, 'page');
+  })  
   .on('/', () => {
     doPageChange('/', 'home');
   });
