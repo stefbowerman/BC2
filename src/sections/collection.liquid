@@ -3,15 +3,10 @@
   Collection Section
   ------------------------------------------------------------------------------
 
-  The tags using for filtering are the ones that starts with:
-    - `color:`
-    - `size:`
-
 {% endcomment -%}
 
-{% assign filter_types = 'color,size' | split: "," %}
 
-{% paginate collection.products by 6 %}
+{% paginate collection.products by 100 %}
 
 <div class="layout-content-wrapper">
   <section data-section-id="{{ section.id }}" data-section-type="collection">
@@ -33,7 +28,8 @@
             {% endif %}
 
             <div class="content-grid__item">
-              {% include 'product-card', product: product, lazy_load: lazy_load %}
+              {% comment %}{% include 'product-card', product: product, lazy_load: lazy_load %}{% endcomment %}
+              {% include 'product-card', product: product, lazy_load: false %}
             </div>
           {% endfor %}
         </div>

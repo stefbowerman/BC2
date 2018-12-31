@@ -535,14 +535,16 @@ var AJAXCart = function () {
 
 exports.default = AJAXCart;
 
-},{"./currency":4,"./images":5,"./shopifyAPI":14,"./utils":15}],3:[function(require,module,exports){
+},{"./currency":5,"./images":6,"./shopifyAPI":16,"./utils":18}],3:[function(require,module,exports){
 'use strict';
-
-require('navigo');
 
 var _utils = require('./utils');
 
 var _utils2 = _interopRequireDefault(_utils);
+
+var _appRouter = require('./appRouter');
+
+var _appRouter2 = _interopRequireDefault(_appRouter);
 
 var _header = require('./sections/header');
 
@@ -556,23 +558,15 @@ var _ajaxCart = require('./sections/ajaxCart');
 
 var _ajaxCart2 = _interopRequireDefault(_ajaxCart);
 
-var _base = require('./views/base');
+var _mobileMenu = require('./sections/mobileMenu');
 
-var _base2 = _interopRequireDefault(_base);
-
-var _product = require('./views/product');
-
-var _product2 = _interopRequireDefault(_product);
-
-var _cart = require('./views/cart');
-
-var _cart2 = _interopRequireDefault(_cart);
+var _mobileMenu2 = _interopRequireDefault(_mobileMenu);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // Sections
 // import SectionManager  from './sectionManager';
-(function ($, Navigo) {
+(function ($) {
 
   // console.log(`I have 8 ${Utils.pluralize(8, 'dog', 'dogs')}`);
 
@@ -589,9 +583,21 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   sections.header = new _header2.default($('[data-section-type="header"]'));
   sections.footer = new _footer2.default($('[data-section-type="footer"]'));
   sections.ajaxCart = new _ajaxCart2.default($('[data-section-type="ajax-cart"]'));
+  sections.mobileMenu = new _mobileMenu2.default($('[data-section-type="mobile-menu"]'));
 
-  console.log(sections);
-
+  var appRouter = new _appRouter2.default({
+    onRouteStart: function onRouteStart(url) {
+      sections.ajaxCart.ajaxCart.close(); // Run this immediately in case it's open
+    },
+    onViewTransitionOutDone: function onViewTransitionOutDone(url) {
+      // Update the menu immediately or wait?
+      sections.header.deactivateMenuLinks();
+      sections.header.activateMenuLinkForUrl(url);
+    },
+    onViewChangeDOMUpdatesComplete: function onViewChangeDOMUpdatesComplete() {
+      window.scrollTop = 0;
+    }
+  });
   // Misc Stuff
 
   // Chosen JS plugin for select boxes
@@ -605,109 +611,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
     document.documentElement.className = document.documentElement.className.replace('supports-no-cookies', 'supports-cookies');
   }
   // END Misc Stuff
-
-  // Test router
-  var $mainContent = $('#MainContent');
-  var $loader = $('#loader');
-  var root = window.location.origin;
-  var useHash = false; // Defaults to: false
-  var hash = '#!'; // Defaults to: '#'
-  var firstRoute = true;
-  var currentView = null;
-
-  var viewContructors = {
-    'product': _product2.default,
-    'cart': _cart2.default
-  };
-
-  var doPageChange = function doPageChange(url, type) {
-
-    var viewContructor = viewContructors[type] || _base2.default;
-
-    if (firstRoute) {
-      currentView = new viewContructor($mainContent);
-      firstRoute = false;
-      return;
-    }
-
-    var t = null; // Add a timeout to do a basic redirect to the url if the request takes longer than a few seconds
-    var transitionDeferred = $.Deferred();
-    var ajaxDeferred = $.Deferred();
-
-    var callBack = function callBack(response) {
-      // Kill the current view
-      currentView.destroy();
-
-      var $html = $(response);
-      var title = $html.filter('title').text();
-      var $dom = $html.find('#MainContent .layout-main-content');
-
-      // Do DOM updates
-      document.title = title;
-      $mainContent.find('.layout-main-content').replaceWith($dom);
-      // Finish DOM updates
-
-      window.scrollTop = 0;
-
-      console.log('instantiate new view for ' + type);
-      currentView = new viewContructor($mainContent);
-
-      $mainContent.imagesLoaded(function () {
-        $loader.removeClass('is-visible');
-        currentView.transitionIn();
-      });
-    };
-
-    t = setTimeout(function () {
-      window.location = url;
-    }, 4000);
-
-    $.get(url, function (response) {
-      clearTimeout(t);
-      ajaxDeferred.resolve(response);
-    });
-
-    // Let the current view do it's 'out' transition and then apply the loading state
-    currentView.transitionOut(function () {
-      $loader.addClass('is-visible');
-      $loader.on('transitionend', function () {
-        transitionDeferred.resolve();
-      });
-    });
-
-    // Once AJAX *and* css animations are done, trigger the callback
-    $.when(ajaxDeferred, transitionDeferred).done(function (response) {
-      callBack(response);
-    });
-  };
-
-  window.router = new Navigo(root, useHash, '#!');
-
-  router.on('/products/:slug', function (params) {
-    doPageChange('/products/' + params.slug, 'product');
-  }).on('/collections/:slug', function (params, query) {
-    var url = '/collections/' + params.slug;
-    if (query) {
-      url += '?' + query;
-    }
-    doPageChange(url, 'collection');
-  });
-  router.on('/cart', function (params) {
-    doPageChange('/cart');
-  });
-  router.on('/pages/:slug', function (params) {
-    doPageChange('/pages/' + params.slug, 'page');
-  }).on('/', function () {
-    doPageChange('/', 'home');
-  });
-
-  router.notFound(function (params) {
-    // called when there is path specified but
-    // there is no route matching
-    console.log(params);
-  });
-
-  router.resolve();
 
   // Stop here...no AJAX navigation inside the theme editor
   if (Shopify && Shopify.designMode) {
@@ -725,13 +628,184 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
     if (testAnchor.host != window.location.host) return;
 
     e.preventDefault();
-    router.navigate(url);
+    appRouter.navigate(url);
   });
-})(jQuery, Navigo);
+})(jQuery);
+
+},{"./appRouter":4,"./sections/ajaxCart":9,"./sections/footer":12,"./sections/header":13,"./sections/mobileMenu":14,"./utils":18}],4:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+require('navigo');
+
+var _base = require('./views/base');
+
+var _base2 = _interopRequireDefault(_base);
+
+var _product = require('./views/product');
+
+var _product2 = _interopRequireDefault(_product);
+
+var _collection = require('./views/collection');
+
+var _collection2 = _interopRequireDefault(_collection);
+
+var _cart = require('./views/cart');
+
+var _cart2 = _interopRequireDefault(_cart);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 // Views
 
-},{"./sections/ajaxCart":8,"./sections/footer":11,"./sections/header":12,"./utils":15,"./views/base":16,"./views/cart":17,"./views/product":18,"navigo":1}],4:[function(require,module,exports){
+
+// TODO - Move the loader and main content bits to variables that get passed in
+var $mainContent = $('#MainContent');
+var $loader = $('#loader');
+var firstRoute = true;
+
+var AppRouter = function () {
+  function AppRouter() {
+    var _this = this;
+
+    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+    _classCallCheck(this, AppRouter);
+
+    var defaults = {
+      onRouteStart: $.noop,
+      onViewTransitionOutDone: $.noop,
+      onViewChangeDOMUpdatesComplete: $.noop
+    };
+
+    this.viewConstructors = {
+      'product': _product2.default,
+      'collection': _collection2.default,
+      'cart': _cart2.default
+    };
+
+    this.router = new Navigo(window.location.origin, false, '#!');
+    this.currentView = null;
+    this.settings = $.extend({}, defaults, options);
+
+    // Add Routes
+    this.router.on('/products/:slug', function (params) {
+      _this.doRoute('/products/' + params.slug, 'product');
+    });
+
+    this.router.on('/collections/:slug', function (params, query) {
+      var url = '/collections/' + params.slug;
+      if (query) {
+        url += '?' + query;
+      }
+      _this.doRoute(url, 'collection');
+    });
+
+    this.router.on('/cart', function (params) {
+      _this.doRoute('/cart');
+    });
+
+    this.router.on('/pages/:slug', function (params) {
+      _this.doRoute('/pages/' + params.slug, 'page');
+    });
+
+    this.router.on('/', function () {
+      _this.doRoute('/', 'home');
+    });
+
+    this.router.notFound(function (params) {
+      // called when there is path specified but
+      // there is no route matching
+      console.log(params);
+    });
+
+    this.router.resolve();
+  }
+
+  AppRouter.prototype.doRoute = function doRoute(url, type) {
+    var _this2 = this;
+
+    var self = this;
+    var viewConstructor = this.viewConstructors[type] || _base2.default;
+
+    if (firstRoute) {
+      this.currentView = new viewConstructor($mainContent);
+      firstRoute = false;
+      return;
+    }
+
+    var transitionDeferred = $.Deferred();
+    var ajaxDeferred = $.Deferred();
+
+    // Add a timeout to do a basic redirect to the url if the request takes longer than a few seconds
+    var t = setTimeout(function () {
+      window.location = url;
+    }, 4000);
+
+    $.get(url, function (response) {
+      clearTimeout(t);
+      ajaxDeferred.resolve(response);
+    });
+
+    this.settings.onRouteStart(url);
+
+    // Let the current view do it's 'out' transition and then apply the loading state
+    this.currentView.transitionOut(function () {
+
+      _this2.settings.onViewTransitionOutDone(url);
+
+      $loader.addClass('is-visible');
+      $loader.on('transitionend', function () {
+        transitionDeferred.resolve();
+      });
+    });
+
+    // Once AJAX *and* css animations are done, trigger the callback
+    $.when(ajaxDeferred, transitionDeferred).done(function (response) {
+      _this2.doViewChange(response, viewConstructor);
+    });
+  };
+
+  AppRouter.prototype.doViewChange = function doViewChange(AJAXResponse, viewConstructor) {
+    var _this3 = this;
+
+    // Kill the current view
+    this.currentView.destroy();
+
+    var $html = $(AJAXResponse);
+    var title = $html.filter('title').text();
+    var $dom = $html.find('#MainContent .layout-main-content');
+
+    // Do DOM updates
+    document.title = title;
+    $mainContent.find('.layout-main-content').replaceWith($dom);
+    // Finish DOM updates
+
+    this.settings.onViewChangeDOMUpdatesComplete();
+
+    this.currentView = new viewConstructor($mainContent);
+
+    $mainContent.imagesLoaded(function () {
+      $loader.removeClass('is-visible');
+      _this3.currentView.transitionIn();
+    });
+  };
+
+  AppRouter.prototype.navigate = function navigate(url) {
+    this.router.navigate(url);
+  };
+
+  return AppRouter;
+}();
+
+exports.default = AppRouter;
+
+},{"./views/base":19,"./views/cart":20,"./views/collection":21,"./views/product":22,"navigo":1}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -824,7 +898,7 @@ exports.default = {
   }
 };
 
-},{"./utils":15}],5:[function(require,module,exports){
+},{"./utils":18}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -915,7 +989,7 @@ exports.default = {
   }
 };
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1367,7 +1441,7 @@ var ProductDetailForm = function () {
 
 exports.default = ProductDetailForm;
 
-},{"../currency":4,"../utils":15,"./productVariants":7}],7:[function(require,module,exports){
+},{"../currency":5,"../utils":18,"./productVariants":8}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1574,7 +1648,7 @@ var ProductVariants = function () {
 
 exports.default = ProductVariants;
 
-},{"../utils":15}],8:[function(require,module,exports){
+},{"../utils":18}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1644,7 +1718,7 @@ var AJAXCartSection = function (_BaseSection) {
 
 exports.default = AJAXCartSection;
 
-},{"../ajaxCart":2,"./base":9}],9:[function(require,module,exports){
+},{"../ajaxCart":2,"./base":10}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1693,7 +1767,7 @@ var BaseSection = function () {
 
 exports.default = BaseSection;
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1750,7 +1824,7 @@ var CartSection = function (_BaseSection) {
 
 exports.default = CartSection;
 
-},{"./base":9}],11:[function(require,module,exports){
+},{"./base":10}],12:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1791,7 +1865,7 @@ var FooterSection = function (_BaseSection) {
 
 exports.default = FooterSection;
 
-},{"./base":9}],12:[function(require,module,exports){
+},{"./base":10}],13:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1827,19 +1901,111 @@ var HeaderSection = function (_BaseSection) {
     _this.$el = $(selectors.header, _this.$container);
     _this.name = 'header';
     _this.namespace = '.' + _this.name;
+    _this.$menu = _this.$el.find('.main-menu');
 
     setTimeout(function () {
-      _this.$el.find('.main-menu').addClass('is-visible');
+      _this.$menu.addClass('is-visible');
     }, 500);
     return _this;
   }
+
+  HeaderSection.prototype.activateMenuLinkForUrl = function activateMenuLinkForUrl(url) {
+    this.$menu.find('a').each(function (i, el) {
+      var $el = $(el);
+      var href = $el.attr('href');
+      if (href == url || url.indexOf(href) > -1) {
+        $el.addClass('is-active');
+      }
+    });
+  };
+
+  HeaderSection.prototype.deactivateMenuLinks = function deactivateMenuLinks() {
+    this.$menu.find('.is-active').removeClass('is-active');
+  };
 
   return HeaderSection;
 }(_base2.default);
 
 exports.default = HeaderSection;
 
-},{"./base":9}],13:[function(require,module,exports){
+},{"./base":10}],14:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _base = require("./base");
+
+var _base2 = _interopRequireDefault(_base);
+
+var _drawer = require("../uiComponents/drawer");
+
+var _drawer2 = _interopRequireDefault(_drawer);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
+
+var selectors = {
+  toggle: '[data-mobile-menu-toggle]',
+  menu: '[data-mobile-menu]'
+};
+
+var MobileMenuSection = function (_BaseSection) {
+  _inherits(MobileMenuSection, _BaseSection);
+
+  function MobileMenuSection(container) {
+    _classCallCheck(this, MobileMenuSection);
+
+    var _this = _possibleConstructorReturn(this, _BaseSection.call(this, container));
+
+    _this.name = 'mobileMenu';
+    _this.namespace = "." + _this.name;
+
+    _this.$el = $(selectors.menu, _this.$container);
+    _this.$toggle = $(selectors.toggle); // Don't scope to this.$container
+
+    _this.drawer = new _drawer2.default(_this.$el);
+
+    _this.$toggle.on('click', _this.onToggleClick.bind(_this));
+    return _this;
+  }
+
+  MobileMenuSection.prototype.onToggleClick = function onToggleClick(e) {
+    e.preventDefault();
+    this.drawer.toggle();
+  };
+
+  /**
+   * Theme Editor section events below
+   */
+
+
+  MobileMenuSection.prototype.onSelect = function onSelect() {
+    this.drawer.show();
+  };
+
+  MobileMenuSection.prototype.onDeselect = function onDeselect() {
+    this.drawer.hide();
+  };
+
+  MobileMenuSection.prototype.onUnload = function onUnload() {
+    this.drawer.$backdrop && this.drawer.$backdrop.remove();
+  };
+
+  return MobileMenuSection;
+}(_base2.default);
+
+exports.default = MobileMenuSection;
+
+},{"../uiComponents/drawer":17,"./base":10}],15:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1894,7 +2060,7 @@ var ProductSection = function (_BaseSection) {
 
 exports.default = ProductSection;
 
-},{"../product/productDetailForm":6,"./base":9}],14:[function(require,module,exports){
+},{"../product/productDetailForm":7,"./base":10}],16:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1991,7 +2157,196 @@ exports.default = {
   }
 };
 
-},{}],15:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _utils = require('../utils');
+
+var _utils2 = _interopRequireDefault(_utils);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var $document = $(document);
+var $body = $(document.body);
+
+var selectors = {
+  close: '[data-drawer-close]'
+};
+
+var classes = {
+  drawer: 'drawer',
+  visible: 'is-visible',
+  backdrop: 'drawer-backdrop',
+  backdropVisible: 'is-visible',
+  bodyDrawerOpen: 'drawer-open'
+};
+
+var Drawer = function () {
+
+  /**
+   * Drawer constructor
+   *
+   * @param {HTMLElement | $} el - The drawer element
+   * @param {Object} options
+   */
+  function Drawer(el, options) {
+    _classCallCheck(this, Drawer);
+
+    this.name = 'mobileMenu';
+    this.namespace = '.' + this.name;
+
+    this.$el = $(el);
+    this.$backdrop = null;
+    this.stateIsOpen = false;
+    this.transitionEndEvent = _utils2.default.whichTransitionEnd();
+    this.supportsCssTransitions = Modernizr.hasOwnProperty('csstransitions') && Modernizr.csstransitions;
+
+    if (this.$el == undefined || !this.$el.hasClass(classes.drawer)) {
+      console.warn('[' + this.name + '] - Element with class `' + classes.drawer + '` required to initialize.');
+      return;
+    }
+
+    var defaults = {
+      closeSelector: selectors.close,
+      backdrop: true
+    };
+
+    this.settings = $.extend({}, defaults, options);
+
+    this.events = {
+      HIDE: 'hide' + this.namespace,
+      HIDDEN: 'hidden' + this.namespace,
+      SHOW: 'show' + this.namespace,
+      SHOWN: 'shown' + this.namespace
+    };
+
+    this.$el.on('click', this.settings.closeSelector, this.onCloseClick.bind(this));
+  }
+
+  Drawer.prototype.addBackdrop = function addBackdrop(callback) {
+    var _this = this;
+    var cb = callback || $.noop;
+
+    if (this.stateIsOpen) {
+      this.$backdrop = $(document.createElement('div'));
+
+      this.$backdrop.addClass(classes.backdrop).appendTo($body);
+
+      this.$backdrop.one(this.transitionEndEvent, cb);
+      this.$backdrop.one('click', this.hide.bind(this));
+
+      // debug this...
+      setTimeout(function () {
+        $body.addClass(classes.bodyDrawerOpen);
+        _this.$backdrop.addClass(classes.backdropVisible);
+      }, 10);
+    } else {
+      cb();
+    }
+  };
+
+  Drawer.prototype.removeBackdrop = function removeBackdrop(callback) {
+    var _this = this;
+    var cb = callback || $.noop;
+
+    if (this.$backdrop) {
+      this.$backdrop.one(this.transitionEndEvent, function () {
+        _this.$backdrop && _this.$backdrop.remove();
+        _this.$backdrop = null;
+        cb();
+      });
+
+      setTimeout(function () {
+        _this.$backdrop.removeClass(classes.backdropVisible);
+        $body.removeClass(classes.bodyDrawerOpen);
+      }, 10);
+    } else {
+      cb();
+    }
+  };
+
+  /**
+   * Called after the closing animation has run
+   */
+
+
+  Drawer.prototype.onHidden = function onHidden() {
+    this.stateIsOpen = false;
+    var e = $.Event(this.events.HIDDEN);
+    this.$el.trigger(e);
+  };
+
+  /**
+   * Called after the opening animation has run
+   */
+
+
+  Drawer.prototype.onShown = function onShown() {
+    var e = $.Event(this.events.SHOWN);
+    this.$el.trigger(e);
+  };
+
+  Drawer.prototype.hide = function hide() {
+    var e = $.Event(this.events.HIDE);
+    this.$el.trigger(e);
+
+    if (!this.stateIsOpen) return;
+
+    this.$el.removeClass(classes.visible);
+
+    if (this.settings.backdrop) {
+      this.removeBackdrop();
+    }
+
+    if (this.supportsCssTransitions) {
+      this.$el.one(this.transitionEndEvent, this.onHidden.bind(this));
+    } else {
+      this.onHidden();
+    }
+  };
+
+  Drawer.prototype.show = function show() {
+    var e = $.Event(this.events.SHOW);
+    this.$el.trigger(e);
+
+    if (this.stateIsOpen) return;
+
+    this.stateIsOpen = true;
+
+    this.$el.addClass(classes.visible);
+
+    if (this.settings.backdrop) {
+      this.addBackdrop();
+    }
+
+    if (this.supportsCssTransitions) {
+      this.$el.one(this.transitionEndEvent, this.onShown.bind(this));
+    } else {
+      this.onShown();
+    }
+  };
+
+  Drawer.prototype.toggle = function toggle() {
+    return this.stateIsOpen ? this.hide() : this.show();
+  };
+
+  Drawer.prototype.onCloseClick = function onCloseClick(e) {
+    e.preventDefault();
+    this.hide();
+  };
+
+  return Drawer;
+}();
+
+exports.default = Drawer;
+
+},{"../utils":18}],18:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2343,7 +2698,7 @@ exports.default = {
   }
 };
 
-},{}],16:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2378,7 +2733,7 @@ var BaseView = function () {
 
 exports.default = BaseView;
 
-},{}],17:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2425,7 +2780,47 @@ var CartView = function (_BaseView) {
 
 exports.default = CartView;
 
-},{"../sections/cart":10,"./base":16}],18:[function(require,module,exports){
+},{"../sections/cart":11,"./base":19}],21:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _base = require("./base");
+
+var _base2 = _interopRequireDefault(_base);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
+
+var CollectionView = function (_BaseView) {
+  _inherits(CollectionView, _BaseView);
+
+  function CollectionView($el) {
+    _classCallCheck(this, CollectionView);
+
+    return _possibleConstructorReturn(this, _BaseView.call(this, $el));
+  }
+
+  CollectionView.prototype.transitionOut = function transitionOut(callback) {
+    $("html, body").animate({ scrollTop: 0 }, 300);
+    setTimeout(callback, 150);
+  };
+
+  return CollectionView;
+}(_base2.default);
+
+exports.default = CollectionView;
+
+},{"./base":19}],22:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2483,4 +2878,4 @@ var ProductView = function (_BaseView) {
 
 exports.default = ProductView;
 
-},{"../sections/product":13,"./base":16}]},{},[3]);
+},{"../sections/product":15,"./base":19}]},{},[3]);

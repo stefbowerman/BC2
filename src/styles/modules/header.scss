@@ -43,6 +43,12 @@ nav {
       &:nth-child(6) { transition-delay: 900ms; transition-duration: 700ms, 850ms; } 
     }
 
+    a {
+      &.is-active {
+        font-weight: bold;
+      }
+    }
+
     // Temp style until we figure out sublists
     ul {
       display: none;

@@ -6,7 +6,6 @@ window.views = window.views || {};
 // =require slate/a11y.js
 // =require slate/utils.js
 // =require slate/rte.js
-// =require slate/sections.js
 // =require slate/currency.js
 // =require slate/images.js
 // =require slate/variants.js
@@ -24,9 +23,6 @@ window.views = window.views || {};
 // =require slate/models/slideup.js
 // =require slate/models/overlay.js
 
-/*================ Sections ================*/
-// =require sections/mobileMenu.js
-
 /*================ Templates ================*/
 // =require templates/customers-addresses.js
 // =require templates/customers-login.js
@@ -40,8 +36,6 @@ window.views = window.views || {};
   var $body         = $(document.body);
 
   $(document).ready(function() {
-    var sections = new slate.Sections();
-    sections.register('mobile-menu', theme.MobileMenu);
 
     $('.in-page-link').on('click', function(evt) {
       slate.a11y.pageLinkFocus($(evt.currentTarget.hash));
