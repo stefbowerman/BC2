@@ -535,7 +535,7 @@ var AJAXCart = function () {
 
 exports.default = AJAXCart;
 
-},{"./currency":5,"./images":6,"./shopifyAPI":16,"./utils":18}],3:[function(require,module,exports){
+},{"./currency":5,"./images":6,"./shopifyAPI":19,"./utils":21}],3:[function(require,module,exports){
 'use strict';
 
 var _utils = require('./utils');
@@ -568,15 +568,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 // import SectionManager  from './sectionManager';
 (function ($) {
 
-  // console.log(`I have 8 ${Utils.pluralize(8, 'dog', 'dogs')}`);
-
   // Sections Stuff 
   // window.sectionManager = new SectionManager();
-
-  // sectionManager.register('header', HeaderSection);
-  // sectionManager.register('footer', FooterSection);
-  // sectionManager.register('product', ProductSection);
-  // sectionManager.register('cart', CartSection);
 
   var sections = {};
 
@@ -632,7 +625,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   });
 })(jQuery);
 
-},{"./appRouter":4,"./sections/ajaxCart":9,"./sections/footer":12,"./sections/header":13,"./sections/mobileMenu":14,"./utils":18}],4:[function(require,module,exports){
+},{"./appRouter":4,"./sections/ajaxCart":10,"./sections/footer":14,"./sections/header":15,"./sections/mobileMenu":16,"./utils":21}],4:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -644,6 +637,10 @@ require('navigo');
 var _base = require('./views/base');
 
 var _base2 = _interopRequireDefault(_base);
+
+var _index = require('./views/index');
+
+var _index2 = _interopRequireDefault(_index);
 
 var _product = require('./views/product');
 
@@ -684,6 +681,7 @@ var AppRouter = function () {
     };
 
     this.viewConstructors = {
+      'index': _index2.default,
       'product': _product2.default,
       'collection': _collection2.default,
       'cart': _cart2.default
@@ -715,7 +713,7 @@ var AppRouter = function () {
     });
 
     this.router.on('/', function () {
-      _this.doRoute('/', 'home');
+      _this.doRoute('/', 'index');
     });
 
     this.router.notFound(function (params) {
@@ -805,7 +803,7 @@ var AppRouter = function () {
 
 exports.default = AppRouter;
 
-},{"./views/base":19,"./views/cart":20,"./views/collection":21,"./views/product":22,"navigo":1}],5:[function(require,module,exports){
+},{"./views/base":22,"./views/cart":23,"./views/collection":24,"./views/index":25,"./views/product":26,"navigo":1}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -898,7 +896,7 @@ exports.default = {
   }
 };
 
-},{"./utils":18}],6:[function(require,module,exports){
+},{"./utils":21}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1441,7 +1439,7 @@ var ProductDetailForm = function () {
 
 exports.default = ProductDetailForm;
 
-},{"../currency":5,"../utils":18,"./productVariants":8}],8:[function(require,module,exports){
+},{"../currency":5,"../utils":21,"./productVariants":8}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1648,7 +1646,24 @@ var ProductVariants = function () {
 
 exports.default = ProductVariants;
 
-},{"../utils":18}],9:[function(require,module,exports){
+},{"../utils":21}],9:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _test = require('./sections/test');
+
+var _test2 = _interopRequireDefault(_test);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = {
+  test: _test2.default
+};
+
+},{"./sections/test":18}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1701,15 +1716,16 @@ var AJAXCartSection = function (_BaseSection) {
     return _this;
   }
 
-  AJAXCartSection.prototype.onSelect = function onSelect() {
+  AJAXCartSection.prototype.onSelect = function onSelect(e) {
+    console.log('on select inside AJAXCart');
     this.ajaxCart.open();
   };
 
-  AJAXCartSection.prototype.onDeselect = function onDeselect() {
+  AJAXCartSection.prototype.onDeselect = function onDeselect(e) {
     this.ajaxCart.close();
   };
 
-  AJAXCartSection.prototype.onUnload = function onUnload() {
+  AJAXCartSection.prototype.onUnload = function onUnload(e) {
     this.ajaxCart.$backdrop && this.ajaxCart.$backdrop.remove();
   };
 
@@ -1718,7 +1734,7 @@ var AJAXCartSection = function (_BaseSection) {
 
 exports.default = AJAXCartSection;
 
-},{"../ajaxCart":2,"./base":10}],10:[function(require,module,exports){
+},{"../ajaxCart":2,"./base":11}],11:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1727,47 +1743,69 @@ Object.defineProperty(exports, "__esModule", {
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var shopifyEvents = ['shopify:section:unload', 'shopify:section:select', 'shopify:section:deselect', 'shopify:section:reorder', 'shopify:block:select', 'shopify:block:deselect'];
+
 var BaseSection = function () {
   function BaseSection(container) {
     _classCallCheck(this, BaseSection);
 
     this.$container = container instanceof $ ? container : $(container);
-    // console.log('constructing!');
-    // console.log(this);
+    this.id = this.$container.data('section-id');
+    this.type = this.$container.data('section-type');
 
-    this.$container.on({
-      'shopify:section:load': this.onSectionLoad.bind(this),
-      'shopify:section:unload': this.onSectionUnload.bind(this),
-      'shopify:section:select': this.onSelect.bind(this),
-      'shopify:section:deselect': this.onDeselect.bind(this),
-      'shopify:section:reorder': this.onReorder.bind(this),
-      'shopify:block:select': this.onBlockSelect.bind(this),
-      'shopify:block:deselect': this.onBlockDeselect.bind(this)
-    });
+    $(document).on(shopifyEvents.join(' '), this.onShopifyEvent.bind(this));
   }
 
-  BaseSection.prototype.onSectionLoad = function onSectionLoad(evt) {};
+  BaseSection.prototype.onShopifyEvent = function onShopifyEvent(e) {
+    if (e.detail.sectionId != this.id.toString()) {
+      return;
+    }
 
-  BaseSection.prototype.onSectionUnload = function onSectionUnload(evt) {};
+    switch (e.type) {
+      case 'shopify:section:unload':
+        this.onUnload(e);
+        break;
+      case 'shopify:section:select':
+        this.onSelect(e);
+        break;
+      case 'shopify:section:deselect':
+        this.onDeselect(e);
+        break;
+      case 'shopify:section:reorder':
+        this.onReorder(e);
+        break;
+      case 'shopify:block:select':
+        this.onBlockSelect(e);
+        break;
+      case 'shopify:block:deselect':
+        this.onBlockDeselect(e);
+        break;
+    }
+  };
 
-  BaseSection.prototype.onSelect = function onSelect(evt) {
+  BaseSection.prototype.onUnload = function onUnload(e) {
+    console.log('[BaseSection] - removing event listeners - onSectionUnload');
+    $(document).off(shopifyEvents.join(' '), this.onShopifyEvent.bind(this));
+  };
+
+  BaseSection.prototype.onSelect = function onSelect(e) {
     console.log('onselect in base section');
   };
 
-  BaseSection.prototype.onDeselect = function onDeselect(evt) {};
+  BaseSection.prototype.onDeselect = function onDeselect(e) {};
 
-  BaseSection.prototype.onReorder = function onReorder(evt) {};
+  BaseSection.prototype.onReorder = function onReorder(e) {};
 
-  BaseSection.prototype.onBlockSelect = function onBlockSelect(evt) {};
+  BaseSection.prototype.onBlockSelect = function onBlockSelect(e) {};
 
-  BaseSection.prototype.onBlockDeselect = function onBlockDeselect(evt) {};
+  BaseSection.prototype.onBlockDeselect = function onBlockDeselect(e) {};
 
   return BaseSection;
 }();
 
 exports.default = BaseSection;
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1824,7 +1862,47 @@ var CartSection = function (_BaseSection) {
 
 exports.default = CartSection;
 
-},{"./base":10}],12:[function(require,module,exports){
+},{"./base":11}],13:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _base = require('./base');
+
+var _base2 = _interopRequireDefault(_base);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
+
+var CollectionSection = function (_BaseSection) {
+  _inherits(CollectionSection, _BaseSection);
+
+  function CollectionSection(container) {
+    _classCallCheck(this, CollectionSection);
+
+    var _this = _possibleConstructorReturn(this, _BaseSection.call(this, container));
+
+    _this.name = 'collection';
+    _this.namespace = '.' + _this.name;
+    console.log('constructing collection view');
+    return _this;
+  }
+
+  return CollectionSection;
+}(_base2.default);
+
+exports.default = CollectionSection;
+
+},{"./base":11}],14:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1865,7 +1943,7 @@ var FooterSection = function (_BaseSection) {
 
 exports.default = FooterSection;
 
-},{"./base":10}],13:[function(require,module,exports){
+},{"./base":11}],15:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1928,7 +2006,7 @@ var HeaderSection = function (_BaseSection) {
 
 exports.default = HeaderSection;
 
-},{"./base":10}],14:[function(require,module,exports){
+},{"./base":11}],16:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2005,7 +2083,7 @@ var MobileMenuSection = function (_BaseSection) {
 
 exports.default = MobileMenuSection;
 
-},{"../uiComponents/drawer":17,"./base":10}],15:[function(require,module,exports){
+},{"../uiComponents/drawer":20,"./base":11}],17:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2060,7 +2138,49 @@ var ProductSection = function (_BaseSection) {
 
 exports.default = ProductSection;
 
-},{"../product/productDetailForm":7,"./base":10}],16:[function(require,module,exports){
+},{"../product/productDetailForm":7,"./base":11}],18:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _base = require("./base");
+
+var _base2 = _interopRequireDefault(_base);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
+
+var TestSection = function (_BaseSection) {
+  _inherits(TestSection, _BaseSection);
+
+  function TestSection(container) {
+    _classCallCheck(this, TestSection);
+
+    var _this = _possibleConstructorReturn(this, _BaseSection.call(this, container));
+
+    _this.name = 'test';
+    _this.namespace = "." + _this.name;
+
+    _this.$container.append(new Date());
+
+    return _this;
+  }
+
+  return TestSection;
+}(_base2.default);
+
+exports.default = TestSection;
+
+},{"./base":11}],19:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2157,7 +2277,7 @@ exports.default = {
   }
 };
 
-},{}],17:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2346,7 +2466,7 @@ var Drawer = function () {
 
 exports.default = Drawer;
 
-},{"../utils":18}],18:[function(require,module,exports){
+},{"../utils":21}],21:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2698,12 +2818,22 @@ exports.default = {
   }
 };
 
-},{}],19:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _base = require('../sections/base');
+
+var _base2 = _interopRequireDefault(_base);
+
+var _sectionConstructorDictionary = require('../sectionConstructorDictionary');
+
+var _sectionConstructorDictionary2 = _interopRequireDefault(_sectionConstructorDictionary);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -2712,11 +2842,59 @@ var BaseView = function () {
     _classCallCheck(this, BaseView);
 
     this.$el = $el;
-    console.log('contructing view');
+    this.sections = [];
+
+    $(document).on('shopify:section:load', this.onSectionLoad.bind(this));
+    $(document).on('shopify:section:unload', this.onSectionUnload.bind(this));
+
+    console.log('BaseView - contructing view');
   }
 
+  BaseView.prototype._createSectionInstance = function _createSectionInstance($container) {
+    var id = $container.attr('data-section-id');
+    var type = $container.attr('data-section-type');
+
+    var constructor = _sectionConstructorDictionary2.default[type];
+
+    // Need to make sure we're working with actual sections here..
+    if (typeof constructor === 'undefined' || !(constructor.prototype instanceof _base2.default)) {
+      return;
+    }
+
+    console.log('creating new section instance for type - ' + type);
+
+    this.sections.push(new constructor($container));
+  };
+
+  BaseView.prototype.onSectionLoad = function onSectionLoad(e) {
+    console.log('[BaseView] - calling section LOAD');
+
+    this._createSectionInstance($('[data-section-id]', e.target));
+  };
+
+  BaseView.prototype.onSectionUnload = function onSectionUnload(e) {
+    console.log('[BaseView] - calling section UNLOAD');
+    console.log('sections count - ' + this.sections.length);
+
+    var remainingSections = [];
+    this.sections.forEach(function (section) {
+      if (section.id == e.detail.sectionId) {
+        console.log('removing section for type - ' + section.type);
+        section.onUnload();
+      } else {
+        remainingSections.push(section);
+      }
+    });
+
+    this.sections = remainingSections;
+    console.log('updated sections count - ' + this.sections.length);
+  };
+
   BaseView.prototype.destroy = function destroy() {
-    console.log('calling destroy from the baseview');
+    console.log('[BaseView] - calling DESTROY');
+    this.sections.forEach(function (section) {
+      section.onUnload && section.onUnload();
+    });
   };
 
   BaseView.prototype.transitionIn = function transitionIn() {
@@ -2733,7 +2911,7 @@ var BaseView = function () {
 
 exports.default = BaseView;
 
-},{}],20:[function(require,module,exports){
+},{"../sectionConstructorDictionary":9,"../sections/base":11}],23:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2767,29 +2945,30 @@ var CartView = function (_BaseView) {
     var _this = _possibleConstructorReturn(this, _BaseView.call(this, $el));
 
     _this.cartSection = new _cart2.default($el.find('[data-section-type="cart"]'));
+
+    _this.sections.push(_this.cartSection);
     return _this;
   }
-
-  CartView.prototype.destroy = function destroy() {
-    this.cartSection.onSectionUnload();
-    delete this.cartSection;
-  };
 
   return CartView;
 }(_base2.default);
 
 exports.default = CartView;
 
-},{"../sections/cart":11,"./base":19}],21:[function(require,module,exports){
-"use strict";
+},{"../sections/cart":12,"./base":22}],24:[function(require,module,exports){
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _base = require("./base");
+var _base = require('./base');
 
 var _base2 = _interopRequireDefault(_base);
+
+var _collection = require('../sections/collection');
+
+var _collection2 = _interopRequireDefault(_collection);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -2807,7 +2986,12 @@ var CollectionView = function (_BaseView) {
   function CollectionView($el) {
     _classCallCheck(this, CollectionView);
 
-    return _possibleConstructorReturn(this, _BaseView.call(this, $el));
+    var _this = _possibleConstructorReturn(this, _BaseView.call(this, $el));
+
+    _this.collectionSection = new _collection2.default($el.find('[data-section-type="collection"]'));
+
+    _this.sections.push(_this.collectionSection);
+    return _this;
   }
 
   CollectionView.prototype.transitionOut = function transitionOut(callback) {
@@ -2820,7 +3004,53 @@ var CollectionView = function (_BaseView) {
 
 exports.default = CollectionView;
 
-},{"./base":19}],22:[function(require,module,exports){
+},{"../sections/collection":13,"./base":22}],25:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _base = require('./base');
+
+var _base2 = _interopRequireDefault(_base);
+
+var _base3 = require('../sections/base');
+
+var _base4 = _interopRequireDefault(_base3);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
+
+var IndexView = function (_BaseView) {
+  _inherits(IndexView, _BaseView);
+
+  function IndexView($el) {
+    _classCallCheck(this, IndexView);
+
+    var _this = _possibleConstructorReturn(this, _BaseView.call(this, $el));
+
+    console.log('index view');
+
+    $('[data-section-id]').each(function (i, el) {
+      _this._createSectionInstance($(el));
+    });
+    return _this;
+  }
+
+  return IndexView;
+}(_base2.default);
+
+exports.default = IndexView;
+
+},{"../sections/base":11,"./base":22}],26:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2854,14 +3084,10 @@ var ProductView = function (_BaseView) {
     var _this = _possibleConstructorReturn(this, _BaseView.call(this, $el));
 
     _this.productSection = new _product2.default($el.find('[data-section-type="product"]'));
+
+    _this.sections.push(_this.productSection);
     return _this;
   }
-
-  ProductView.prototype.destroy = function destroy() {
-    console.log('destroying product view');
-    this.productSection.onSectionUnload();
-    delete this.productSection;
-  };
 
   ProductView.prototype.transitionIn = function transitionIn() {};
 
@@ -2878,4 +3104,4 @@ var ProductView = function (_BaseView) {
 
 exports.default = ProductView;
 
-},{"../sections/product":15,"./base":19}]},{},[3]);
+},{"../sections/product":17,"./base":22}]},{},[3]);

@@ -1,46 +1,71 @@
+const shopifyEvents = [
+  'shopify:section:unload',
+  'shopify:section:select',
+  'shopify:section:deselect',
+  'shopify:section:reorder',
+  'shopify:block:select',
+  'shopify:block:deselect'
+];
+
 export default class BaseSection {
   
   constructor(container) {
     this.$container = container instanceof $ ? container : $(container);
-    // console.log('constructing!');
-    // console.log(this);
+    this.id = this.$container.data('section-id');
+    this.type = this.$container.data('section-type');
 
-    this.$container.on({
-      'shopify:section:load': this.onSectionLoad.bind(this),
-      'shopify:section:unload': this.onSectionUnload.bind(this),
-      'shopify:section:select': this.onSelect.bind(this),
-      'shopify:section:deselect': this.onDeselect.bind(this),
-      'shopify:section:reorder': this.onReorder.bind(this),
-      'shopify:block:select': this.onBlockSelect.bind(this),
-      'shopify:block:deselect': this.onBlockDeselect.bind(this)
-    });
+    $(document).on(shopifyEvents.join(' '), this.onShopifyEvent.bind(this));
   }
 
-  onSectionLoad(evt) {
+  onShopifyEvent(e) {
+    if(e.detail.sectionId != this.id.toString()) {
+      return;
+    }
+
+    switch(e.type) {
+      case 'shopify:section:unload':
+        this.onUnload(e);
+        break;
+      case 'shopify:section:select':
+        this.onSelect(e);
+        break;
+      case 'shopify:section:deselect':
+        this.onDeselect(e);
+        break;
+      case 'shopify:section:reorder':
+        this.onReorder(e);
+        break;
+      case 'shopify:block:select':
+        this.onBlockSelect(e);
+        break;
+      case 'shopify:block:deselect':
+        this.onBlockDeselect(e);
+        break;
+    }
+  }
+
+  onUnload(e) {
+    console.log('[BaseSection] - removing event listeners - onSectionUnload');
+    $(document).off(shopifyEvents.join(' '), this.onShopifyEvent.bind(this));
+  }
+
+  onSelect(e) {
+    console.log('onselect in base section');  
+  }
+
+  onDeselect(e) {
 
   }
 
-  onSectionUnload(evt) {
+  onReorder(e) {
 
   }
 
-  onSelect(evt) {
-    console.log('onselect in base section');
-  }
-
-  onDeselect(evt) {
+  onBlockSelect(e) {
 
   }
 
-  onReorder(evt) {
-
-  }
-
-  onBlockSelect(evt) {
-
-  }
-
-  onBlockDeselect(evt) {
+  onBlockDeselect(e) {
 
   }
 

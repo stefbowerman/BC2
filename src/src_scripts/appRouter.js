@@ -2,6 +2,7 @@ import 'navigo';
 
 // Views
 import BaseView    from './views/base';
+import IndexView    from './views/index';
 import ProductView from './views/product';
 import CollectionView from './views/collection';
 import CartView    from './views/cart';
@@ -21,6 +22,7 @@ export default class AppRouter {
     };
 
     this.viewConstructors = {
+      'index': IndexView,
       'product': ProductView,
       'collection': CollectionView,
       'cart': CartView
@@ -52,7 +54,7 @@ export default class AppRouter {
     })
 
     this.router.on('/', () => {
-      this.doRoute('/', 'home');
+      this.doRoute('/', 'index');
     });
 
     this.router.notFound((params) => {

@@ -1,0 +1,27 @@
+<div data-section-id="{{ section.id }}" data-section-type="test" style="display: block; max-width: 500px; text-align: center; margin: 30px auto;">
+  
+  <div>{{ section.settings.title }}</div>
+  
+</div>
+
+{% schema %}
+  {
+    "name": "Test",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title"
+      }
+    ],
+    "presets": [
+      {
+        "category": "Misc",
+        "name": "Test",
+        "settings": {
+          "title": "Test Element"
+        }
+      }
+    ]    
+  }
+{% endschema %}

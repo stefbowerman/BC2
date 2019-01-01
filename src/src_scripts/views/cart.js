@@ -7,10 +7,7 @@ export default class CartView extends BaseView {
     super($el);
 
     this.cartSection = new CartSection($el.find('[data-section-type="cart"]'));
-  }
 
-  destroy() {
-    this.cartSection.onSectionUnload();
-    delete this.cartSection;
+    this.sections.push(this.cartSection);
   }
 }

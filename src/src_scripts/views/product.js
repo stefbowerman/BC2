@@ -7,12 +7,8 @@ export default class ProductView extends BaseView {
     super($el);
 
     this.productSection = new ProductSection($el.find('[data-section-type="product"]'));
-  }
 
-  destroy() {
-    console.log('destroying product view');
-    this.productSection.onSectionUnload();
-    delete this.productSection;
+    this.sections.push(this.productSection);
   }
 
   transitionIn() {

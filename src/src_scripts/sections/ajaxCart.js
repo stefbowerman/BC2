@@ -25,15 +25,16 @@ export default class AJAXCartSection extends BaseSection {
     this.ajaxCart.init();
   }
 
-  onSelect() {
+  onSelect(e) {
+    console.log('on select inside AJAXCart');
     this.ajaxCart.open();
   }
 
-  onDeselect() {
+  onDeselect(e) {
     this.ajaxCart.close();
   }
 
-  onUnload() {
+  onUnload(e) {
     this.ajaxCart.$backdrop && this.ajaxCart.$backdrop.remove();
   }  
 }

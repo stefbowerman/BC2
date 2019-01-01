@@ -11,22 +11,15 @@ import MobileMenuSection from './sections/mobileMenu';
 
 (($) => {
 
-  // console.log(`I have 8 ${Utils.pluralize(8, 'dog', 'dogs')}`);
-
   // Sections Stuff 
   // window.sectionManager = new SectionManager();
 
-  // sectionManager.register('header', HeaderSection);
-  // sectionManager.register('footer', FooterSection);
-  // sectionManager.register('product', ProductSection);
-  // sectionManager.register('cart', CartSection);
-
   const sections = {};
 
-  sections.header     = new HeaderSection(   $('[data-section-type="header"]')    );
-  sections.footer     = new FooterSection(   $('[data-section-type="footer"]')    );
-  sections.ajaxCart   = new AJAXCartSection( $('[data-section-type="ajax-cart"]') );
-  sections.mobileMenu = new MobileMenuSection( $('[data-section-type="mobile-menu"]') );
+  sections.header     = new HeaderSection(     $('[data-section-type="header"]')     );
+  sections.footer     = new FooterSection(     $('[data-section-type="footer"]')     );
+  sections.ajaxCart   = new AJAXCartSection(   $('[data-section-type="ajax-cart"]')  );
+  sections.mobileMenu = new MobileMenuSection( $('[data-section-type="mobile-menu"]'));
   
   const appRouter = new AppRouter({
     onRouteStart: (url) => {
