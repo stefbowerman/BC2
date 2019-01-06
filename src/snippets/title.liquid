@@ -1,0 +1,23 @@
+{% capture title_text %}
+  {% if template.name == 'product' %}
+    {% comment %}{% endcomment %}
+  {% elsif template.name == 'collection' or template.name == 'list-collections' %}
+    Shop
+  {% elsif template.name == 'page' %}
+    {{ page.title }}
+  {% endif %}
+{% endcapture %}
+
+{% comment %}
+  Next, look through the main menu and check if it's a submenu item.  If it is, output the parent menu item name.
+{% endcomment %}
+{% for link in linklists[settings.main_menu].links %}
+  {% if link.active or link.child_active %}
+    {% assign title_text = link.title %}
+    {% break %}
+  {% endif %}
+{% endfor %}
+
+<h1 id="title" style="position: fixed; z-index: 1; pointer-events: none;bottom: 0;right: 20px;transform: rotate(-90deg) translate(100%, 0);transform-origin: right bottom; font-size: 30px;">
+  {{ title_text | strip }}
+</h1>

@@ -81,10 +81,8 @@
   <a class="in-page-link visually-hidden skip-link" href="#MainContent">{{ 'general.accessibility.skip_to_content' | t }}</a>
 
   <div id="loader"></div>
-{% comment %}
-  <h1 id="page-title">
-    Page Title + {{ template.name }}
-  </h1>{% endcomment %}
+
+  {% include 'title' %}
 
   {% section 'mobile-menu' %}
 

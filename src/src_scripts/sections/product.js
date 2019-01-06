@@ -28,17 +28,15 @@ export default class ProductSection extends BaseSection {
     if(this.$sizeGuideDrawerEl.length) {
       this.drawer = new Drawer(this.$sizeGuideDrawerEl);
 
-      this.$container.on('click', selectors.sizeGuideShow, this.onSizeGuideShowClick.bind(this));
+      this.$container.on('click', selectors.sizeGuideShow, (e) => {
+        e.preventDefault();
+        this.drawer.show();
+      });
     }
   }
 
   onSelect(e) {
     console.log('on select in product section');
-  }
-
-  onSizeGuideShowClick(e) {
-    e.preventDefault();
-    this.drawer.show()
   }
   
 }

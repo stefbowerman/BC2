@@ -150,11 +150,10 @@ export default class AppRouter {
       }).join(' ');
 
       return addClasses;
-      // return responseBodyClasses.(/(^|\s)template-\S+/g).join(' ');
     });
     // Finish DOM updates
 
-    this.settings.onViewChangeDOMUpdatesComplete();
+    this.settings.onViewChangeDOMUpdatesComplete($responseHead, $responseBody);
 
     this.currentView = new viewConstructor($mainContent);
 

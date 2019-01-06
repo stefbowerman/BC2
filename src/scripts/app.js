@@ -587,8 +587,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
       sections.header.deactivateMenuLinks();
       sections.header.activateMenuLinkForUrl(url);
     },
-    onViewChangeDOMUpdatesComplete: function onViewChangeDOMUpdatesComplete() {
+    onViewChangeDOMUpdatesComplete: function onViewChangeDOMUpdatesComplete($responseHead, $responseBody) {
       window.scrollTop = 0;
+
+      var title = $responseBody.find('#title').text();
+      $('#title').text(title);
     }
   });
   // Misc Stuff
@@ -833,11 +836,10 @@ var AppRouter = function () {
       }).join(' ');
 
       return addClasses;
-      // return responseBodyClasses.(/(^|\s)template-\S+/g).join(' ');
     });
     // Finish DOM updates
 
-    this.settings.onViewChangeDOMUpdatesComplete();
+    this.settings.onViewChangeDOMUpdatesComplete($responseHead, $responseBody);
 
     this.currentView = new viewConstructor($mainContent);
 
@@ -2214,18 +2216,16 @@ var ProductSection = function (_BaseSection) {
     if (_this.$sizeGuideDrawerEl.length) {
       _this.drawer = new _drawer2.default(_this.$sizeGuideDrawerEl);
 
-      _this.$container.on('click', selectors.sizeGuideShow, _this.onSizeGuideShowClick.bind(_this));
+      _this.$container.on('click', selectors.sizeGuideShow, function (e) {
+        e.preventDefault();
+        _this.drawer.show();
+      });
     }
     return _this;
   }
 
   ProductSection.prototype.onSelect = function onSelect(e) {
     console.log('on select in product section');
-  };
-
-  ProductSection.prototype.onSizeGuideShowClick = function onSizeGuideShowClick(e) {
-    e.preventDefault();
-    this.drawer.show();
   };
 
   return ProductSection;

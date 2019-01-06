@@ -30,8 +30,11 @@ import MobileMenuSection from './sections/mobileMenu';
       sections.header.deactivateMenuLinks();
       sections.header.activateMenuLinkForUrl(url); 
     },
-    onViewChangeDOMUpdatesComplete: () => {
+    onViewChangeDOMUpdatesComplete: ($responseHead, $responseBody) => {
       window.scrollTop = 0;
+
+      const title = $responseBody.find('#title').text();
+      $('#title').text(title);
     }
   });
   // Misc Stuff

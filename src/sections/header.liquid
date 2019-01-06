@@ -9,7 +9,7 @@
         <ul class="main-menu">
           {% for link in linklists[settings.main_menu].links %}
             <li>
-              <a href="{{ link.url }}" {% if link.active or l.child_active %}class="is-active"{% endif %}>{{ link.title }}</a>
+              <a href="{{ link.url }}" {% if link.active or link.child_active %}class="is-active"{% endif %}>{{ link.title }}</a>
 
               {% if link.links.size > 0 %}
                 <ul>
