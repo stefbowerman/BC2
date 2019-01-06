@@ -43,6 +43,31 @@
     ]
   },
   {
+    "name": "Size Guides",
+    "settings": [
+      {
+        "type": "page",
+        "id": "size_guide_default",
+        "label": "Default"
+      },
+      {
+        "type": "page",
+        "id": "size_guide_tshirts",
+        "label": "T-Shirts"
+      },
+      {
+        "type": "page",
+        "id": "size_guide_sweatshirts",
+        "label": "Sweatshirts"
+      },
+      {
+        "type": "page",
+        "id": "size_guide_tops",
+        "label": "Tops"
+      }
+    ]
+  },  
+  {
     "name": "Favicon",
     "settings": [
       {

@@ -12,7 +12,7 @@
               <a href="{{ link.url }}" {% if link.active or l.child_active %}class="is-active"{% endif %}>{{ link.title }}</a>
 
               {% if link.links.size > 0 %}
-                <ul class="list-unstyled u-fs-xsmall" style="padding-left: 20px; margin-top: 5px;">
+                <ul>
                   {% for l in link.links %}
                     <li><a href="{{ l.url }}">{{ l.title }}</a></li>
                   {% endfor %}

@@ -78,6 +78,15 @@
 .shopify-preview-bar, 
 #preview-bar-iframe { display: none; }
 
+body.is-loading {
+  opacity: 0;
+
+  &.is-loaded {
+    opacity: 1;
+    transition: opacity 300ms ease-out;
+  }
+}
+
 
 #loader {
   position: fixed;

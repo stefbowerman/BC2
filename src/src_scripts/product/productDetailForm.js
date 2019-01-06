@@ -95,10 +95,9 @@ export default class ProductDetailForm {
 
       // See productVariants
       this.$container.on('variantChange' + this.namespace, this.onVariantChange.bind(this));
+      this.$container.on(this.events.CLICK, selectors.variantOptionValue, this.onVariantOptionValueClick.bind(this));
 
       this.initGalleries();
-
-      this.$container.on(this.events.CLICK, selectors.variantOptionValue, this.onVariantOptionValueClick.bind(this));
 
       var e = $.Event(this.events.READY);
       this.$el.trigger(e);

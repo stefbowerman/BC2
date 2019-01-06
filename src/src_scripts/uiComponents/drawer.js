@@ -24,7 +24,7 @@ export default class Drawer {
   * @param {Object} options
   */  
   constructor(el, options) {
-    this.name = 'mobileMenu';
+    this.name = 'drawer';
     this.namespace = `.${this.name}`;
 
     this.$el = $(el);

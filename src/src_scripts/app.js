@@ -48,23 +48,43 @@ import MobileMenuSection from './sections/mobileMenu';
   }
   // END Misc Stuff
 
+  $(document.body).addClass('is-loaded').removeClass('is-loading');
+
   // Stop here...no AJAX navigation inside the theme editor
   if(Shopify && Shopify.designMode) {
     return;
   }  
 
-  const host = window.location.host;
-
   $(document.body).on('click', 'a', (e) => {
     if(e.isDefaultPrevented()) return;
+    
     const url = e.currentTarget.getAttribute('href');
-    const testAnchor = document.createElement('a');
-          testAnchor.href = url;
-
-    if(testAnchor.host != window.location.host) return;
+    
+    if(Utils.isExternal(url) || url == '#') return;
 
     e.preventDefault();
     appRouter.navigate(url);
-  });  
+  });
+
+  return;
+
+  // Prefetching :)
+  let linkInteractivityTimeout = false;
+  let prefetchCache = {};
+  $(document.body).on('mouseenter', 'a', (e) => {
+    const url = e.currentTarget.getAttribute('href');
+    if(Utils.isExternal(url) || url == '#' || prefetchCache.hasOwnProperty(url)) return;
+
+    let linkInteractivityTimeout = setTimeout(() => {
+      $.get(url, () => {
+        prefetchCache[url] = true;
+        console.log(prefetchCache);
+      });
+    }, 500);
+  });
+
+  $(document.body).on('mouseleave', 'a', (e) => {
+    let linkInteractivityTimeout = false;
+  });
 
 })(jQuery);

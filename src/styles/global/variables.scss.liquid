@@ -313,13 +313,13 @@ $container-xl:                 $container-xlarge !default;
 
 
 /*================ Z-Index ================*/
+$z-index-drawer-backdrop: 10;
+$z-index-ajax-cart-backdrop: 10;
 $z-index-loader: 50;
 $z-index-slideup: 140;
 $z-index-header: 150;
 $z-index-footer: 150;
-$z-index-drawer-backdrop: 199;
 $z-index-drawer: 200;
-$z-index-ajax-cart-backdrop: 200;
 $z-index-ajax-cart: 201;
 $z-index-overlay-backdrop: 299;
 $z-index-overlay: 300;
@@ -454,13 +454,13 @@ $header-bp-min:                         $screen-md-min; // Above this breakpoint
 $header-logo-width:                     220px;
 
 // #Drawer
-$drawer-max-width:                      400px;
+$drawer-max-width:                      450px;
 $drawer-bg:                             $color-white;
 $drawer-border-color:                   darken($drawer-bg, 5%);
 $drawer-padding-vertical:               $grid-gutter-width;
 $drawer-padding-horizontal:             $grid-gutter-width;
-$drawer-backdrop-color:                 #888;
-$drawer-backdrop-opacity:               0.6;
+$drawer-backdrop-color:                 $color-white;
+$drawer-backdrop-opacity:               0.85;
 $drawer-header-font-size:               $font-size-h5;
 $drawer-header-border-color:            $color-black;
 

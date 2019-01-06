@@ -605,23 +605,43 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   }
   // END Misc Stuff
 
+  $(document.body).addClass('is-loaded').removeClass('is-loading');
+
   // Stop here...no AJAX navigation inside the theme editor
   if (Shopify && Shopify.designMode) {
     return;
   }
 
-  var host = window.location.host;
-
   $(document.body).on('click', 'a', function (e) {
     if (e.isDefaultPrevented()) return;
-    var url = e.currentTarget.getAttribute('href');
-    var testAnchor = document.createElement('a');
-    testAnchor.href = url;
 
-    if (testAnchor.host != window.location.host) return;
+    var url = e.currentTarget.getAttribute('href');
+
+    if (_utils2.default.isExternal(url) || url == '#') return;
 
     e.preventDefault();
     appRouter.navigate(url);
+  });
+
+  return;
+
+  // Prefetching :)
+  var linkInteractivityTimeout = false;
+  var prefetchCache = {};
+  $(document.body).on('mouseenter', 'a', function (e) {
+    var url = e.currentTarget.getAttribute('href');
+    if (_utils2.default.isExternal(url) || url == '#' || prefetchCache.hasOwnProperty(url)) return;
+
+    var linkInteractivityTimeout = setTimeout(function () {
+      $.get(url, function () {
+        prefetchCache[url] = true;
+        console.log(prefetchCache);
+      });
+    }, 500);
+  });
+
+  $(document.body).on('mouseleave', 'a', function (e) {
+    var linkInteractivityTimeout = false;
   });
 })(jQuery);
 
@@ -662,8 +682,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 
 // TODO - Move the loader and main content bits to variables that get passed in
+var $body = $(document.body);
 var $mainContent = $('#MainContent');
 var $loader = $('#loader');
+var TEMPLATE_REGEX = /(^|\s)template-\S+/g;
 var firstRoute = true;
 
 var AppRouter = function () {
@@ -696,12 +718,25 @@ var AppRouter = function () {
       _this.doRoute('/products/' + params.slug, 'product');
     });
 
+    // Product within collection
+    this.router.on('/collections/:slug/products/:handle', function (params, query) {
+      _this.doRoute('/collections/' + params.slug + '/products/' + params.handle, 'product');
+    });
+
     this.router.on('/collections/:slug', function (params, query) {
       var url = '/collections/' + params.slug;
       if (query) {
         url += '?' + query;
       }
       _this.doRoute(url, 'collection');
+    });
+
+    this.router.on('/collections', function () {
+      _this.doRoute('/collections', 'list-collections');
+    });
+
+    this.router.on('/products', function () {
+      _this.doRoute('/products', 'list-collections');
     });
 
     this.router.on('/cart', function (params) {
@@ -775,13 +810,31 @@ var AppRouter = function () {
     // Kill the current view
     this.currentView.destroy();
 
-    var $html = $(AJAXResponse);
-    var title = $html.filter('title').text();
-    var $dom = $html.find('#MainContent .layout-main-content');
+    var $responseHtml = $(document.createElement("html"));
+
+    $responseHtml.get(0).innerHTML = AJAXResponse;
+
+    var $responseHead = $responseHtml.find('head');
+    var $responseBody = $responseHtml.find('body');
+
+    var $dom = $responseBody.find('#MainContent .layout-main-content');
 
     // Do DOM updates
-    document.title = title;
+    document.title = $responseHead.find('title').text();
     $mainContent.find('.layout-main-content').replaceWith($dom);
+    $body.removeClass(function (i, classname) {
+      return (classname.match(TEMPLATE_REGEX) || []).join(' ');
+    });
+
+    var responseBodyClasses = $responseBody.attr('class').split(' ');
+    $body.addClass(function (i, classname) {
+      var addClasses = responseBodyClasses.map(function (classname) {
+        return classname.match(TEMPLATE_REGEX);
+      }).join(' ');
+
+      return addClasses;
+      // return responseBodyClasses.(/(^|\s)template-\S+/g).join(' ');
+    });
     // Finish DOM updates
 
     this.settings.onViewChangeDOMUpdatesComplete();
@@ -1105,10 +1158,9 @@ var ProductDetailForm = function () {
 
       // See productVariants
       this.$container.on('variantChange' + this.namespace, this.onVariantChange.bind(this));
+      this.$container.on(this.events.CLICK, selectors.variantOptionValue, this.onVariantOptionValueClick.bind(this));
 
       this.initGalleries();
-
-      this.$container.on(this.events.CLICK, selectors.variantOptionValue, this.onVariantOptionValueClick.bind(this));
 
       var e = $.Event(this.events.READY);
       this.$el.trigger(e);
@@ -1965,7 +2017,12 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
 
 var selectors = {
-  header: '[data-header]'
+  header: '[data-header]',
+  mainMenu: '.main-menu'
+};
+
+var classes = {
+  menuLinkActive: 'is-active'
 };
 
 var HeaderSection = function (_BaseSection) {
@@ -1979,11 +2036,12 @@ var HeaderSection = function (_BaseSection) {
     _this.$el = $(selectors.header, _this.$container);
     _this.name = 'header';
     _this.namespace = '.' + _this.name;
-    _this.$menu = _this.$el.find('.main-menu');
+    _this.$menu = _this.$el.find(selectors.mainMenu);
+    _this.$menuDirectLinks = _this.$menu.find('> li > a');
 
-    setTimeout(function () {
-      _this.$menu.addClass('is-visible');
-    }, 500);
+    _this.$menu.on('mouseleave', _this.onMenuMouseleave.bind(_this));
+    _this.$menuDirectLinks.on('mouseenter', _this.onMenuLinkMouseenter.bind(_this));
+    _this.$menuDirectLinks.on('mouseleave', _this.onMenuLinkMouseleave.bind(_this));
     return _this;
   }
 
@@ -1992,13 +2050,28 @@ var HeaderSection = function (_BaseSection) {
       var $el = $(el);
       var href = $el.attr('href');
       if (href == url || url.indexOf(href) > -1) {
-        $el.addClass('is-active');
+        $el.addClass(classes.menuLinkActive);
       }
     });
   };
 
   HeaderSection.prototype.deactivateMenuLinks = function deactivateMenuLinks() {
-    this.$menu.find('.is-active').removeClass('is-active');
+    this.$menu.find('.' + classes.menuLinkActive).removeClass(classes.menuLinkActive);
+  };
+
+  HeaderSection.prototype.onMenuMouseleave = function onMenuMouseleave(e) {
+    this.$menu.removeClass('has-hovered-link');
+    this.$menuDirectLinks.removeClass('is-hovered');
+  };
+
+  HeaderSection.prototype.onMenuLinkMouseenter = function onMenuLinkMouseenter(e) {
+    this.$menu.addClass('has-hovered-link');
+    $(e.currentTarget).addClass('is-hovered');
+  };
+
+  HeaderSection.prototype.onMenuLinkMouseleave = function onMenuLinkMouseleave(e) {
+    this.$menu.removeClass('has-hovered-link');
+    $(e.currentTarget).removeClass('is-hovered');
   };
 
   return HeaderSection;
@@ -2098,6 +2171,10 @@ var _productDetailForm = require('../product/productDetailForm');
 
 var _productDetailForm2 = _interopRequireDefault(_productDetailForm);
 
+var _drawer = require('../uiComponents/drawer');
+
+var _drawer2 = _interopRequireDefault(_drawer);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
@@ -2107,6 +2184,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
+
+var selectors = {
+  sizeGuideDrawer: '[data-size-guide-drawer]',
+  sizeGuideShow: '[data-size-guide-show]'
+};
 
 var ProductSection = function (_BaseSection) {
   _inherits(ProductSection, _BaseSection);
@@ -2119,18 +2201,31 @@ var ProductSection = function (_BaseSection) {
     _this.name = 'product';
     _this.namespace = '.' + _this.name;
 
-    var productDetailForm = new _productDetailForm2.default({
+    _this.productDetailForm = new _productDetailForm2.default({
       $el: _this.$container,
       $container: _this.$container,
       enableHistoryState: true
     });
 
-    productDetailForm.initialize();
+    _this.productDetailForm.initialize();
+
+    _this.$sizeGuideDrawerEl = $(selectors.sizeGuideDrawer, _this.$container);
+
+    if (_this.$sizeGuideDrawerEl.length) {
+      _this.drawer = new _drawer2.default(_this.$sizeGuideDrawerEl);
+
+      _this.$container.on('click', selectors.sizeGuideShow, _this.onSizeGuideShowClick.bind(_this));
+    }
     return _this;
   }
 
-  ProductSection.prototype.onSelect = function onSelect(evt) {
+  ProductSection.prototype.onSelect = function onSelect(e) {
     console.log('on select in product section');
+  };
+
+  ProductSection.prototype.onSizeGuideShowClick = function onSizeGuideShowClick(e) {
+    e.preventDefault();
+    this.drawer.show();
   };
 
   return ProductSection;
@@ -2138,7 +2233,7 @@ var ProductSection = function (_BaseSection) {
 
 exports.default = ProductSection;
 
-},{"../product/productDetailForm":7,"./base":11}],18:[function(require,module,exports){
+},{"../product/productDetailForm":7,"../uiComponents/drawer":20,"./base":11}],18:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2318,7 +2413,7 @@ var Drawer = function () {
   function Drawer(el, options) {
     _classCallCheck(this, Drawer);
 
-    this.name = 'mobileMenu';
+    this.name = 'drawer';
     this.namespace = '.' + this.name;
 
     this.$el = $(el);
@@ -2815,6 +2910,20 @@ exports.default = {
       }
     }
     return output;
+  },
+
+
+  /**
+   * Checks if a url is an external link or not
+   *
+   * @param {String} url
+   * @return {Bool}
+   */
+  isExternal: function isExternal(url) {
+    var match = url.match(/^([^:\/?#]+:)?(?:\/\/([^\/?#]*))?([^?#]+)?(\?[^#]*)?(#.*)?/);
+    if (typeof match[1] === "string" && match[1].length > 0 && match[1].toLowerCase() !== location.protocol) return true;
+    if (typeof match[2] === "string" && match[2].length > 0 && match[2].replace(new RegExp(":(" + { "http:": 80, "https:": 443 }[location.protocol] + ")?$"), "") !== location.host) return true;
+    return false;
   }
 };
 
@@ -2898,7 +3007,6 @@ var BaseView = function () {
   };
 
   BaseView.prototype.transitionIn = function transitionIn() {
-    //
     console.log('transition in!');
   };
 
@@ -3092,11 +3200,16 @@ var ProductView = function (_BaseView) {
   ProductView.prototype.transitionIn = function transitionIn() {};
 
   ProductView.prototype.transitionOut = function transitionOut(callback) {
+    if (this.productSection.drawer && this.productSection.drawer.stateIsOpen) {
+      this.productSection.drawer.$el.one('hidden.drawer', callback);
+      this.productSection.drawer.hide();
+    } else {
+      callback();
+    }
     // this.productSection.$container.css('transition', 'all 1000ms cubic-bezier(0.4, 0.08, 0, 1.02)');
     // this.productSection.$container.css('transform', 'translateY(5%)');
     // this.productSection.$container.css('opacity', '0');
     // setTimeout(callback, 400);
-    callback();
   };
 
   return ProductView;

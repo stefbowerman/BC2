@@ -14,7 +14,7 @@
 
   {% include 'product-detail-form',
               product: { product } - required
-              current_variant: { variant} - optional
+              current_variant: { variant } - optional
   %}
 
 {% endcomment -%}
@@ -25,9 +25,9 @@
 {% endif %}
 {% comment %} End Defaults {% endcomment %}
 
-{% if template.name == 'product' and template.suffix == 'quick-view' %}
-  {% assign is_quick_view = true %}
-{% endif %}
+{% capture size_guide_drawer_html %}
+  {% include 'product-detail-form-size-guide-drawer', product: product %}
+{% endcapture %}
 
 <div data-product-detail-form>
 
@@ -157,6 +157,11 @@
                     {% endif %}
                   </span>
               </button>
+              
+              {% if size_guide_drawer_html != blank %}
+                <br /><a href="#" data-size-guide-show>See Size Guide</a>
+              {% endif %}
+
             </form>
           </div>
 
@@ -166,6 +171,8 @@
     </div> 
 
   </div>
+
+  {{ size_guide_drawer_html }}
 
   {% unless product == empty %}
     <script type="application/json" data-product-json>

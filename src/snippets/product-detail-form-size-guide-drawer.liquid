@@ -1,0 +1,75 @@
+{%- comment %}
+
+  Product Detail Form - Size Guide Drawer
+  ------------------------------------------------------------------------------
+
+  Usage:
+
+  {% include 'product-detail-form-size-guide-drawer',
+              product: { product } - required
+  %}
+
+{% endcomment -%}
+
+{% if product %}
+
+  {% assign has_size = false %}
+  {% for option in product.options %}  
+    {% assign downcased_option = option | downcase %}
+    {% if downcased_option == "size" %}
+      {% assign has_size = true %}
+      {% break %}
+    {% endif %}
+  {% endfor %}
+
+  {% assign size_guide_source = false %}
+  {% assign product_type_slug = product.type | handle | replace: '-', '' %}
+
+  {% if product_type_slug == 'tshirt' and settings.size_guide_tshirts != blank %}
+    {% assign size_guide_source = pages[settings.size_guide_tshirts].content %}
+  {% elsif product_type_slug == 'top' and settings.size_guide_tops != blank %}
+    {% assign size_guide_source = pages[settings.size_guide_tops].content %}
+  {% elsif product_type_slug contains 'sweatshirt' and settings.size_guide_sweatshirts != blank %}
+    {% assign size_guide_source = pages[settings.size_guide_sweatshirts].content %}
+  {% elsif settings.size_guide_default != blank %}
+    {% assign size_guide_source = pages[settings.size_guide_default].content %}
+  {% endif %}
+
+  {% if product_type_slug contains 'bottom' or 
+        product_type_slug contains 'deck' or 
+        product_type_slug == 'hats' or 
+        product_type_slug == 'accessories' %}
+    {% assign size_guide_source = false %}
+  {% endif %}
+
+  {% comment %} If a product has it's size guide metafields filled out, that's the most specific so lets use that {% endcomment %}
+  {% if product.metafields.size_guide.html != blank %}
+    {% assign size_guide_source = product.metafields.size_guide.html %}
+  {% endif %}
+
+  {% if has_size and size_guide_source != false %}
+
+    <div class="drawer" data-size-guide-drawer>
+      <a href="#" class="drawer__close" data-drawer-close>
+        {% include 'icon-close' %}
+      </a> 
+      <div class="drawer__inner">
+        <div class="drawer__body">
+          <div class="drawer__body-contents">
+            <div style="font-size: 12px;">
+              {% if product.metafields.size_guide.model_image %}
+                <img src="{{ product.metafields.size_guide.model_image | strip }}" style="margin-bottom: 10px;" />
+                {% if product.metafields.size_guide.model_description %}
+                  <p style="font-size: 11px; text-align: center;">{{ product.metafields.size_guide.model_description }}</p>
+                {% endif %}
+              {% endif %}
+              {{ size_guide_source }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  {% endif %}
+
+{% endif %}

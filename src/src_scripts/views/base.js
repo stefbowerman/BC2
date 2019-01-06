@@ -62,7 +62,6 @@ export default class BaseView {
   }
 
   transitionIn() {
-    //
     console.log('transition in!');
   }
 

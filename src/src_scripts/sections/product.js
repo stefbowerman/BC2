@@ -1,5 +1,11 @@
 import BaseSection from "./base";
 import ProductDetailForm from '../product/productDetailForm';
+import Drawer from '../uiComponents/drawer';
+
+const selectors = {
+  sizeGuideDrawer: '[data-size-guide-drawer]',
+  sizeGuideShow: '[data-size-guide-show]'
+}
 
 export default class ProductSection extends BaseSection {
 
@@ -9,17 +15,30 @@ export default class ProductSection extends BaseSection {
     this.name = 'product';
     this.namespace = `.${this.name}`;
 
-    const productDetailForm = new ProductDetailForm({
+    this.productDetailForm = new ProductDetailForm({
       $el: this.$container,
       $container: this.$container,
       enableHistoryState: true
     });
 
-    productDetailForm.initialize();    
+    this.productDetailForm.initialize();
+
+    this.$sizeGuideDrawerEl = $(selectors.sizeGuideDrawer, this.$container);
+
+    if(this.$sizeGuideDrawerEl.length) {
+      this.drawer = new Drawer(this.$sizeGuideDrawerEl);
+
+      this.$container.on('click', selectors.sizeGuideShow, this.onSizeGuideShowClick.bind(this));
+    }
   }
 
-  onSelect(evt) {
+  onSelect(e) {
     console.log('on select in product section');
+  }
+
+  onSizeGuideShowClick(e) {
+    e.preventDefault();
+    this.drawer.show()
   }
   
 }

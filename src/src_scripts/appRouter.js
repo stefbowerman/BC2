@@ -1,15 +1,17 @@
 import 'navigo';
 
 // Views
-import BaseView    from './views/base';
-import IndexView    from './views/index';
-import ProductView from './views/product';
+import BaseView       from './views/base';
+import IndexView      from './views/index';
+import ProductView    from './views/product';
 import CollectionView from './views/collection';
-import CartView    from './views/cart';
+import CartView       from './views/cart';
 
 // TODO - Move the loader and main content bits to variables that get passed in
+const $body = $(document.body);
 const $mainContent = $('#MainContent');
 const $loader = $('#loader');
+const TEMPLATE_REGEX = /(^|\s)template-\S+/g;
 let firstRoute = true;
 
 export default class AppRouter {
@@ -34,23 +36,36 @@ export default class AppRouter {
 
     // Add Routes
     this.router.on('/products/:slug', (params) => {
-      this.doRoute('/products/' + params.slug, 'product');
+      this.doRoute(`/products/${params.slug}`, 'product');
     });
 
+    // Product within collection
+    this.router.on('/collections/:slug/products/:handle', (params, query) => {
+      this.doRoute(`/collections/${params.slug}/products/${params.handle}`, 'product');
+    });    
+
     this.router.on('/collections/:slug', (params, query) => {
-      var url = '/collections/' + params.slug;
+      var url = `/collections/${params.slug}`;
       if(query) {
         url += `?${query}`;
       }
       this.doRoute(url, 'collection');
     });
 
+    this.router.on('/collections', () => {
+      this.doRoute('/collections', 'list-collections');
+    });
+
+    this.router.on('/products', () => {
+      this.doRoute('/products', 'list-collections');
+    });    
+
     this.router.on('/cart', (params) => {
       this.doRoute('/cart');
     });
 
     this.router.on('/pages/:slug', (params) => {
-      this.doRoute('/pages/' + params.slug, 'page');
+      this.doRoute(`/pages/${params.slug}`, 'page');
     })
 
     this.router.on('/', () => {
@@ -112,13 +127,31 @@ export default class AppRouter {
     // Kill the current view
     this.currentView.destroy();
 
-    const $html = $(AJAXResponse);
-    const title = $html.filter('title').text();
-    const $dom  = $html.find('#MainContent .layout-main-content');
+    const $responseHtml = $(document.createElement("html"));
+    
+    $responseHtml.get(0).innerHTML = AJAXResponse;
+
+    const $responseHead = $responseHtml.find('head');
+    const $responseBody = $responseHtml.find('body');
+
+    const $dom  = $responseBody.find('#MainContent .layout-main-content');
 
     // Do DOM updates
-    document.title = title;
+    document.title = $responseHead.find('title').text();
     $mainContent.find('.layout-main-content').replaceWith($dom);
+    $body.removeClass((i, classname) => {
+      return (classname.match(TEMPLATE_REGEX) || []).join(' ');
+    });
+
+    const responseBodyClasses = $responseBody.attr('class').split(' ');
+    $body.addClass((i, classname) => {
+      const addClasses = responseBodyClasses.map((classname) => {
+        return classname.match(TEMPLATE_REGEX);
+      }).join(' ');
+
+      return addClasses;
+      // return responseBodyClasses.(/(^|\s)template-\S+/g).join(' ');
+    });
     // Finish DOM updates
 
     this.settings.onViewChangeDOMUpdatesComplete();

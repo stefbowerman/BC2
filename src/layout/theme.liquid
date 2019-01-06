@@ -76,9 +76,15 @@
 
 <body id="{{ page_title | handle }}" class="{{ body_class | strip | strip_newlines }}">
 
+  <script type="text/javascript">document.body.className += ' is-loading';</script>
+
   <a class="in-page-link visually-hidden skip-link" href="#MainContent">{{ 'general.accessibility.skip_to_content' | t }}</a>
 
   <div id="loader"></div>
+{% comment %}
+  <h1 id="page-title">
+    Page Title + {{ template.name }}
+  </h1>{% endcomment %}
 
   {% section 'mobile-menu' %}
 
