@@ -535,7 +535,216 @@ var AJAXCart = function () {
 
 exports.default = AJAXCart;
 
-},{"./currency":5,"./images":6,"./shopifyAPI":19,"./utils":21}],3:[function(require,module,exports){
+},{"./currency":6,"./images":7,"./shopifyAPI":20,"./utils":22}],3:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * AJAX MailChimp Library
+ * -----------------------------------------------------------------------------
+ * Heavily modified version of the original jQuery plugin - https://github.com/scdoshi/jquery-ajaxchimp
+ * Handles AJAX form submission and provides hooks for lifecycle events.
+ *
+ * Usage:
+ *
+ *   var $form = $('form');
+ *   var ajaxForm = new AjaxMailChimpForm($form, {
+ *     onInit: function() {
+ *       // ...
+ *     }
+ *   });
+ *
+ * @namespace ajaxMailChimpForm
+ */
+
+var regexes = {
+  error: {
+    1: /Please enter a value/,
+    2: /An email address must contain a single @/,
+    3: /The domain portion of the email address is invalid \(the portion after the @: (.+)\)/,
+    4: /The username portion of the email address is invalid \(the portion before the @: (.+)\)/,
+    5: /This email address looks fake or invalid. Please enter a real email address/,
+    6: /.+\#6592.+/,
+    7: /(.+@.+) is already subscribed to list (.+)\..+<a href.+/
+  }
+};
+
+var responses = {
+  success: 'Thank you for subscribing!',
+  error: {
+    1: 'Please enter an email address',
+    2: 'There was a problem with your entry. Please check the address and try again.',
+    3: 'There was a problem with your entry. Please check the address and try again.',
+    4: 'There was a problem with your entry. Please check the address and try again.',
+    5: 'There was a problem with your entry. Please check the address and try again.',
+    6: 'Too many subscribe attempts for this email address. Please try again in about 5 minutes.',
+    7: 'You\'re already subscribed. Thank you!'
+  }
+};
+
+var AJAXMailchimpForm = function () {
+
+  /**
+   * AJAX MailChimp Form Contructor
+   *
+   * @param {HTMLElement | jQuery} form - Form element
+   * @param {Object} options
+   * @param {Function} options.onInit
+   * @param {Function} options.onDestroy
+   * @param {Function} options.onBeforeSend - Prevent AJAX submission by returning false here
+   * @param {Function} options.onSubmitFail
+   * @param {Function} options.onSubscribeSuccess
+   * @param {Function} options.onSubscribeFail
+   * @return {self}
+   */
+  function AJAXMailchimpForm(form) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+    _classCallCheck(this, AJAXMailchimpForm);
+
+    this.name = 'ajaxMailChimpForm';
+    this.namespace = '.' + this.name;
+    this.events = {
+      SUBMIT: 'submit' + this.namespace
+    };
+
+    var _this = this;
+    var defaults = {
+      onInit: $.noop,
+      onDestroy: $.noop,
+      onBeforeSend: $.noop,
+      onSubmitFail: $.noop,
+      onSubscribeSuccess: $.noop,
+      onSubscribeFail: $.noop
+    };
+
+    if (form.length === 0) {
+      return false;
+    }
+
+    this.$form = form instanceof jQuery ? form : $(form);
+    this.$input = this.$form.find('input[type="email"]');
+    this.$submit = this.$form.find('[type="submit"]');
+    this.settings = $.extend({}, defaults, options);
+
+    if (this.$input.attr('name') != "EMAIL") {
+      console.warn('[' + this.name + '] - Email input *must* have attribute [name="EMAIL"]');
+    }
+
+    this.$form.on(this.events.SUBMIT, this.onFormSubmit.bind(_this));
+
+    this.settings.onInit();
+
+    return this;
+  }
+
+  AJAXMailchimpForm.prototype.getRegexMatch = function getRegexMatch(string, stringKey) {
+    var regexPatterns = regexes[stringKey];
+    var matchedId;
+    $.each(regexPatterns, function (id, regexPattern) {
+      if (string.match(regexPattern) !== null) {
+        matchedId = id;
+        return false;
+      }
+    });
+    return matchedId;
+  };
+
+  AJAXMailchimpForm.prototype.getMessageForResponse = function getMessageForResponse(response) {
+    var msg;
+    if (response.result === 'success') {
+      msg = responses.success;
+    } else {
+      var index = -1;
+      try {
+        var parts = response.msg.split(' - ', 2);
+        if (parts[1] === undefined) {
+          msg = response.msg;
+        } else {
+          msg = parts[1];
+        }
+      } catch (e) {
+        msg = response.msg;
+      }
+
+      // Now that we have the relevant part of the message, lets get the actual string for it
+      var regexPattern = regexes.error;
+      var matchedId = this.getRegexMatch(msg, 'error');
+      if (matchedId && regexPattern[matchedId] && responses.error[matchedId]) {
+        return msg.replace(regexPattern[matchedId], responses.error[matchedId]);
+      }
+    }
+
+    return msg;
+  };
+
+  AJAXMailchimpForm.prototype.destroy = function destroy() {
+    this.$form.off(this.events.SUBMIT);
+    this.settings.onDestroy();
+  };
+
+  AJAXMailchimpForm.prototype.onBeforeSend = function onBeforeSend() {
+    if (this.settings.onBeforeSend() == false) {
+      return false;
+    }
+
+    if (this.$input.val() && this.$input.val().length) {
+      this.$submit.prop('disabled', true);
+      return true;
+    }
+    // else {
+    //   this.$input.parents('.form-group').addClass('alert-info');
+    // }
+    return false;
+  };
+
+  AJAXMailchimpForm.prototype.onSubmitDone = function onSubmitDone(response) {
+    var rspMsg = this.getMessageForResponse(response);
+    this.$submit.prop('disabled', false);
+    response.result === 'success' ? this.settings.onSubscribeSuccess(rspMsg) : this.settings.onSubscribeFail(rspMsg);
+  };
+
+  AJAXMailchimpForm.prototype.onSubmitFail = function onSubmitFail(response) {
+    this.settings.onSubmitFail();
+  };
+
+  AJAXMailchimpForm.prototype.onFormSubmit = function onFormSubmit(e) {
+    e.preventDefault();
+    var _this = this;
+    var $form = this.$form;
+    var data = {};
+    var dataArray = $form.serializeArray();
+
+    // See - https://github.com/scdoshi/jquery-ajaxchimp/blob/master/jquery.ajaxchimp.js
+    $.each(dataArray, function (index, item) {
+      data[item.name] = item.value;
+    });
+
+    $.ajax({
+      url: $form.attr('action').replace('/post?', '/post-json?').concat('&c=?'),
+      dataType: 'jsonp',
+      data: data,
+      beforeSend: _this.onBeforeSend.bind(_this)
+    }).done(function (response) {
+      _this.onSubmitDone(response);
+    }).fail(function (response) {
+      _this.onSubmitFail(response);
+    });
+
+    return false;
+  };
+
+  return AJAXMailchimpForm;
+}();
+
+exports.default = AJAXMailchimpForm;
+
+},{}],4:[function(require,module,exports){
 'use strict';
 
 var _utils = require('./utils');
@@ -648,7 +857,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   });
 })(jQuery);
 
-},{"./appRouter":4,"./sections/ajaxCart":10,"./sections/footer":14,"./sections/header":15,"./sections/mobileMenu":16,"./utils":21}],4:[function(require,module,exports){
+},{"./appRouter":5,"./sections/ajaxCart":11,"./sections/footer":15,"./sections/header":16,"./sections/mobileMenu":17,"./utils":22}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -858,7 +1067,7 @@ var AppRouter = function () {
 
 exports.default = AppRouter;
 
-},{"./views/base":22,"./views/cart":23,"./views/collection":24,"./views/index":25,"./views/product":26,"navigo":1}],5:[function(require,module,exports){
+},{"./views/base":23,"./views/cart":24,"./views/collection":25,"./views/index":26,"./views/product":27,"navigo":1}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -951,7 +1160,7 @@ exports.default = {
   }
 };
 
-},{"./utils":21}],6:[function(require,module,exports){
+},{"./utils":22}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1042,7 +1251,7 @@ exports.default = {
   }
 };
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1493,7 +1702,7 @@ var ProductDetailForm = function () {
 
 exports.default = ProductDetailForm;
 
-},{"../currency":5,"../utils":21,"./productVariants":8}],8:[function(require,module,exports){
+},{"../currency":6,"../utils":22,"./productVariants":9}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1700,7 +1909,7 @@ var ProductVariants = function () {
 
 exports.default = ProductVariants;
 
-},{"../utils":21}],9:[function(require,module,exports){
+},{"../utils":22}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1717,7 +1926,7 @@ exports.default = {
   test: _test2.default
 };
 
-},{"./sections/test":18}],10:[function(require,module,exports){
+},{"./sections/test":19}],11:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1788,7 +1997,7 @@ var AJAXCartSection = function (_BaseSection) {
 
 exports.default = AJAXCartSection;
 
-},{"../ajaxCart":2,"./base":11}],11:[function(require,module,exports){
+},{"../ajaxCart":2,"./base":12}],12:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1859,7 +2068,7 @@ var BaseSection = function () {
 
 exports.default = BaseSection;
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1916,7 +2125,7 @@ var CartSection = function (_BaseSection) {
 
 exports.default = CartSection;
 
-},{"./base":11}],13:[function(require,module,exports){
+},{"./base":12}],14:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1956,7 +2165,7 @@ var CollectionSection = function (_BaseSection) {
 
 exports.default = CollectionSection;
 
-},{"./base":11}],14:[function(require,module,exports){
+},{"./base":12}],15:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1966,6 +2175,10 @@ Object.defineProperty(exports, "__esModule", {
 var _base = require("./base");
 
 var _base2 = _interopRequireDefault(_base);
+
+var _ajaxMailchimpForm = require("../ajaxMailchimpForm");
+
+var _ajaxMailchimpForm2 = _interopRequireDefault(_ajaxMailchimpForm);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1989,6 +2202,19 @@ var FooterSection = function (_BaseSection) {
 
     _this.name = 'footer';
     _this.namespace = "." + _this.name;
+    _this.$subscribeForm = _this.$container.find('form');
+
+    _this.AJAXMailchimpForm = new _ajaxMailchimpForm2.default(_this.$subscribeForm, {
+      onInit: function onInit() {
+        console.log('init footer subscribe!');
+      },
+      onSubscribeFail: function onSubscribeFail(msg) {
+        console.log('subscribed fail - ' + msg);
+      },
+      onSubscribeSuccess: function onSubscribeSuccess() {
+        console.log('subscribed successfully');
+      }
+    });
     return _this;
   }
 
@@ -1997,7 +2223,7 @@ var FooterSection = function (_BaseSection) {
 
 exports.default = FooterSection;
 
-},{"./base":11}],15:[function(require,module,exports){
+},{"../ajaxMailchimpForm":3,"./base":12}],16:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2081,7 +2307,7 @@ var HeaderSection = function (_BaseSection) {
 
 exports.default = HeaderSection;
 
-},{"./base":11}],16:[function(require,module,exports){
+},{"./base":12}],17:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2158,7 +2384,7 @@ var MobileMenuSection = function (_BaseSection) {
 
 exports.default = MobileMenuSection;
 
-},{"../uiComponents/drawer":20,"./base":11}],17:[function(require,module,exports){
+},{"../uiComponents/drawer":21,"./base":12}],18:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2233,7 +2459,7 @@ var ProductSection = function (_BaseSection) {
 
 exports.default = ProductSection;
 
-},{"../product/productDetailForm":7,"../uiComponents/drawer":20,"./base":11}],18:[function(require,module,exports){
+},{"../product/productDetailForm":8,"../uiComponents/drawer":21,"./base":12}],19:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2275,7 +2501,7 @@ var TestSection = function (_BaseSection) {
 
 exports.default = TestSection;
 
-},{"./base":11}],19:[function(require,module,exports){
+},{"./base":12}],20:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2372,7 +2598,7 @@ exports.default = {
   }
 };
 
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2561,7 +2787,7 @@ var Drawer = function () {
 
 exports.default = Drawer;
 
-},{"../utils":21}],21:[function(require,module,exports){
+},{"../utils":22}],22:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2927,7 +3153,7 @@ exports.default = {
   }
 };
 
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3019,7 +3245,7 @@ var BaseView = function () {
 
 exports.default = BaseView;
 
-},{"../sectionConstructorDictionary":9,"../sections/base":11}],23:[function(require,module,exports){
+},{"../sectionConstructorDictionary":10,"../sections/base":12}],24:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3063,7 +3289,7 @@ var CartView = function (_BaseView) {
 
 exports.default = CartView;
 
-},{"../sections/cart":12,"./base":22}],24:[function(require,module,exports){
+},{"../sections/cart":13,"./base":23}],25:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3112,7 +3338,7 @@ var CollectionView = function (_BaseView) {
 
 exports.default = CollectionView;
 
-},{"../sections/collection":13,"./base":22}],25:[function(require,module,exports){
+},{"../sections/collection":14,"./base":23}],26:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3158,7 +3384,7 @@ var IndexView = function (_BaseView) {
 
 exports.default = IndexView;
 
-},{"../sections/base":11,"./base":22}],26:[function(require,module,exports){
+},{"../sections/base":12,"./base":23}],27:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3217,4 +3443,4 @@ var ProductView = function (_BaseView) {
 
 exports.default = ProductView;
 
-},{"../sections/product":17,"./base":22}]},{},[3]);
+},{"../sections/product":18,"./base":23}]},{},[4]);

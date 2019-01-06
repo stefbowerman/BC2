@@ -1,8 +1,8 @@
 <footer class="footer" data-section-id="{{ section.id }}" data-section-type="footer">
   {% unless settings.mailchimp_form_url == blank %}
-    <form action="{{ settings.newsletter_form_action }}" method="post">
+    <form action="{{ settings.mailchimp_form_url }}" method="post">
       <div class="minimal-input-box">
-        <input type="email" class="minimal-input-box__input" value="" placeholder="Subscribe" required="required"/>
+        <input type="email"name="EMAIL" class="minimal-input-box__input" value="" placeholder="Subscribe" required="required"/>
         <button type="submit" class="minimal-input-box__submit">
           {% include 'icon-arrow-right' %}
           <span class="icon-fallback-text">Submit</span>
