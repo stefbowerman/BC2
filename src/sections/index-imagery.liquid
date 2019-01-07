@@ -1,0 +1,91 @@
+<div>
+
+  <style type="text/css">
+    #imagery {
+      white-space: nowrap;
+      height: 700px;
+      width: 100%;
+      overflow: scroll;
+      font-size: 0;
+      margin-bottom: 80px;
+      height: 100vh;     
+    }
+    #imagery img {
+      height: 100%;
+    }
+  </style>
+
+  <div style="
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 400px;
+      /* background: white; */
+      content: '';
+      background-image: linear-gradient(to left, transparent 18%, white 134%);
+      z-index: 1;
+  "></div>  
+
+  {%- capture imagery -%}
+    {% for block in section.blocks %}
+      <img src="{{ block.settings.image | img_url: '800x' }}" />
+    {% endfor %}
+  {%- endcapture -%}
+
+  {% if imagery != blank %}
+    {% assign imagery = imagery | prepend: '<div id="imagery">' | append: '</div>' %}
+  {% endif %}
+
+  {% if section.settings.enable_release_logic %}
+    {% if section.settings.release_logic_product != blank and all_products[section.settings.release_logic_product] != blank %}
+      {% comment %}Output imagery for "show" logic because the product is available{% endcomment %}
+      {{ imagery }}
+    {% else %}
+      {% comment %}Don't output imagery because release product is blank or product is not available{% endcomment %}
+    {% endif %}
+  {% else %}
+    {% comment %}Just output the imagery as normal{% endcomment %}
+    {{ imagery }}
+  {% endif %}
+  
+</div>
+
+{% schema %}
+  {
+    "name": "Imagery",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "enable_release_logic",
+        "label": "Enable Release Logic",
+        "default": false
+      },
+      {
+        "type": "product",
+        "id": "release_logic_product",
+        "label": "Release Logic Associated Product"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "image",
+        "name": "Image",
+        "settings": [
+          {
+            "id": "image",
+            "type": "image_picker",
+            "label": "Image"
+          }
+        ]
+      }
+    ],    
+    "presets": [
+      {
+        "category": "Image",
+        "name": "Imagery",
+        "settings": {}
+      }
+    ]    
+  }
+{% endschema %}

@@ -1,0 +1,69 @@
+<div class="container">
+
+  {% capture collection_product_grid_items %}
+    {% assign outputted_collection_count = 0 %}
+    {% for block in section.blocks %}
+      {% if block.settings.collection and collections[block.settings.collection].products.size > 0 %}
+
+        {% for product in collections[block.settings.collection].products limit: 500 %}
+          <div class="content-grid__item">
+            {% include 'product-card', product: product %}
+          </div>
+        {% endfor %} 
+
+        {% assign outputted_collection_count = outputted_collection_count | plus: 1 %}
+        {% if outputted_collection_count >= section.settings.collection_count_max %}
+          {% break %}
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+  {% endcapture %}
+
+  {% if collection_product_grid_items != blank %}
+    <div class="content-grid">{{ collection_product_grid_items }}</div>
+  {% endif %}
+  
+</div>
+
+{% schema %}
+  {
+    "name": "Collections",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Display Logic",
+        "info": "Collections are added as blocks.  Only collections with visible product will be outputted.  The total number of outputted collections is controlled by the setting below."
+      },
+      {
+        "type": "range",
+        "id": "collection_count_max",
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "unit": "col",
+        "label": "Max Collections to Display",
+        "default": 10
+      }  
+    ],
+    "blocks": [
+      {
+        "type": "collection",
+        "name": "Collection",
+        "settings": [
+          {
+            "id": "collection",
+            "type": "collection",
+            "label": "Collection"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "category": "Product",
+        "name": "Collections",
+        "settings": {}
+      }
+    ]    
+  }
+{% endschema %}
