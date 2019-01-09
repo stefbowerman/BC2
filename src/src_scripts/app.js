@@ -24,6 +24,7 @@ import MobileMenuSection from './sections/mobileMenu';
   const appRouter = new AppRouter({
     onRouteStart: (url) => {
       sections.ajaxCart.ajaxCart.close();  // Run this immediately in case it's open
+      sections.mobileMenu.drawer.hide();
     },
     onViewTransitionOutDone: (url) => {
       // Update the menu immediately or wait?

@@ -1,4 +1,4 @@
-<div>
+<div style="display: none!important;">
 
   <style type="text/css">
     #imagery {
@@ -8,7 +8,8 @@
       overflow: scroll;
       font-size: 0;
       margin-bottom: 80px;
-      height: 100vh;     
+      height: 100vh;
+      padding: 67px 100px 68px 265px;
     }
     #imagery img {
       height: 100%;
@@ -23,8 +24,9 @@
       width: 400px;
       /* background: white; */
       content: '';
-      background-image: linear-gradient(to left, transparent 18%, white 134%);
+      background-image: linear-gradient(to left, transparent 18%, white 105%);
       z-index: 1;
+      pointer-events: none;
   "></div>  
 
   {%- capture imagery -%}

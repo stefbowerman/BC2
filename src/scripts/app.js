@@ -790,6 +790,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   var appRouter = new _appRouter2.default({
     onRouteStart: function onRouteStart(url) {
       sections.ajaxCart.ajaxCart.close(); // Run this immediately in case it's open
+      sections.mobileMenu.drawer.hide();
     },
     onViewTransitionOutDone: function onViewTransitionOutDone(url) {
       // Update the menu immediately or wait?
@@ -2337,6 +2338,10 @@ var selectors = {
   menu: '[data-mobile-menu]'
 };
 
+var classes = {
+  toggleActive: 'is-active'
+};
+
 var MobileMenuSection = function (_BaseSection) {
   _inherits(MobileMenuSection, _BaseSection);
 
@@ -2354,12 +2359,32 @@ var MobileMenuSection = function (_BaseSection) {
     _this.drawer = new _drawer2.default(_this.$el);
 
     _this.$toggle.on('click', _this.onToggleClick.bind(_this));
+    _this.$el.on('click', 'a', function (e) {
+      if (!e.isDefaultPrevented()) {
+        _this.drawer.hide();
+      }
+    });
+    _this.$el.on('show.drawer', function () {
+      _this.$toggle.addClass(classes.toggleActive);
+    });
+    _this.$el.on('hide.drawer', function () {
+      _this.$toggle.removeClass(classes.toggleActive);
+    });
+
+    $(window).on('resize', _this.onResize.bind(_this));
     return _this;
   }
 
   MobileMenuSection.prototype.onToggleClick = function onToggleClick(e) {
     e.preventDefault();
     this.drawer.toggle();
+  };
+
+  MobileMenuSection.prototype.onResize = function onResize(e) {
+    // @TODO - Turn breakpoints into es6 file
+    if (window.innerWidth >= 576) {
+      this.drawer.hide();
+    }
   };
 
   /**
@@ -2623,8 +2648,6 @@ var selectors = {
 var classes = {
   drawer: 'drawer',
   visible: 'is-visible',
-  backdrop: 'drawer-backdrop',
-  backdropVisible: 'is-visible',
   bodyDrawerOpen: 'drawer-open'
 };
 
@@ -2643,7 +2666,6 @@ var Drawer = function () {
     this.namespace = '.' + this.name;
 
     this.$el = $(el);
-    this.$backdrop = null;
     this.stateIsOpen = false;
     this.transitionEndEvent = _utils2.default.whichTransitionEnd();
     this.supportsCssTransitions = Modernizr.hasOwnProperty('csstransitions') && Modernizr.csstransitions;
@@ -2654,8 +2676,7 @@ var Drawer = function () {
     }
 
     var defaults = {
-      closeSelector: selectors.close,
-      backdrop: true
+      closeSelector: selectors.close
     };
 
     this.settings = $.extend({}, defaults, options);
@@ -2669,48 +2690,6 @@ var Drawer = function () {
 
     this.$el.on('click', this.settings.closeSelector, this.onCloseClick.bind(this));
   }
-
-  Drawer.prototype.addBackdrop = function addBackdrop(callback) {
-    var _this = this;
-    var cb = callback || $.noop;
-
-    if (this.stateIsOpen) {
-      this.$backdrop = $(document.createElement('div'));
-
-      this.$backdrop.addClass(classes.backdrop).appendTo($body);
-
-      this.$backdrop.one(this.transitionEndEvent, cb);
-      this.$backdrop.one('click', this.hide.bind(this));
-
-      // debug this...
-      setTimeout(function () {
-        $body.addClass(classes.bodyDrawerOpen);
-        _this.$backdrop.addClass(classes.backdropVisible);
-      }, 10);
-    } else {
-      cb();
-    }
-  };
-
-  Drawer.prototype.removeBackdrop = function removeBackdrop(callback) {
-    var _this = this;
-    var cb = callback || $.noop;
-
-    if (this.$backdrop) {
-      this.$backdrop.one(this.transitionEndEvent, function () {
-        _this.$backdrop && _this.$backdrop.remove();
-        _this.$backdrop = null;
-        cb();
-      });
-
-      setTimeout(function () {
-        _this.$backdrop.removeClass(classes.backdropVisible);
-        $body.removeClass(classes.bodyDrawerOpen);
-      }, 10);
-    } else {
-      cb();
-    }
-  };
 
   /**
    * Called after the closing animation has run
@@ -2741,10 +2720,6 @@ var Drawer = function () {
 
     this.$el.removeClass(classes.visible);
 
-    if (this.settings.backdrop) {
-      this.removeBackdrop();
-    }
-
     if (this.supportsCssTransitions) {
       this.$el.one(this.transitionEndEvent, this.onHidden.bind(this));
     } else {
@@ -2761,10 +2736,6 @@ var Drawer = function () {
     this.stateIsOpen = true;
 
     this.$el.addClass(classes.visible);
-
-    if (this.settings.backdrop) {
-      this.addBackdrop();
-    }
 
     if (this.supportsCssTransitions) {
       this.$el.one(this.transitionEndEvent, this.onShown.bind(this));

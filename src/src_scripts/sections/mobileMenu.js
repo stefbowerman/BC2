@@ -6,6 +6,10 @@ const selectors = {
   menu: '[data-mobile-menu]'
 };
 
+const classes = {
+  toggleActive: 'is-active'
+}
+
 export default class MobileMenuSection extends BaseSection {
 
   constructor(container) {
@@ -19,12 +23,32 @@ export default class MobileMenuSection extends BaseSection {
 
     this.drawer  = new Drawer(this.$el);
 
-    this.$toggle.on('click', this.onToggleClick.bind(this));   
+    this.$toggle.on('click', this.onToggleClick.bind(this));
+    this.$el.on('click', 'a', (e) => {
+      if(!e.isDefaultPrevented()) {
+        this.drawer.hide();
+      }
+    });
+    this.$el.on('show.drawer', () => {
+      this.$toggle.addClass(classes.toggleActive);
+    });
+    this.$el.on('hide.drawer', () => {
+      this.$toggle.removeClass(classes.toggleActive);
+    });
+
+    $(window).on('resize', this.onResize.bind(this));
   }
 
   onToggleClick(e) {
     e.preventDefault();
     this.drawer.toggle();
+  }
+
+  onResize(e) {
+    // @TODO - Turn breakpoints into es6 file
+    if(window.innerWidth >= 576) {
+      this.drawer.hide();
+    }
   }
 
   /**
