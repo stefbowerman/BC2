@@ -18,7 +18,7 @@ export default class ProductSection extends BaseSection {
     this.productDetailForm = new ProductDetailForm({
       $el: this.$container,
       $container: this.$container,
-      enableHistoryState: true
+      enableHistoryState: false
     });
 
     this.productDetailForm.initialize();

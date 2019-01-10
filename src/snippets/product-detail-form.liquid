@@ -31,147 +31,148 @@
 
 <div data-product-detail-form>
 
-  <div class="container">
+  <div data-product-scroll-container>
+    {% include 'product-detail-form-gallery', product: product %}
 
-    <div class="row">
-      <div class="col-md-6 col-lg-7">
-        {% include 'product-detail-form-gallery',
-                    product: product,
-                    current_variant: current_variant
-        %}         
-      </div>
-      <div class="col-md-6 col-lg-5">
-        <h1>{{ product.title }}</h1>
+    <div class="product-essential" data-product-essential>
 
-        <div class="rte">
-          {{ product.description }}
-        </div>        
+      {% include 'product-detail-price', product: product, current_variant: current_variant %}
 
-        {% include 'product-detail-price', product: product, current_variant: current_variant %}
+      <h1 class="h4">{{ product.title }}</h1>
 
-        <div itemprop="offers" itemscope itemtype="http://schema.org/Offer">
-          <meta itemprop="priceCurrency" content="{{ shop.currency }}">
-          <meta itemprop="price" content="{{ current_variant.price | divided_by: 100.00 }}">
-          <link itemprop="availability" href="http://schema.org/{% if current_variant.available %}InStock{% else %}OutOfStock{% endif %}">
+      <div class="hidden-xs hidden-sm">
+        {{ product.description }}
+      </div>        
 
-          <div data-add-to-cart-form-wrapper>
-            <form action="/cart/add" method="post" enctype="multipart/form-data" data-add-to-cart-form>
-              {% unless product.has_only_default_variant %}
-                {% for option in product.options_with_values %}
-                  
-                  {% assign option_name_downcase = option.name | downcase %}
+      <div itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+        <meta itemprop="priceCurrency" content="{{ shop.currency }}">
+        <meta itemprop="price" content="{{ current_variant.price | divided_by: 100.00 }}">
+        <link itemprop="availability" href="http://schema.org/{% if current_variant.available %}InStock{% else %}OutOfStock{% endif %}">
 
-                  {% capture option_alt_ui %}
-                    {% comment %}{% endcomment %}
-                  {% endcapture %}
+        <div data-add-to-cart-form-wrapper>
+          <form action="/cart/add" method="post" enctype="multipart/form-data" data-add-to-cart-form>
+            {% unless product.has_only_default_variant %}
+              {% for option in product.options_with_values %}
+                
+                {% assign option_name_downcase = option.name | downcase %}
 
-                  <div class="selector-wrapper form-group js">
+                {% capture option_alt_ui %}
+                  {% comment %}{% endcomment %}
+                {% endcapture %}
 
-                    <label for="SingleOptionSelector-{{ forloop.index0 }}">
-                      {{ option.name }}
-                    </label>
+                <div class="selector-wrapper form-group js">
+
+                  <label for="SingleOptionSelector-{{ forloop.index0 }}">
+                    {{ option.name }}
+                  </label>
 
 
-                    <select
-                      id="SingleOptionSelector-{{ forloop.index0 }}"
-                      class="form-control"
-                      data-single-option-selector
-                      data-index="option{{ option.position }}"
-                      {% if option_alt_ui != blank %}style="display: none" data-no-chosen{% endif %}>
-                      {% for value in option.values %}
-                        <option
-                          value="{{ value | escape }}"
-                          {% if option.selected_value == value %}selected="selected"{% endif %}>
-                            {{ value }}
-                        </option>
-                      {% endfor %}
-                    </select>
-
-                    {% comment %} Output alternative option UI here {% endcomment %}
-                    {{ option_alt_ui }}
-
-                  </div>
-
-                  {% comment %}
-                    To enable alternative variant option value select UI, create your markup here with the following data attributes.
-
-                    parent - 'data-option-position="{{ option.position }}" data-variant-option-value-list'
-                      child - 'data-variant-option-value="{{ value }}"'
-
-                    These data attributes are used to attach click events and update the selected variant when one is clicked.
-                    The child element should respond to some sort of 'active' class to reflect the selected value.
-
-                    See: `scripts/slate/productDetailForm.js` - Product.prototype.onVariantOptionValueClick
-
-                    For example, to show a list of sizes..
-
-                    {% if option.name == "Size" %}
-                      <div data-option-position="{{ option.position }}" data-variant-option-value-list>
-                        {% for value in option.values %}
-                          <span class="{% if option.selected_value == value %} is-active{% endif %}" data-variant-option-value="{{ value }}">
-                            {{ value }}
-                          </span>
-                        {% endfor %}
-                      </div>
-                    {% endif %}
-
-                    Be sure to hide the corresponding select tag for that option
-                  {% endcomment %}
-
-                {% endfor %}
-              {% endunless %}
-
-              <select name="id" class="no-js" data-product-select>
-                {% for variant in product.variants %}
-                  <option
-                    {% if variant == current_variant %}selected="selected"{% endif %}
-                    {% unless variant.available %}disabled="disabled"{% endunless %}
-                    value="{{ variant.id }}">
-                      {{ variant.title }}
-                  </option>
-                {% endfor %}
-              </select>
-
-              <div class="selector-wrapper form-group" style="min-width: 0;">
-                <label for="Quantity">{{ 'products.product.quantity' | t }}:</label>
-                <div style="max-width: 80px;">
-                  <select id="Quantity" name="quantity" class="form-control" {% if current_variant.available == false %}disabled="true"{% endif %} data-product-quantity-select>
-                    {% for i in (1..5) %}
-                      <option value="{{ i }}">{{ i }}</option>
+                  <select
+                    id="SingleOptionSelector-{{ forloop.index0 }}"
+                    class="form-control"
+                    data-single-option-selector
+                    data-index="option{{ option.position }}"
+                    {% if option_alt_ui != blank %}style="display: none" data-no-chosen{% endif %}>
+                    {% for value in option.values %}
+                      <option
+                        value="{{ value | escape }}"
+                        {% if option.selected_value == value %}selected="selected"{% endif %}>
+                          {{ value }}
+                      </option>
                     {% endfor %}
                   </select>
+
+                  {% comment %} Output alternative option UI here {% endcomment %}
+                  {{ option_alt_ui }}
+
                 </div>
+
+                {% comment %}
+                  To enable alternative variant option value select UI, create your markup here with the following data attributes.
+
+                  parent - 'data-option-position="{{ option.position }}" data-variant-option-value-list'
+                    child - 'data-variant-option-value="{{ value }}"'
+
+                  These data attributes are used to attach click events and update the selected variant when one is clicked.
+                  The child element should respond to some sort of 'active' class to reflect the selected value.
+
+                  See: `scripts/slate/productDetailForm.js` - Product.prototype.onVariantOptionValueClick
+
+                  For example, to show a list of sizes..
+
+                  {% if option.name == "Size" %}
+                    <div data-option-position="{{ option.position }}" data-variant-option-value-list>
+                      {% for value in option.values %}
+                        <span class="{% if option.selected_value == value %} is-active{% endif %}" data-variant-option-value="{{ value }}">
+                          {{ value }}
+                        </span>
+                      {% endfor %}
+                    </div>
+                  {% endif %}
+
+                  Be sure to hide the corresponding select tag for that option
+                {% endcomment %}
+
+              {% endfor %}
+            {% endunless %}
+
+            <select name="id" class="no-js" data-product-select>
+              {% for variant in product.variants %}
+                <option
+                  {% if variant == current_variant %}selected="selected"{% endif %}
+                  {% unless variant.available %}disabled="disabled"{% endunless %}
+                  value="{{ variant.id }}">
+                    {{ variant.title }}
+                </option>
+              {% endfor %}
+            </select>
+
+            <div class="selector-wrapper form-group" style="min-width: 0; display: none !important;">
+              <label for="Quantity">{{ 'products.product.quantity' | t }}:</label>
+              <div style="max-width: 80px;">
+                <select id="Quantity" name="quantity" class="form-control" {% if current_variant.available == false %}disabled="true"{% endif %} data-product-quantity-select>
+                  {% for i in (1..5) %}
+                    <option value="{{ i }}">{{ i }}</option>
+                  {% endfor %}
+                </select>
               </div>
+            </div>
 
-              <button
-                type="submit"
-                name="add"
-                class="btn btn-primary"
-                data-add-to-cart
-                {% unless current_variant.available %}disabled="disabled"{% endunless %}>
-                  <span data-add-to-cart-text>
-                    {% if current_variant.available %}
-                      {{ 'products.product.add_to_cart' | t }}
-                    {% else %}
-                      {{ 'products.product.sold_out' | t }}
-                    {% endif %}
-                  </span>
-              </button>
-              
-              {% if size_guide_drawer_html != blank %}
-                <br /><a href="#" data-size-guide-show>See Size Guide</a>
-              {% endif %}
+            <button
+              type="submit"
+              name="add"
+              class="btn btn-primary"
+              data-add-to-cart
+              {% unless current_variant.available %}disabled="disabled"{% endunless %}>
+                <span data-add-to-cart-text>
+                  {% if current_variant.available %}
+                    {{ 'products.product.add_to_cart' | t }}
+                  {% else %}
+                    {{ 'products.product.sold_out' | t }}
+                  {% endif %}
+                </span>
+            </button>
+            
+            {% if size_guide_drawer_html != blank %}
+              <br /><a href="#" class="hidden-xs hidden-sm" data-size-guide-show>See Size Guide</a>
+            {% endif %}
 
-            </form>
-          </div>
-
+          </form>
         </div>
-       
-      </div>
-    </div> 
 
+      </div>
+    </div>
   </div>
 
+  <div class="visible-xs visible-sm">
+    <div class="container">
+      <div>{{ product.description }}</div>
+      {% if size_guide_drawer_html != blank %}
+        <br /><a href="#" data-size-guide-show>See Size Guide</a>
+      {% endif %}
+    </div>
+  </div>  
+       
   {{ size_guide_drawer_html }}
 
   {% unless product == empty %}

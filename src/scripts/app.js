@@ -1283,12 +1283,11 @@ var selectors = {
   originalSelectorId: '[data-product-select]',
   priceWrapper: '[data-price-wrapper]',
   productZoomButton: '[data-zoom-button]',
-  productGallery: '[data-product-gallery]',
-  productGallerySlideshow: '[data-product-gallery-slideshow]',
-  productGallerySlideLink: '[data-product-gallery-slide-link]',
-  productGalleryThumbnails: '[data-product-gallery-thumbnails]',
-  productGalleryThumbnailsSlide: '[data-product-gallery-thumbnails-slide]',
-  initialSlide: '[data-initial-slide]',
+
+  gallery: '[data-gallery]',
+  galleryItem: '[data-gallery-item]',
+  galleryImage: '[data-gallery-image]',
+
   productJson: '[data-product-json]',
   productPrice: '[data-product-price]',
   singleOptionSelector: '[data-single-option-selector]',
@@ -1301,7 +1300,9 @@ var classes = {
   hide: 'hide',
   variantOptionValueActive: 'is-active',
   zoomReady: 'is-zoomable',
-  zoomedIn: 'is-zoomed'
+  zoomedIn: 'is-zoomed',
+  galleryReady: 'is-ready',
+  galleryImageLoaded: 'is-loaded'
 };
 
 var $window = $(window);
@@ -1336,6 +1337,8 @@ var ProductDetailForm = function () {
     };
 
     this.initialize = function () {
+      var _this = this;
+
       if (ready) {
         return;
       }
@@ -1354,6 +1357,20 @@ var ProductDetailForm = function () {
         this.$container = this.$el;
       }
 
+      // Dom elements we'll need
+      // this.$singleOptionSelectors      = $(selectors.singleOptionSelector, this.$container);
+      // this.$productGallerySlideshow    = $(selectors.productGallerySlideshow, this.$container);
+      // this.$productGalleryCurrentIndex = $(selectors.productGalleryCurrentIndex, this.$container);
+      // this.$addToCartBtn               = $(selectors.addToCart, this.$container);
+      // this.$addToCartBtnText           = $(selectors.addToCartText, this.$container);
+      // this.$priceWrapper               = $(selectors.priceWrapper, this.$container);
+      // this.$productPrice               = $(selectors.productPrice, this.$container);
+      // this.$comparePrice               = $(selectors.comparePrice, this.$container);
+      // this.$comparePriceText           = $(selectors.comparePriceText, this.$container);
+      this.$gallery = $(selectors.gallery, this.$container);
+      this.$galleryItems = $(selectors.galleryItem, this.$container);
+      this.$galleryImages = $(selectors.galleryImage, this.$container);
+
       this.productSingleObject = JSON.parse($(selectors.productJson, this.$container).html());
 
       _utils2.default.chosenSelects(this.$container);
@@ -1368,11 +1385,22 @@ var ProductDetailForm = function () {
 
       this.variants = new _productVariants2.default(variantOptions);
 
+      console.log(this);
+
+      this.$galleryImages.first().imagesLoaded(function () {
+        _this.$gallery.addClass(classes.galleryReady);
+      });
+
+      this.$galleryImages.unveil(200, function () {
+        var $img = $(this);
+        $img.on('load', function () {
+          $img.addClass(classes.galleryImageLoaded).removeAttr('data-src');
+        });
+      });
+
       // See productVariants
       this.$container.on('variantChange' + this.namespace, this.onVariantChange.bind(this));
       this.$container.on(this.events.CLICK, selectors.variantOptionValue, this.onVariantOptionValueClick.bind(this));
-
-      this.initGalleries();
 
       var e = $.Event(this.events.READY);
       this.$el.trigger(e);
@@ -1381,131 +1409,6 @@ var ProductDetailForm = function () {
     };
   }
 
-  ProductDetailForm.prototype.initGalleries = function initGalleries() {
-    var self = this;
-    var $galleries = $(selectors.productGallery, this.$container);
-
-    // Lifecycle methods for handling slideshow changes + hoverzoom initialization
-    function initHoverZoom($zoomTarget) {
-
-      var opts = {
-        url: $zoomTarget.find(selectors.productGallerySlideLink).attr('href'),
-        on: 'click',
-        touch: false,
-        escToClose: true,
-        magnify: 0.8,
-        duration: 300,
-        callback: function callback() {
-          $zoomTarget.addClass(classes.zoomReady);
-        },
-        onZoomIn: function onZoomIn() {
-          $zoomTarget.addClass(classes.zoomedIn);
-        },
-        onZoomOut: function onZoomOut() {
-          $zoomTarget.removeClass(classes.zoomedIn);
-        }
-      };
-
-      $zoomTarget.zoom(opts);
-
-      $zoomTarget.find(selectors.productZoomButton).on('click', function (e) {
-        $zoomTarget.trigger('click');
-        return false;
-      });
-    }
-
-    function destroyHoverZoom($zoomTarget) {
-      $zoomTarget.trigger('zoom.destroy');
-      $zoomTarget.find(selectors.productZoomButton).off('click');
-    }
-
-    function onSlideshowSlickBeforeChange(e, slick) {
-      var $zoomTarget = $(slick.$slides[slick.currentSlide]);
-      destroyHoverZoom($zoomTarget);
-    }
-
-    function onSlideshowSlickAfterChange(e, slick) {
-      var $zoomTarget = $(slick.$slides[slick.currentSlide]);
-      if (self.settings.enableZoom) {
-        initHoverZoom($zoomTarget);
-      }
-    }
-
-    function onSlideshowSlickInit(e, slick) {
-      var $zoomTarget = $(slick.$slides[slick.currentSlide]);
-      initHoverZoom($zoomTarget);
-    }
-
-    $galleries.each(function () {
-      var $slideshow = $(this).find(selectors.productGallerySlideshow);
-      var $thumbnails = $(this).find(selectors.productGalleryThumbnails);
-
-      // Look for element with the initialSlide selector.
-      var initialSlide = $(this).find(selectors.initialSlide).length ? $(this).find(selectors.initialSlide).index() : 0;
-
-      var thumbnailsSlidesToShow;
-      var thumbnailsSlidesCount = $thumbnails.children().length;
-
-      // Slick has trouble when slideToShow == slideCount
-      if (thumbnailsSlidesCount < 4) {
-        thumbnailsSlidesToShow = Math.max(thumbnailsSlidesCount - 1, 1);
-      } else {
-        thumbnailsSlidesToShow = thumbnailsSlidesCount == 4 ? 3 : 4;
-      }
-
-      $slideshow.on({
-        init: onSlideshowSlickInit,
-        beforeChange: onSlideshowSlickBeforeChange,
-        afterChange: onSlideshowSlickAfterChange
-      });
-
-      $slideshow.slick({
-        speed: 600,
-        dots: false,
-        swipe: Modernizr.touchevents,
-        arrows: !Modernizr.touchevents,
-        asNavFor: '#' + $thumbnails.attr('id'),
-        prevArrow: '<div class="slick-arrow slick-arrow--prev"><span class="arrow arrow--left"><span class="arrow__icon"></span></span></div>',
-        nextArrow: '<div class="slick-arrow slick-arrow--next"><span class="arrow arrow--right"><span class="arrow__icon"></span></span></div>',
-        initialSlide: initialSlide,
-        accessibility: false,
-        draggable: true
-      });
-
-      $thumbnails.on('click', selectors.productGalleryThumbnailsSlide, function () {
-        $slideshow.slick('slickGoTo', $(this).data('slick-index'));
-      });
-
-      $thumbnails.slick({
-        speed: 600,
-        slidesToShow: thumbnailsSlidesToShow,
-        slidestoScroll: 1,
-        arrows: false,
-        asNavFor: '#' + $slideshow.attr('id'),
-        initialSlide: initialSlide,
-        accessibility: false,
-        draggable: false
-      });
-    });
-
-    // Because slick can get weird on initialization, make sure we call `refresh` on any visible galleries
-    $galleries.not('.hide').each(function () {
-      var $variantGallery = $(this);
-      $variantGallery.find(selectors.productGallerySlideshow).slick('getSlick').refresh();
-      $variantGallery.find(selectors.productGalleryThumbnails).slick('getSlick').refresh();
-    });
-  };
-
-  /**
-   * Slick sliders are annoying and sometimes need an ass kicking
-   *
-   */
-
-
-  ProductDetailForm.prototype.resizeGalleries = function resizeGalleries() {
-    $('.slick-slider', this.$container).resize();
-  };
-
   ProductDetailForm.prototype.onVariantChange = function onVariantChange(evt) {
     var variant = evt.variant;
 
@@ -1513,7 +1416,6 @@ var ProductDetailForm = function () {
     this.updateAddToCartState(variant);
     this.updateQuantityDropdown(variant);
     this.updateVariantOptionValues(variant);
-    this.updateGalleries(variant);
 
     $(selectors.singleOptionSelector, this.$container).trigger('chosen:updated');
   };
@@ -1620,54 +1522,6 @@ var ProductDetailForm = function () {
         $variantOptionValueUI.addClass(classes.variantOptionValueActive);
         $variantOptionValueUI.siblings().removeClass(classes.variantOptionValueActive);
       }
-    }
-  };
-
-  /**
-   * Look for a gallery matching one of the selected variant's options and switch to that gallery
-   * If a matching gallery doesn't exist, look for the variant's featured image in the main gallery and switch to that
-   *
-   * @param {Object} variant - Shopify variant object
-   */
-
-
-  ProductDetailForm.prototype.updateGalleries = function updateGalleries(variant) {
-
-    var $galleries = $(selectors.productGallery, this.$container);
-
-    function getVariantGalleryForOption(option) {
-      return $galleries.filter(function () {
-        return $(this).data('variant-gallery') == option;
-      });
-    }
-
-    if (variant) {
-      if ($galleries.length > 1) {
-        for (var i = 3; i >= 1; i--) {
-          var $variantGallery = getVariantGalleryForOption(variant['option' + i]);
-
-          if ($variantGallery.length && $variantGallery.hasClass(classes.hide)) {
-            $galleries.not($variantGallery).addClass(classes.hide);
-            $variantGallery.removeClass(classes.hide);
-            // Slick needs to make a lot of measurements in order to work, calling `refresh` forces this to happen
-            $variantGallery.find(selectors.productGallerySlideshow).slick('getSlick').refresh();
-            $variantGallery.find(selectors.productGalleryThumbnails).slick('getSlick').refresh();
-          }
-        }
-      } else {
-        // $galleries is just a single gallery
-        // Slide to featured image for selected variant but only if we're not already on it.
-        // Have to check this way because slick clones slides so even if we're currently on it, there can be a cloned slide that also has the correct data-image attribute
-        if (variant.featured_image && $galleries.find('.slick-current').data('image') != variant.featured_image.id) {
-          var $imageSlide = $galleries.find('[data-image="' + variant.featured_image.id + '"]').first();
-
-          if ($imageSlide.length) {
-            $galleries.find(selectors.productGallerySlideshow).slick('slickGoTo', $imageSlide.data('slick-index'));
-          }
-        }
-      }
-    } else {
-      // No variant - Don't do anything?
     }
   };
 
@@ -2457,7 +2311,7 @@ var ProductSection = function (_BaseSection) {
     _this.productDetailForm = new _productDetailForm2.default({
       $el: _this.$container,
       $container: _this.$container,
-      enableHistoryState: true
+      enableHistoryState: false
     });
 
     _this.productDetailForm.initialize();

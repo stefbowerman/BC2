@@ -9,6 +9,10 @@
   left: $grid-gutter-width/2;
   max-width: 400px;
 
+  @media (max-width: $screen-xs-max) {
+    display: none; // Until we fiure this out, maybe just position static?
+  }
+
   body.is-loading & {
     opacity: 0;
   }
