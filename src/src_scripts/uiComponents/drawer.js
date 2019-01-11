@@ -10,6 +10,8 @@ const selectors = {
 const classes = {
   drawer: 'drawer',
   visible: 'is-visible',
+  backdrop: 'drawer-backdrop',
+  backdropVisible: 'is-visible',  
   bodyDrawerOpen: 'drawer-open'    
 };
 
@@ -26,6 +28,7 @@ export default class Drawer {
     this.namespace = `.${this.name}`;
 
     this.$el = $(el);
+    this.$backdrop              = null;
     this.stateIsOpen            = false;
     this.transitionEndEvent     = Utils.whichTransitionEnd();
     this.supportsCssTransitions = Modernizr.hasOwnProperty('csstransitions') && Modernizr.csstransitions;
@@ -37,6 +40,7 @@ export default class Drawer {
 
     const defaults = {
       closeSelector: selectors.close,
+      backdrop: true
     };
 
     this.settings = $.extend({}, defaults, options);
@@ -50,6 +54,51 @@ export default class Drawer {
 
     this.$el.on('click', this.settings.closeSelector, this.onCloseClick.bind(this));    
   }
+
+  addBackdrop(callback) {
+    var _this = this;
+    var cb    = callback || $.noop;
+
+    if(this.stateIsOpen) {
+      this.$backdrop = $(document.createElement('div'));
+
+      this.$backdrop.addClass(classes.backdrop)
+                    .appendTo($body);
+
+      this.$backdrop.one(this.transitionEndEvent, cb);
+      this.$backdrop.one('click', this.hide.bind(this));
+
+      // debug this...
+      setTimeout(function() {
+        $body.addClass(classes.bodyDrawerOpen);          
+        _this.$backdrop.addClass(classes.backdropVisible);
+      }, 10);
+    }
+    else {
+      cb();
+    }
+  }
+
+  removeBackdrop(callback) {
+    var _this = this;
+    var cb    = callback || $.noop;
+
+    if(this.$backdrop) {
+      this.$backdrop.one(this.transitionEndEvent, function(){
+        _this.$backdrop && _this.$backdrop.remove();
+        _this.$backdrop = null;
+        cb();
+      });
+
+      setTimeout(function() {
+        _this.$backdrop.removeClass(classes.backdropVisible);
+        $body.removeClass(classes.bodyDrawerOpen);
+      }, 10);
+    }
+    else {
+      cb();
+    }
+  }  
   
   /**
    * Called after the closing animation has run
@@ -74,7 +123,11 @@ export default class Drawer {
 
     if(!this.stateIsOpen) return;
 
-    this.$el.removeClass(classes.visible);     
+    this.$el.removeClass(classes.visible);
+
+    if(this.settings.backdrop) {
+      this.removeBackdrop();
+    }    
 
     if(this.supportsCssTransitions) {
       this.$el.one(this.transitionEndEvent, this.onHidden.bind(this));
@@ -93,6 +146,10 @@ export default class Drawer {
     this.stateIsOpen = true;
 
     this.$el.addClass(classes.visible);
+
+    if(this.settings.backdrop) {
+      this.addBackdrop();
+    }    
 
     if(this.supportsCssTransitions) {
       this.$el.one(this.transitionEndEvent, this.onShown.bind(this));

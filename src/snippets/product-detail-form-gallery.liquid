@@ -20,12 +20,16 @@
 <div class="product-gallery" data-gallery>
   <ul class="product-gallery__list">
     {% for image in product.images %}
-      <li class="product-gallery__item" data-image="{{ image.id }}" data-gallery-item>
-        {% comment %} Needs this inner position:relative element because we append a sibling element to the image via JS {% endcomment %}
-        <div class="u-pos-rel">     
-          <img {% if forloop.index0 == 0 %}src={% else %}data-src={% endif%}"{{ image | img_url: photo_main_dimension }}" alt="{{ image.alt | escape }}" class="product-gallery__image" data-gallery-image>
-        </div>
+      <li class="product-gallery__item" data-image="{{ image.id }}" data-gallery-item>   
+        <img {% if forloop.index0 == 0 %}src={% else %}data-src={% endif%}"{{ image | img_url: photo_main_dimension }}" alt="{{ image.alt | escape }}" class="product-gallery__image" data-gallery-image>
       </li>
     {% endfor %}
   </ul>
+</div>
+
+<div class="blowup" data-blowup>
+  <div class="blowup__close">{% include 'icon-close' %}</div>
+  <div class="blowup__scroll" data-blowup-scroll>
+    <img class="blowup__image" data-blowup-image />
+  </div>
 </div>

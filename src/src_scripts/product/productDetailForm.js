@@ -1,4 +1,7 @@
 import ProductVariants from './productVariants';
+import ProductImageTouchZoomController from './productImageTouchZoomController';
+import ProductImageDesktopZoomController from './productImageDesktopZoomController';
+import * as Breakpoints from '../breakpoints';
 import Utils from '../utils';
 import Currency from '../currency';
 
@@ -66,6 +69,7 @@ export default class ProductDetailForm {
         return;
       }
 
+      this.zoomMinWidth = Breakpoints.getBreakpointMinWidth('sm');
       this.settings = $.extend({}, defaults, config);
 
       if (!this.settings.$el || this.settings.$el == undefined) {
@@ -107,8 +111,12 @@ export default class ProductDetailForm {
       };
 
       this.variants = new ProductVariants(variantOptions);
+      this.productImageTouchZoomController = new ProductImageTouchZoomController(this.$container);
+      this.productImageDesktopZoomController = new ProductImageDesktopZoomController(this.$container);
 
-      console.log(this);
+      // this.productImageTouchZoomController.enable();
+
+      // console.log(this);
 
       this.$galleryImages.first().imagesLoaded(() => {
         this.$gallery.addClass(classes.galleryReady);
@@ -124,6 +132,9 @@ export default class ProductDetailForm {
       // See productVariants
       this.$container.on('variantChange' + this.namespace, this.onVariantChange.bind(this));
       this.$container.on(this.events.CLICK, selectors.variantOptionValue, this.onVariantOptionValueClick.bind(this));
+      $window.on('resize', $.throttle(50, this.onResize.bind(this)));
+
+      this.onResize();
 
       var e = $.Event(this.events.READY);
       this.$el.trigger(e);
@@ -265,5 +276,18 @@ export default class ProductDetailForm {
 
     $option.addClass(classes.variantOptionValueActive);
     $option.siblings().removeClass( classes.variantOptionValueActive );      
-  }  
+  }
+
+
+  onResize(e) {
+    if(window.innerWidth >= this.zoomMinWidth) {
+      this.productImageTouchZoomController.disable();
+      this.productImageDesktopZoomController.enable();
+    }
+    else {
+      if(Modernizr && Modernizr.touchevents) {
+        this.productImageTouchZoomController.enable();
+      }
+    }
+  }
 }

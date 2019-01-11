@@ -9,6 +9,8 @@ export default class ProductView extends BaseView {
     this.productSection = new ProductSection($el.find('[data-section-type="product"]'));
 
     this.sections.push(this.productSection);
+
+    window.scrollTop = 0;
   }
 
   transitionIn() {

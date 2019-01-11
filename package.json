@@ -34,6 +34,7 @@
     "chosen-js": "^1.8.3",
     "gulp-notify": "^3.2.0",
     "imagesloaded": "^4.1.4",
+    "iscroll": "^5.2.0",
     "jquery": "^3.2.1",
     "jquery-zoom": "^1.7.20",
     "js-cookie": "^2.2.0",

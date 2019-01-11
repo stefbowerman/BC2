@@ -36,13 +36,22 @@
 
     <div class="product-essential" data-product-essential>
 
-      {% include 'product-detail-price', product: product, current_variant: current_variant %}
-
-      <h1 class="h4">{{ product.title }}</h1>
+      <div class="hidden-xs">
+        {% include 'product-detail-price', product: product, current_variant: current_variant %}
+        <h1 class="h4">{{ product.title }}</h1>
+      </div>
 
       <div class="hidden-xs hidden-sm">
-        {{ product.description }}
-      </div>        
+        <div class="pdf-description">{{ product.description }}</div>
+      </div>
+
+      {% comment %} Sticky row {% endcomment %}
+      <div class="visible-xs">
+        <div class="sticky-row">
+          <div class="sticky-row__entry">{{ product.title }}</div>
+          <div class="sticky-row__entry" style="flex-basis: 60px; flex: 0;">{% include 'product-detail-price', product: product, current_variant: current_variant %}</div>
+        </div>
+      </div>
 
       <div itemprop="offers" itemscope itemtype="http://schema.org/Offer">
         <meta itemprop="priceCurrency" content="{{ shop.currency }}">
@@ -65,7 +74,6 @@
                   <label for="SingleOptionSelector-{{ forloop.index0 }}">
                     {{ option.name }}
                   </label>
-
 
                   <select
                     id="SingleOptionSelector-{{ forloop.index0 }}"
@@ -166,7 +174,7 @@
 
   <div class="visible-xs visible-sm">
     <div class="container">
-      <div>{{ product.description }}</div>
+      <div class="pdf-description">{{ product.description }}</div>
       {% if size_guide_drawer_html != blank %}
         <br /><a href="#" data-size-guide-show>See Size Guide</a>
       {% endif %}

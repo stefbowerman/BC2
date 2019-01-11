@@ -1,0 +1,54 @@
+// -------------------------
+// Blowup
+// -------------------------
+
+// Kill the scroll on the body
+body.blowup-open {
+  overflow: hidden;
+}
+
+.blowup {
+  position: fixed;
+  z-index: $z-index-blowup;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0;
+  overflow: hidden;
+  background-color: $body-bg;
+  cursor: pointer;
+  pointer-events: none;
+  transition: opacity 300ms ease;
+
+  &.is-active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+.blowup__close {
+  position: absolute;
+  z-index: $z-index-blowup + 1;
+  top: 19px;
+  right: 21px;
+}
+
+.blowup__scroll {
+  @include stretch-within;
+
+  opacity: 0;
+  transition: opacity 300ms ease-in-out;
+
+  .is-active & {
+    opacity: 1;
+    transition-delay: 150ms;
+    transition-duration: 500ms;
+  }  
+}
+
+.blowup__image {
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+}
