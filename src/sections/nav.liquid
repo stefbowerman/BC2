@@ -1,0 +1,28 @@
+<nav class="main-nav" data-section-id="{{ section.id }}" data-section-type="nav">
+  {% if settings.main_menu != blank %}
+    <ul class="main-menu">
+      {% for link in linklists[settings.main_menu].links %}
+        {% assign submenu_id = section.id | append: '-' | append: forloop.index %}
+        <li>
+          {% if link.links.size == 0 %}
+            <a href="{{ link.url }}" data-menu-link {% if link.active or link.child_active %}class="is-active"{% endif %}>{{ link.title }}</a>
+          {% else %}
+            <a href="#" data-menu-link data-submenu-trigger="{{ submenu_id }}" {% if link.active or link.child_active %}class="is-active"{% endif %}>{{ link.title }}</a>
+            <ul id="{{ submenu_id }}" class="main-submenu" data-submenu>
+              {% for l in link.links %}
+                <li><a href="{{ l.url }}">{{ l.title }}</a></li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+</nav>
+
+{% schema %}
+  {
+    "name": "Navigation",
+    "settings": []
+  }
+{% endschema %}

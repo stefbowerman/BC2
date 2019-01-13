@@ -5,42 +5,18 @@
     {% include 'header-logo' %}
 
     {% if settings.main_menu != blank %}
-      <nav>
-        <ul class="main-menu">
-          {% for link in linklists[settings.main_menu].links %}
-            <li>
-              <a href="{{ link.url }}" {% if link.active or link.child_active %}class="is-active"{% endif %}>{{ link.title }}</a>
-
-              {% if link.links.size > 0 %}
-                <ul>
-                  {% for l in link.links %}
-                    <li><a href="{{ l.url }}">{{ l.title }}</a></li>
-                  {% endfor %}
-                </ul>
-              {% endif %}
-            </li>
-          {% endfor %}
-        </ul>
-      </nav>
-    {% endif %}
-
-    {% if settings.main_menu != blank %}
       <a href="#" title="Toggle menu" class="mobile-menu-toggle" data-mobile-menu-toggle>
         <div class="mobile-menu-icon">
           <div class="mobile-menu-icon__inner"></div>
         </div>
-        {% comment %}{% include 'icon-hamburger' %}{% endcomment %}
       </a>
     {% endif %}
 
-    <div style="display: none;">
-      <a href="/cart" data-ajax-cart-trigger>
-        <div class="header-cart__badge{% if cart.item_count > 0 %} has-items{% endif %}" data-cart-badge>
-          {% include 'icon-cart' %}
-          <span class="header-cart__badge-count" data-cart-badge-count>{{ cart.item_count }}</span>
-        </div>
-      </a>
-    </div>
+    <a href="/cart" class="header-cart" data-ajax-cart-trigger>
+      <div class="header-cart__badge{% if cart.item_count > 0 %} has-items{% endif %}" data-cart-badge>
+        {{ cart.item_count }} {{ cart.item_count | pluralize: 'Item', 'Items' }}
+      </div>
+    </a>
   </header>
 
 </div>

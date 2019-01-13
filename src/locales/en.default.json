@@ -273,7 +273,11 @@
       "from_text_html": "From {{ price }}",
       "quantity": "Quantity",
       "add_to_cart": "Add to Cart",
-      "adding": "Adding..."
+      "adding": "Adding...",
+      "next_image": "Next image",
+      "previous_image": "Previous image",
+      "other_colors": "Other Colors",
+      "select_options": "Select Options"
     }
   },
   "gift_cards": {

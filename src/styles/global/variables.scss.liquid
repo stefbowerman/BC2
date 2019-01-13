@@ -52,9 +52,6 @@ $font-size-h3:              $font-size-base * 1.75;
 $font-size-h4:              $font-size-base * 1.5;
 $font-size-h5:              $font-size-base * 1.25;
 $font-size-h6:              $font-size-base;
-$font-size-p1:              $font-size-base * 1.5;
-$font-size-p2:              $font-size-base;
-$font-size-p3:              $font-size-small;
 
 $font-weight-normal:        400;
 $font-weight-medium:        500;
@@ -71,9 +68,6 @@ $letter-spacing-h3:         -0.015em;
 $letter-spacing-h4:         0em;
 $letter-spacing-h5:         0em;
 $letter-spacing-h6:         0em;
-$letter-spacing-p1:         0em;
-$letter-spacing-p2:         0em;
-$letter-spacing-p3:         0em;
 
 $line-height-base:          1.65; //** Unit-less `line-height` for use in components like buttons.
 $line-height-computed:      $font-size-base * $line-height-base !default; //** Computed "line-height" (`font-size` * `line-height`) for use with `margin`, `padding`, etc.
@@ -83,9 +77,6 @@ $line-height-h3:            1.2;
 $line-height-h4:            1.2;
 $line-height-h5:            1.2;
 $line-height-h6:            1.2;
-$line-height-p1:            1.4;
-$line-height-p2:            1.4;
-$line-height-p3:            1.4;
 
 $text-transform-base:       uppercase;
 
@@ -315,10 +306,11 @@ $container-xl:                 $container-xlarge !default;
 
 
 /*================ Z-Index ================*/
-$z-index-drawer-backdrop: 10;
-$z-index-ajax-cart-backdrop: 10;
-$z-index-loader: 50;
-$z-index-footer: 100;
+$z-index-loader: 40;
+$z-index-nav: 50;
+$z-index-footer: 50;
+$z-index-drawer-backdrop: 80;
+$z-index-ajax-cart-backdrop: 80;
 $z-index-slideup: 140;
 $z-index-drawer: 140;
 $z-index-header: 150;

@@ -22,13 +22,14 @@ const selectors = {
   productPrice: '[data-product-price]',
   singleOptionSelector: '[data-single-option-selector]',
   variantOptionValueList: '[data-variant-option-value-list][data-option-position]',
-  variantOptionValue: '[data-variant-option-value]',
-  quantitySelect: '[data-product-quantity-select]'
+  variantOptionValue: '[data-variant-option-value]'
 };
 
 const classes = {
   hide: 'hide',
   variantOptionValueActive: 'is-active',
+  variantOptionValueDisabled: 'is-disabled',
+  variantOptionValueNotHovered: 'is-not-hovered',
   zoomReady: 'is-zoomable',
   zoomedIn: 'is-zoomed',
   galleryReady: 'is-ready',
@@ -56,7 +57,9 @@ export default class ProductDetailForm {
     this.events = {
       RESIZE: 'resize' + this.namespace,
       CLICK:  'click'  + this.namespace,
-      READY:  'ready'  + this.namespace
+      READY:  'ready'  + this.namespace,
+      MOUSEENTER: 'mouseenter' + this.namespace,
+      MOUSELEAVE: 'mouseleave' + this.namespace
     };
 
     let ready = false;
@@ -69,6 +72,7 @@ export default class ProductDetailForm {
         return;
       }
 
+      this.stickyMaxWidth = Breakpoints.getBreakpointMinWidth('sm') - 1;
       this.zoomMinWidth = Breakpoints.getBreakpointMinWidth('sm');
       this.settings = $.extend({}, defaults, config);
 
@@ -100,8 +104,6 @@ export default class ProductDetailForm {
 
       this.productSingleObject  = JSON.parse($(selectors.productJson, this.$container).html());
 
-      Utils.chosenSelects(this.$container);
-
       var variantOptions = {
         $container: this.$container,
         enableHistoryState: this.settings.enableHistoryState,
@@ -132,6 +134,8 @@ export default class ProductDetailForm {
       // See productVariants
       this.$container.on('variantChange' + this.namespace, this.onVariantChange.bind(this));
       this.$container.on(this.events.CLICK, selectors.variantOptionValue, this.onVariantOptionValueClick.bind(this));
+      this.$container.on(this.events.MOUSEENTER, selectors.variantOptionValue, this.onVariantOptionValueMouseenter.bind(this));
+      this.$container.on(this.events.MOUSELEAVE, selectors.variantOptionValue, this.onVariantOptionValueMouseleave.bind(this));
       $window.on('resize', $.throttle(50, this.onResize.bind(this)));
 
       this.onResize();
@@ -148,10 +152,7 @@ export default class ProductDetailForm {
 
     this.updateProductPrices(variant);
     this.updateAddToCartState(variant);
-    this.updateQuantityDropdown(variant);
     this.updateVariantOptionValues(variant);
-
-    $(selectors.singleOptionSelector, this.$container).trigger('chosen:updated');
   }
 
   /**
@@ -181,30 +182,7 @@ export default class ProductDetailForm {
       $addToCartBtn.prop('disabled', true);
       $addToCartBtnText.html(theme.strings.soldOut);
     }
-  }
-
-  /**
-   * Updates the disabled property of the quantity select based on the availability of the selected variant
-   *
-   * @param {Object} variant - Shopify variant object
-   */
-  updateQuantityDropdown(variant) {
-
-    var $select = $(selectors.quantitySelect, this.$container);
-
-    // Close the dropdown while we make changes to it
-    $select.trigger('chosen:close');
-
-    if(variant && variant.available) {
-      $select.prop('disabled', false);
-    }
-    else {
-      $select.prop('disabled', true);
-    }
-
-    $select.trigger('chosen:updated');
-    
-  }  
+  } 
 
   /**
    * Updates the DOM with specified prices
@@ -217,10 +195,10 @@ export default class ProductDetailForm {
     var $compareEls   = $comparePrice.add( $(selectors.comparePriceText, this.$container) );
 
     if(variant) {
-      $productPrice.html(Currency.formatMoney(variant.price, theme.moneyFormat));
+      $productPrice.html(Currency.stripZeroCents(Currency.formatMoney(variant.price, theme.moneyFormat)));
 
       if (variant.compare_at_price > variant.price) {
-        $comparePrice.html(Currency.formatMoney(variant.compare_at_price, theme.moneyFormat));
+        $comparePrice.html(Currency.stripZeroCents(Currency.formatMoney(variant.compare_at_price, theme.moneyFormat)));
         $compareEls.removeClass(classes.hide);
       } else {
         $comparePrice.html('');
@@ -260,16 +238,17 @@ export default class ProductDetailForm {
    * @param {event} evt
    */
   onVariantOptionValueClick(e) {
+    e.preventDefault();
 
-    var $option = $(e.currentTarget);
+    const $option = $(e.currentTarget);
 
-    if ($option.hasClass(classes.variantOptionValueActive)) {
+    if ($option.hasClass(classes.variantOptionValueActive) || $option.hasClass(classes.variantOptionValueDisabled) || $option.attr('disabled') != undefined) {
       return;
     }
 
-    var value     = $option.data('variant-option-value');
-    var position  = $option.parents(selectors.variantOptionValueList).data('option-position');
-    var $selector = $(selectors.singleOptionSelector, this.$container).filter('[data-index="option'+position+'"]');
+    const value     = $option.data('variant-option-value');
+    const position  = $option.parents(selectors.variantOptionValueList).data('option-position');
+    const $selector = $(selectors.singleOptionSelector, this.$container).filter('[data-index="option'+position+'"]');
 
     $selector.val(value);
     $selector.trigger('change');
@@ -278,6 +257,21 @@ export default class ProductDetailForm {
     $option.siblings().removeClass( classes.variantOptionValueActive );      
   }
 
+  onVariantOptionValueMouseenter(e) {
+    const $option = $(e.currentTarget);
+    const $list = $option.parents(selectors.variantOptionValueList);
+
+    if($option.hasClass(classes.variantOptionValueDisabled) || $option.attr('disabled') != undefined) return;
+
+    $list.find(selectors.variantOptionValue).not($option).addClass(classes.variantOptionValueNotHovered);
+  }
+
+  onVariantOptionValueMouseleave(e) {
+    console.log('leave');
+    const $option = $(e.currentTarget);
+    const $list = $option.parents(selectors.variantOptionValueList);
+    $list.find(selectors.variantOptionValue).removeClass(classes.variantOptionValueNotHovered);
+  }
 
   onResize(e) {
     if(window.innerWidth >= this.zoomMinWidth) {
@@ -288,6 +282,13 @@ export default class ProductDetailForm {
       if(Modernizr && Modernizr.touchevents) {
         this.productImageTouchZoomController.enable();
       }
+    }
+
+    if(window.innerWidth < this.stickyMaxWidth) {
+      $('.product-detail-form').css('margin-bottom', $('.product-essential').outerHeight());
+    }
+    else {
+      $('.product-detail-form').css('margin-bottom', '');
     }
   }
 }

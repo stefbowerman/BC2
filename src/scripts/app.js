@@ -2324,8 +2324,7 @@ var selectors = {
   itemRemove: '[data-ajax-cart-item-remove]',
   itemIncrement: '[data-ajax-cart-item-increment]',
   itemDecrement: '[data-ajax-cart-item-decrement]',
-  cartBadge: '[data-cart-badge]',
-  cartBadgeCount: '[data-cart-badge-count]'
+  cartBadge: '[data-cart-badge]'
 };
 
 var classes = {
@@ -2649,11 +2648,11 @@ var AJAXCart = function () {
 
   AJAXCart.prototype.updateCartCount = function updateCartCount(cart) {
 
-    this.$cartBadgeCount.html(cart.item_count);
-
     if (cart.item_count) {
+      this.$cartBadge.text(cart.item_count + ' ' + (cart.item_count == 1 ? 'Item' : 'Items'));
       this.$cartBadge.addClass(classes.cartBadgeHasItems);
     } else {
+      this.$cartBadge.text('');
       this.$cartBadge.removeClass(classes.cartBadgeHasItems);
     }
   };
@@ -2812,7 +2811,7 @@ var AJAXCart = function () {
 
 exports.default = AJAXCart;
 
-},{"./currency":8,"./images":9,"./shopifyAPI":24,"./utils":26}],4:[function(require,module,exports){
+},{"./currency":8,"./images":9,"./shopifyAPI":25,"./utils":27}],4:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3036,6 +3035,10 @@ var _header = require('./sections/header');
 
 var _header2 = _interopRequireDefault(_header);
 
+var _nav = require('./sections/nav');
+
+var _nav2 = _interopRequireDefault(_nav);
+
 var _footer = require('./sections/footer');
 
 var _footer2 = _interopRequireDefault(_footer);
@@ -3050,8 +3053,6 @@ var _mobileMenu2 = _interopRequireDefault(_mobileMenu);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// Sections
-// import SectionManager  from './sectionManager';
 (function ($) {
 
   // Sections Stuff 
@@ -3060,6 +3061,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   var sections = {};
 
   sections.header = new _header2.default($('[data-section-type="header"]'));
+  sections.nav = new _nav2.default($('[data-section-type="nav"]'));
   sections.footer = new _footer2.default($('[data-section-type="footer"]'));
   sections.ajaxCart = new _ajaxCart2.default($('[data-section-type="ajax-cart"]'));
   sections.mobileMenu = new _mobileMenu2.default($('[data-section-type="mobile-menu"]'));
@@ -3071,8 +3073,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
     },
     onViewTransitionOutDone: function onViewTransitionOutDone(url) {
       // Update the menu immediately or wait?
-      sections.header.deactivateMenuLinks();
-      sections.header.activateMenuLinkForUrl(url);
+      sections.nav.deactivateMenuLinks();
+      sections.nav.activateMenuLinkForUrl(url);
     },
     onViewChangeDOMUpdatesComplete: function onViewChangeDOMUpdatesComplete($responseHead, $responseBody) {
       window.scrollTop = 0;
@@ -3082,9 +3084,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
     }
   });
   // Misc Stuff
-
-  // Chosen JS plugin for select boxes
-  _utils2.default.chosenSelects();
 
   // Apply UA classes to the document
   _utils2.default.userAgentBodyClass();
@@ -3135,7 +3134,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   });
 })(jQuery);
 
-},{"./appRouter":6,"./sections/ajaxCart":15,"./sections/footer":19,"./sections/header":20,"./sections/mobileMenu":21,"./utils":26}],6:[function(require,module,exports){
+// Sections
+// import SectionManager  from './sectionManager';
+
+},{"./appRouter":6,"./sections/ajaxCart":15,"./sections/footer":19,"./sections/header":20,"./sections/mobileMenu":21,"./sections/nav":22,"./utils":27}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3345,7 +3347,7 @@ var AppRouter = function () {
 
 exports.default = AppRouter;
 
-},{"./views/base":27,"./views/cart":28,"./views/collection":29,"./views/index":30,"./views/product":31,"navigo":2}],7:[function(require,module,exports){
+},{"./views/base":28,"./views/cart":29,"./views/collection":30,"./views/index":31,"./views/product":32,"navigo":2}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3522,7 +3524,7 @@ exports.default = {
   }
 };
 
-},{"./utils":26}],9:[function(require,module,exports){
+},{"./utils":27}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3667,13 +3669,14 @@ var selectors = {
   productPrice: '[data-product-price]',
   singleOptionSelector: '[data-single-option-selector]',
   variantOptionValueList: '[data-variant-option-value-list][data-option-position]',
-  variantOptionValue: '[data-variant-option-value]',
-  quantitySelect: '[data-product-quantity-select]'
+  variantOptionValue: '[data-variant-option-value]'
 };
 
 var classes = {
   hide: 'hide',
   variantOptionValueActive: 'is-active',
+  variantOptionValueDisabled: 'is-disabled',
+  variantOptionValueNotHovered: 'is-not-hovered',
   zoomReady: 'is-zoomable',
   zoomedIn: 'is-zoomed',
   galleryReady: 'is-ready',
@@ -3703,7 +3706,9 @@ var ProductDetailForm = function () {
     this.events = {
       RESIZE: 'resize' + this.namespace,
       CLICK: 'click' + this.namespace,
-      READY: 'ready' + this.namespace
+      READY: 'ready' + this.namespace,
+      MOUSEENTER: 'mouseenter' + this.namespace,
+      MOUSELEAVE: 'mouseleave' + this.namespace
     };
 
     var ready = false;
@@ -3718,6 +3723,7 @@ var ProductDetailForm = function () {
         return;
       }
 
+      this.stickyMaxWidth = Breakpoints.getBreakpointMinWidth('sm') - 1;
       this.zoomMinWidth = Breakpoints.getBreakpointMinWidth('sm');
       this.settings = $.extend({}, defaults, config);
 
@@ -3749,8 +3755,6 @@ var ProductDetailForm = function () {
 
       this.productSingleObject = JSON.parse($(selectors.productJson, this.$container).html());
 
-      _utils2.default.chosenSelects(this.$container);
-
       var variantOptions = {
         $container: this.$container,
         enableHistoryState: this.settings.enableHistoryState,
@@ -3781,6 +3785,8 @@ var ProductDetailForm = function () {
       // See productVariants
       this.$container.on('variantChange' + this.namespace, this.onVariantChange.bind(this));
       this.$container.on(this.events.CLICK, selectors.variantOptionValue, this.onVariantOptionValueClick.bind(this));
+      this.$container.on(this.events.MOUSEENTER, selectors.variantOptionValue, this.onVariantOptionValueMouseenter.bind(this));
+      this.$container.on(this.events.MOUSELEAVE, selectors.variantOptionValue, this.onVariantOptionValueMouseleave.bind(this));
       $window.on('resize', $.throttle(50, this.onResize.bind(this)));
 
       this.onResize();
@@ -3797,10 +3803,7 @@ var ProductDetailForm = function () {
 
     this.updateProductPrices(variant);
     this.updateAddToCartState(variant);
-    this.updateQuantityDropdown(variant);
     this.updateVariantOptionValues(variant);
-
-    $(selectors.singleOptionSelector, this.$container).trigger('chosen:updated');
   };
 
   /**
@@ -3835,29 +3838,6 @@ var ProductDetailForm = function () {
   };
 
   /**
-   * Updates the disabled property of the quantity select based on the availability of the selected variant
-   *
-   * @param {Object} variant - Shopify variant object
-   */
-
-
-  ProductDetailForm.prototype.updateQuantityDropdown = function updateQuantityDropdown(variant) {
-
-    var $select = $(selectors.quantitySelect, this.$container);
-
-    // Close the dropdown while we make changes to it
-    $select.trigger('chosen:close');
-
-    if (variant && variant.available) {
-      $select.prop('disabled', false);
-    } else {
-      $select.prop('disabled', true);
-    }
-
-    $select.trigger('chosen:updated');
-  };
-
-  /**
    * Updates the DOM with specified prices
    *
    * @param {Object} variant - Shopify variant object
@@ -3870,10 +3850,10 @@ var ProductDetailForm = function () {
     var $compareEls = $comparePrice.add($(selectors.comparePriceText, this.$container));
 
     if (variant) {
-      $productPrice.html(_currency2.default.formatMoney(variant.price, theme.moneyFormat));
+      $productPrice.html(_currency2.default.stripZeroCents(_currency2.default.formatMoney(variant.price, theme.moneyFormat)));
 
       if (variant.compare_at_price > variant.price) {
-        $comparePrice.html(_currency2.default.formatMoney(variant.compare_at_price, theme.moneyFormat));
+        $comparePrice.html(_currency2.default.stripZeroCents(_currency2.default.formatMoney(variant.compare_at_price, theme.moneyFormat)));
         $compareEls.removeClass(classes.hide);
       } else {
         $comparePrice.html('');
@@ -3917,10 +3897,11 @@ var ProductDetailForm = function () {
 
 
   ProductDetailForm.prototype.onVariantOptionValueClick = function onVariantOptionValueClick(e) {
+    e.preventDefault();
 
     var $option = $(e.currentTarget);
 
-    if ($option.hasClass(classes.variantOptionValueActive)) {
+    if ($option.hasClass(classes.variantOptionValueActive) || $option.hasClass(classes.variantOptionValueDisabled) || $option.attr('disabled') != undefined) {
       return;
     }
 
@@ -3935,6 +3916,22 @@ var ProductDetailForm = function () {
     $option.siblings().removeClass(classes.variantOptionValueActive);
   };
 
+  ProductDetailForm.prototype.onVariantOptionValueMouseenter = function onVariantOptionValueMouseenter(e) {
+    var $option = $(e.currentTarget);
+    var $list = $option.parents(selectors.variantOptionValueList);
+
+    if ($option.hasClass(classes.variantOptionValueDisabled) || $option.attr('disabled') != undefined) return;
+
+    $list.find(selectors.variantOptionValue).not($option).addClass(classes.variantOptionValueNotHovered);
+  };
+
+  ProductDetailForm.prototype.onVariantOptionValueMouseleave = function onVariantOptionValueMouseleave(e) {
+    console.log('leave');
+    var $option = $(e.currentTarget);
+    var $list = $option.parents(selectors.variantOptionValueList);
+    $list.find(selectors.variantOptionValue).removeClass(classes.variantOptionValueNotHovered);
+  };
+
   ProductDetailForm.prototype.onResize = function onResize(e) {
     if (window.innerWidth >= this.zoomMinWidth) {
       this.productImageTouchZoomController.disable();
@@ -3944,6 +3941,12 @@ var ProductDetailForm = function () {
         this.productImageTouchZoomController.enable();
       }
     }
+
+    if (window.innerWidth < this.stickyMaxWidth) {
+      $('.product-detail-form').css('margin-bottom', $('.product-essential').outerHeight());
+    } else {
+      $('.product-detail-form').css('margin-bottom', '');
+    }
   };
 
   return ProductDetailForm;
@@ -3951,7 +3954,7 @@ var ProductDetailForm = function () {
 
 exports.default = ProductDetailForm;
 
-},{"../breakpoints":7,"../currency":8,"../utils":26,"./productImageDesktopZoomController":11,"./productImageTouchZoomController":12,"./productVariants":13}],11:[function(require,module,exports){
+},{"../breakpoints":7,"../currency":8,"../utils":27,"./productImageDesktopZoomController":11,"./productImageTouchZoomController":12,"./productVariants":13}],11:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4413,7 +4416,7 @@ var ProductVariants = function () {
 
 exports.default = ProductVariants;
 
-},{"../utils":26}],14:[function(require,module,exports){
+},{"../utils":27}],14:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4430,7 +4433,7 @@ exports.default = {
   test: _test2.default
 };
 
-},{"./sections/test":23}],15:[function(require,module,exports){
+},{"./sections/test":24}],15:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4749,13 +4752,10 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
 
 var selectors = {
-  header: '[data-header]',
-  mainMenu: '.main-menu'
+  header: '[data-header]'
 };
 
-var classes = {
-  menuLinkActive: 'is-active'
-};
+var classes = {};
 
 var HeaderSection = function (_BaseSection) {
   _inherits(HeaderSection, _BaseSection);
@@ -4768,43 +4768,8 @@ var HeaderSection = function (_BaseSection) {
     _this.$el = $(selectors.header, _this.$container);
     _this.name = 'header';
     _this.namespace = '.' + _this.name;
-    _this.$menu = _this.$el.find(selectors.mainMenu);
-    _this.$menuDirectLinks = _this.$menu.find('> li > a');
-
-    _this.$menu.on('mouseleave', _this.onMenuMouseleave.bind(_this));
-    _this.$menuDirectLinks.on('mouseenter', _this.onMenuLinkMouseenter.bind(_this));
-    _this.$menuDirectLinks.on('mouseleave', _this.onMenuLinkMouseleave.bind(_this));
     return _this;
   }
-
-  HeaderSection.prototype.activateMenuLinkForUrl = function activateMenuLinkForUrl(url) {
-    this.$menu.find('a').each(function (i, el) {
-      var $el = $(el);
-      var href = $el.attr('href');
-      if (href == url || url.indexOf(href) > -1) {
-        $el.addClass(classes.menuLinkActive);
-      }
-    });
-  };
-
-  HeaderSection.prototype.deactivateMenuLinks = function deactivateMenuLinks() {
-    this.$menu.find('.' + classes.menuLinkActive).removeClass(classes.menuLinkActive);
-  };
-
-  HeaderSection.prototype.onMenuMouseleave = function onMenuMouseleave(e) {
-    this.$menu.removeClass('has-hovered-link');
-    this.$menuDirectLinks.removeClass('is-hovered');
-  };
-
-  HeaderSection.prototype.onMenuLinkMouseenter = function onMenuLinkMouseenter(e) {
-    this.$menu.addClass('has-hovered-link');
-    $(e.currentTarget).addClass('is-hovered');
-  };
-
-  HeaderSection.prototype.onMenuLinkMouseleave = function onMenuLinkMouseleave(e) {
-    this.$menu.removeClass('has-hovered-link');
-    $(e.currentTarget).removeClass('is-hovered');
-  };
 
   return HeaderSection;
 }(_base2.default);
@@ -4912,7 +4877,108 @@ var MobileMenuSection = function (_BaseSection) {
 
 exports.default = MobileMenuSection;
 
-},{"../uiComponents/drawer":25,"./base":16}],22:[function(require,module,exports){
+},{"../uiComponents/drawer":26,"./base":16}],22:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _base = require('./base');
+
+var _base2 = _interopRequireDefault(_base);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
+
+var selectors = {
+  mainMenu: '.main-menu',
+  menuLink: '[data-menu-link]',
+  submenu: '[data-submenu]',
+  submenuTrigger: 'a[data-submenu-trigger]'
+};
+
+var classes = {
+  menuLinkActive: 'is-active',
+  menuLinkNotHovered: 'is-not-hovered',
+  submenuActive: 'is-active'
+};
+
+var NavSection = function (_BaseSection) {
+  _inherits(NavSection, _BaseSection);
+
+  function NavSection(container) {
+    _classCallCheck(this, NavSection);
+
+    var _this = _possibleConstructorReturn(this, _BaseSection.call(this, container));
+
+    _this.$menu = $(selectors.mainMenu, _this.$container);
+    _this.$menuLinks = $(selectors.menuLink, _this.$container);
+    _this.$submenuTriggers = $(selectors.submenuTrigger, _this.$container);
+    _this.$submenus = $(selectors.submenu, _this.$container);
+
+    if (Modernizr && Modernizr.touchevents) {
+      _this.$menu.on('click', selectors.submenuTrigger, _this.onSubmenuTriggerClick.bind(_this));
+    } else {
+      _this.$menuLinks.on('mouseenter', _this.onMenuLinkMouseenter.bind(_this));
+      _this.$menu.on('mouseleave', _this.onMenuMouseleave.bind(_this));
+    }
+    return _this;
+  }
+
+  NavSection.prototype.activateMenuLinkForUrl = function activateMenuLinkForUrl(url) {
+    this.$menu.find('a').each(function (i, el) {
+      var $el = $(el);
+      var href = $el.attr('href');
+      if (href == url || url.indexOf(href) > -1) {
+        $el.addClass(classes.menuLinkActive);
+      }
+    });
+  };
+
+  NavSection.prototype.deactivateMenuLinks = function deactivateMenuLinks() {
+    this.$menu.find('.' + classes.menuLinkActive).removeClass(classes.menuLinkActive);
+  };
+
+  NavSection.prototype.activateSubmenu = function activateSubmenu(id) {
+    this.$submenus.filter('#' + id).addClass(classes.submenuActive);
+  };
+
+  NavSection.prototype.onSubmenuTriggerClick = function onSubmenuTriggerClick(e) {
+    e.preventDefault();
+    // is active ? deactive : activate
+    this.$submenus.filter('#' + $(e.currentTarget).data('submenu-trigger')).toggleClass(classes.submenuActive);
+  };
+
+  NavSection.prototype.onMenuMouseleave = function onMenuMouseleave(e) {
+    this.$submenus.removeClass('is-active');
+    this.$menuLinks.removeClass(classes.menuLinkNotHovered);
+  };
+
+  NavSection.prototype.onMenuLinkMouseenter = function onMenuLinkMouseenter(e) {
+    var $link = $(e.currentTarget);
+    this.$submenus.removeClass(classes.submenuActive);
+    if ($link.is(selectors.submenuTrigger)) {
+      this.activateSubmenu($link.data('submenu-trigger'));
+    }
+    this.$menuLinks.removeClass(classes.menuLinkNotHovered);
+    this.$menuLinks.not($link).addClass(classes.menuLinkNotHovered);
+    // store the active submenu in a variable so we can check if the trigger is for that menu
+  };
+
+  return NavSection;
+}(_base2.default);
+
+exports.default = NavSection;
+
+},{"./base":16}],23:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4987,7 +5053,7 @@ var ProductSection = function (_BaseSection) {
 
 exports.default = ProductSection;
 
-},{"../product/productDetailForm":10,"../uiComponents/drawer":25,"./base":16}],23:[function(require,module,exports){
+},{"../product/productDetailForm":10,"../uiComponents/drawer":26,"./base":16}],24:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5029,7 +5095,7 @@ var TestSection = function (_BaseSection) {
 
 exports.default = TestSection;
 
-},{"./base":16}],24:[function(require,module,exports){
+},{"./base":16}],25:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5126,7 +5192,7 @@ exports.default = {
   }
 };
 
-},{}],25:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5315,7 +5381,7 @@ var Drawer = function () {
 
 exports.default = Drawer;
 
-},{"../utils":26}],26:[function(require,module,exports){
+},{"../utils":27}],27:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5681,7 +5747,7 @@ exports.default = {
   }
 };
 
-},{}],27:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5773,7 +5839,7 @@ var BaseView = function () {
 
 exports.default = BaseView;
 
-},{"../sectionConstructorDictionary":14,"../sections/base":16}],28:[function(require,module,exports){
+},{"../sectionConstructorDictionary":14,"../sections/base":16}],29:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5817,7 +5883,7 @@ var CartView = function (_BaseView) {
 
 exports.default = CartView;
 
-},{"../sections/cart":17,"./base":27}],29:[function(require,module,exports){
+},{"../sections/cart":17,"./base":28}],30:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5866,7 +5932,7 @@ var CollectionView = function (_BaseView) {
 
 exports.default = CollectionView;
 
-},{"../sections/collection":18,"./base":27}],30:[function(require,module,exports){
+},{"../sections/collection":18,"./base":28}],31:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5912,7 +5978,7 @@ var IndexView = function (_BaseView) {
 
 exports.default = IndexView;
 
-},{"../sections/base":16,"./base":27}],31:[function(require,module,exports){
+},{"../sections/base":16,"./base":28}],32:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5973,4 +6039,4 @@ var ProductView = function (_BaseView) {
 
 exports.default = ProductView;
 
-},{"../sections/product":22,"./base":27}]},{},[5]);
+},{"../sections/product":23,"./base":28}]},{},[5]);

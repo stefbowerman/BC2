@@ -39,27 +39,6 @@
   line-height: $line-height-h6;
 }
 
-@mixin p1 {
-  font-size: $font-size-p1;
-  letter-spacing: $letter-spacing-p1;
-  line-height: $line-height-p1;
-  font-weight: $font-weight-p1;
-}
-
-@mixin p2 {
-  font-size: $font-size-p2;
-  letter-spacing: $letter-spacing-p2;
-  line-height: $line-height-p2;
-  font-weight: $font-weight-p2;
-}
-
-@mixin p3 {
-  font-size: $font-size-p3;
-  letter-spacing: $letter-spacing-p3;
-  line-height: $line-height-p3;
-  font-weight: $font-weight-p3;
-}
-
 // RTE styling for long form content
 @mixin article-content {
   h1, h2, h3, h4, h5, h6 {

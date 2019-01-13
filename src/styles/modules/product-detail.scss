@@ -17,16 +17,15 @@ body.template-product .layout-content-wrapper {
     margin-bottom: 0;
   }
 
-  @media (max-width: $screen-sm-max) {
-    margin-bottom: 250px;
-  }
+  // @media (max-width: $screen-sm-max) {
+  //   margin-bottom: 250px;
+  // }
 }
 
 // Essential
 // --------------------------------------------------------
 
 .product-essential {
-
   position: fixed;
   bottom: 0;
   left: 0;
@@ -84,6 +83,7 @@ body.template-product .layout-content-wrapper {
   margin: 0 -25px;
   padding: 0 25px;
   border-bottom: 1px solid #e1e1e1;
+  font-size: $font-size-small;
 }
 
 .sticky-row__entry {
@@ -190,6 +190,12 @@ body.template-product .layout-content-wrapper {
     .product-gallery.is-zoomed & {
       max-width: 90%;
     }     
+  }
+
+  @media (min-width: $screen-xl-min) {
+   .product-gallery.is-zoomed & {
+      max-width: 1200px;
+    } 
   }
   
   // Lazy loaded

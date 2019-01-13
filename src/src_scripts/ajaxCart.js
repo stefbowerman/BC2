@@ -21,8 +21,7 @@ const selectors = {
   itemRemove: '[data-ajax-cart-item-remove]',
   itemIncrement: '[data-ajax-cart-item-increment]',
   itemDecrement: '[data-ajax-cart-item-decrement]',
-  cartBadge: '[data-cart-badge]',
-  cartBadgeCount: '[data-cart-badge-count]'
+  cartBadge: '[data-cart-badge]'
 };
 
 const classes = {
@@ -333,12 +332,12 @@ export default class AJAXCart {
   */
   updateCartCount(cart) {
 
-    this.$cartBadgeCount.html(cart.item_count);
-
     if(cart.item_count) {
+      this.$cartBadge.text(cart.item_count + ' ' + (cart.item_count == 1 ? 'Item' : 'Items'));
       this.$cartBadge.addClass(classes.cartBadgeHasItems);
     }
     else {
+      this.$cartBadge.text('');
       this.$cartBadge.removeClass(classes.cartBadgeHasItems);
     }
   }

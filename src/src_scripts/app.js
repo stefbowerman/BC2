@@ -4,6 +4,7 @@ import AppRouter from './appRouter';
 // Sections
 // import SectionManager  from './sectionManager';
 import HeaderSection     from './sections/header';
+import NavSection        from './sections/nav';
 import FooterSection     from './sections/footer';
 import AJAXCartSection   from './sections/ajaxCart';
 import MobileMenuSection from './sections/mobileMenu';
@@ -17,6 +18,7 @@ import MobileMenuSection from './sections/mobileMenu';
   const sections = {};
 
   sections.header     = new HeaderSection(     $('[data-section-type="header"]')     );
+  sections.nav        = new NavSection(        $('[data-section-type="nav"]')     );
   sections.footer     = new FooterSection(     $('[data-section-type="footer"]')     );
   sections.ajaxCart   = new AJAXCartSection(   $('[data-section-type="ajax-cart"]')  );
   sections.mobileMenu = new MobileMenuSection( $('[data-section-type="mobile-menu"]'));
@@ -28,8 +30,8 @@ import MobileMenuSection from './sections/mobileMenu';
     },
     onViewTransitionOutDone: (url) => {
       // Update the menu immediately or wait?
-      sections.header.deactivateMenuLinks();
-      sections.header.activateMenuLinkForUrl(url); 
+      sections.nav.deactivateMenuLinks();
+      sections.nav.activateMenuLinkForUrl(url); 
     },
     onViewChangeDOMUpdatesComplete: ($responseHead, $responseBody) => {
       window.scrollTop = 0;
@@ -39,9 +41,6 @@ import MobileMenuSection from './sections/mobileMenu';
     }
   });
   // Misc Stuff
-
-  // Chosen JS plugin for select boxes
-  Utils.chosenSelects();
 
   // Apply UA classes to the document
   Utils.userAgentBodyClass();    

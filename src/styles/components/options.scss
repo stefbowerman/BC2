@@ -1,0 +1,49 @@
+// -------------------------
+// Options
+// -------------------------
+
+.option-value-list {
+  font-size: $font-size-xsmall;
+  margin-left: -3px;
+  margin-right: -3px;
+}
+
+.option-value {
+  display: inline-block;
+  position: relative;
+  margin: 0 3px;
+
+  &:after {
+    content: '';
+    position: absolute;
+    left: 1px;
+    right: 1px;
+    bottom: 0;
+    border-bottom: 1px solid transparent;
+    @include transition(border-bottom-color 150ms ease-in-out);
+  }
+
+  &.is-disabled {
+    cursor: $cursor-disabled;
+    // opacity: 0.2;
+
+    &:after {
+      border-bottom-color: $color-black;
+      bottom: 45%;
+    }
+  }
+
+  &.is-active {
+    &:after {
+      border-bottom-color: $color-black;
+    }
+  }
+
+  // @TODO - move this stuff to vars?  It's shared between here and the nav links
+  @include transition(opacity 200ms ease-in);
+
+  &.is-not-hovered {
+    opacity: 0.2;
+    @include transition(opacity 100ms ease-in);
+  }
+}
