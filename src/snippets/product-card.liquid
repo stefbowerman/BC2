@@ -41,41 +41,41 @@
                 <img src="{{ product.featured_image.src | img_url: product_image_dimension }}" alt="{{ product.featured_image.alt | escape }}">
               </div>
             {% endif %}
-            {% if product.images.size > 1 %}
-              {% assign alternate_image = product.images[1] %}
-              {% comment %} Alt product image always gets lazy loaded {% endcomment %}
-              <div class="product-card__gallery-image product-card__gallery-image--alt">
-                <img data-src="{{ alternate_image.src | img_url: product_image_dimension }}" alt="{{ alternate_image.alt | escape }}" data-product-card-alt-lazy />
-              </div>
-            {% endif %}
           </a>
         </div>
       {% endif %}
 
       <div class="product-card__info">
 
-        <h3 class="product-card__info-title">
+        <p class="product-card__info-title">
           <a href="{{ product_url }}">{{ product.title }}</a>
-        </h3>
+        </p>
 
-        <div class="product-card__info-price">
+        <p class="product-card__info-price" style="display: none;">
 
-          {% if product.compare_at_price > product.price %}
-            <span class="visually-hidden">{{ 'products.product.regular_price' | t }}</span>
-            <s>{{ product.compare_at_price | money }}</s>
-          {% endif %}
+          {% if product.available %}
+            {% if product.compare_at_price > product.price %}
+              <span class="visually-hidden">{{ 'products.product.regular_price' | t }}</span>
+              <s>{{ product.compare_at_price | money_without_trailing_zeros }}</s>
+            {% endif %}
 
-          {% if product.price_varies %}
-            {%- assign price = product.price | money -%}
-            {{ 'products.product.from_text_html' | t: price: price }}
+            {% if product.price_varies %}
+              {%- assign price = product.price | money -%}
+              {{ 'products.product.from_text_html' | t: price: price }}
+            {% else %}
+              {{ product.price | money_without_trailing_zeros }}
+            {% endif %}
           {% else %}
-            {{ product.price | money }}
-          {% endif %}
-
-          {% unless product.available %}
             {{ 'products.product.sold_out' | t }}
-          {% endunless %}
-        </div>
+          {% endif %}
+        </p>
+
+        {% for option in product.options_with_values %}
+          {% assign option_name_upcase = option.name | upcase | strip %}        
+          {% if option_name_upcase == "COLOR" and option.values.size > 1 %}
+            <p class="u-fs-xsmall">{{ option.values.size }} Colors Available</p>
+          {% endif %}
+        {% endfor %}
       </div>
     </div>
 

@@ -10,6 +10,7 @@
 $color-black:       #111;
 $color-dark-grey:   #333;
 $color-grey:        #CCC;
+$color-off-white:   #EAEAEA;
 $color-white:       #FFF;
 
 // Main Colors
@@ -45,7 +46,7 @@ $font-size-base:            0.875rem !default; // set to `14px`
 $font-size-large:           $font-size-base * 1.25;
 $font-size-medium:          $font-size-base * 1.125;
 $font-size-small:           $font-size-base * 0.875;
-$font-size-xsmall:          $font-size-base * 0.75;
+$font-size-xsmall:          $font-size-base * 0.789;
 $font-size-h1:              $font-size-base * 2.5;
 $font-size-h2:              $font-size-base * 2;
 $font-size-h3:              $font-size-base * 1.75;
@@ -154,12 +155,12 @@ $btn-default-hover-color:        $color-black !default;
 $btn-default-hover-bg:           darken($color-white, 9%) !default;
 $btn-default-hover-border:       $color-black !default;
 
-$btn-primary-color:              $color-white !default;
-$btn-primary-bg:                 $color-primary !default;
-$btn-primary-border:             $color-primary !default;
-$btn-primary-hover-color:        $color-white !default;
-$btn-primary-hover-bg:           darken($color-primary, 9%) !default;
-$btn-primary-hover-border:       $color-primary !default;
+$btn-primary-color:              $color-black !default;
+$btn-primary-bg:                 $color-white !default;
+$btn-primary-border:             $color-black !default;
+$btn-primary-hover-color:        $color-black !default;
+$btn-primary-hover-bg:           darken($color-white, 9%) !default;
+$btn-primary-hover-border:       $color-black !default;
 
 $btn-secondary-color:            $color-white !default;
 $btn-secondary-bg:               $color-black !default;
@@ -175,8 +176,8 @@ $btn-border-radius-base:         0 !default;
 $btn-border-radius-large:        0 !default;
 $btn-border-radius-small:        0 !default;
 
-$btn-padding-base-vertical:      0.75rem !default;
-$btn-padding-base-horizontal:    3rem !default;
+$btn-padding-base-vertical:      0.55rem !default;
+$btn-padding-base-horizontal:    2.3rem !default;
 
 /*================ Forms ================*/
 
@@ -356,9 +357,9 @@ $dl-horizontal-offset:        $component-offset-horizontal !default;
 //** Point at which .dl-horizontal becomes horizontal
 $dl-horizontal-breakpoint:    $grid-float-breakpoint !default;
 //** Horizontal line color.
-$hr-border-color:             $color-black !default;
-$hr-border-width:             2px;
-$hr-margin-y:                 2rem;
+$hr-border-color:             $color-off-white !default;
+$hr-border-width:             1px;
+$hr-margin-y:                 1.5rem;
 
 $breadcrumb-separator:        "\007c";
 
@@ -466,8 +467,6 @@ $ajax-cart-backdrop-color:              $drawer-backdrop-color;
 $ajax-cart-backdrop-opacity:            $drawer-backdrop-opacity;
 
 // #Product Card
-$product-card-title-size:               $font-size-large;
-$product-card-price-size:               $font-size-small;
 $product-card-text-align:               center;
 
 // #Content Card

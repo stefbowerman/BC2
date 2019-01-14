@@ -9,37 +9,12 @@ slate.productCard = (function() {
   var selectors = {
     el: '[data-product-card]',
     gallery: '[data-product-card-gallery]',
-    mainLazyImg: '[data-product-card-main-lazy]',
-    altLazyImg: '[data-product-card-alt-lazy]'
+    mainLazyImg: '[data-product-card-main-lazy]'
   };
 
   var classes = {
-    mainLoaded: 'is-loaded',
-    altLoaded: 'alt-loaded' // added to the product card once the alt image is loaded to avoid a flash of white while loading
+    mainLoaded: 'is-loaded'
   };
- 
-  var events = window.PointerEvent ? {
-              end:   "pointerup",
-              enter: "pointerenter",
-              leave: "pointerleave"
-            } : {
-              end: "touchend",
-              enter: "mouseenter",
-              leave: "mouseleave"
-            };
-
-  function onEnter(e) {
-    var $productCard = $(e.currentTarget);
-    var $lazyImg = $productCard.find( selectors.altLazyImg );
-
-    if($lazyImg.length) {
-      $lazyImg.on('load', function() {
-        $productCard.addClass(classes.altLoaded);
-      });
-      $lazyImg.attr('src', $lazyImg.data('src'));
-      $lazyImg.removeAttr('data-src');
-    }
-  }
 
   $(document).ready(function() {
 
@@ -48,8 +23,6 @@ slate.productCard = (function() {
     if(!$productCards.length) {
       return;
     }
-
-    $productCards.one(events.enter, onEnter);
 
     // Unveil plugin to lazy load main product card images
     $(selectors.mainLazyImg).unveil(200, function() {

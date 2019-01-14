@@ -7,9 +7,9 @@ import ProductView    from './views/product';
 import CollectionView from './views/collection';
 import CartView       from './views/cart';
 
-// TODO - Move the loader and main content bits to variables that get passed in
+// TODO - Move the loader and view-container bits to variables that get passed in
 const $body = $(document.body);
-const $mainContent = $('#MainContent');
+const $viewContainer = $('#view-container');
 const $loader = $('#loader');
 const TEMPLATE_REGEX = /(^|\s)template-\S+/g;
 let firstRoute = true;
@@ -86,7 +86,7 @@ export default class AppRouter {
     const viewConstructor = this.viewConstructors[type] || BaseView;
 
     if(firstRoute) {
-      this.currentView = new viewConstructor($mainContent);   
+      this.currentView = new viewConstructor($viewContainer);   
       firstRoute = false;
       return;
     }
@@ -134,11 +134,11 @@ export default class AppRouter {
     const $responseHead = $responseHtml.find('head');
     const $responseBody = $responseHtml.find('body');
 
-    const $dom  = $responseBody.find('#MainContent .layout-main-content');
+    const $dom  = $responseBody.find('#view-content');
 
     // Do DOM updates
     document.title = $responseHead.find('title').text();
-    $mainContent.find('.layout-main-content').replaceWith($dom);
+    $viewContainer.find('#view-content').replaceWith($dom);
     $body.removeClass((i, classname) => {
       return (classname.match(TEMPLATE_REGEX) || []).join(' ');
     });
@@ -155,9 +155,9 @@ export default class AppRouter {
 
     this.settings.onViewChangeDOMUpdatesComplete($responseHead, $responseBody);
 
-    this.currentView = new viewConstructor($mainContent);
+    this.currentView = new viewConstructor($viewContainer);
 
-    $mainContent.imagesLoaded(() => {
+    $viewContainer.imagesLoaded(() => {
       $loader.removeClass('is-visible');
       this.currentView.transitionIn();
     });

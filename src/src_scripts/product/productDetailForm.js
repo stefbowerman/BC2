@@ -14,8 +14,8 @@ const selectors = {
   priceWrapper: '[data-price-wrapper]',
   productZoomButton: '[data-zoom-button]',
 
+  galleriesWrapper: '[data-galleries-wrapper]',
   gallery: '[data-gallery]',
-  galleryItem: '[data-gallery-item]',
   galleryImage: '[data-gallery-image]',
 
   productJson: '[data-product-json]',
@@ -27,12 +27,13 @@ const selectors = {
 
 const classes = {
   hide: 'hide',
-  variantOptionValueActive: 'is-active',
+  variantOptionValueSelected: 'is-selected',
   variantOptionValueDisabled: 'is-disabled',
   variantOptionValueNotHovered: 'is-not-hovered',
   zoomReady: 'is-zoomable',
   zoomedIn: 'is-zoomed',
-  galleryReady: 'is-ready',
+  galleriesAreReady: 'is-ready',
+  galleryActive: 'is-active',
   galleryImageLoaded: 'is-loaded'
 };
 
@@ -74,6 +75,7 @@ export default class ProductDetailForm {
 
       this.stickyMaxWidth = Breakpoints.getBreakpointMinWidth('sm') - 1;
       this.zoomMinWidth = Breakpoints.getBreakpointMinWidth('sm');
+      this.transitionEndEvent = Utils.whichTransitionEnd();
       this.settings = $.extend({}, defaults, config);
 
       if (!this.settings.$el || this.settings.$el == undefined) {
@@ -98,8 +100,8 @@ export default class ProductDetailForm {
       // this.$productPrice               = $(selectors.productPrice, this.$container);
       // this.$comparePrice               = $(selectors.comparePrice, this.$container);
       // this.$comparePriceText           = $(selectors.comparePriceText, this.$container);
-      this.$gallery              = $(selectors.gallery, this.$container);
-      this.$galleryItems         = $(selectors.galleryItem, this.$container);
+      this.$galleriesWrapper     = $(selectors.galleriesWrapper, this.$container);
+      this.$galleries            = $(selectors.gallery, this.$container); // can have multiple
       this.$galleryImages        = $(selectors.galleryImage, this.$container);      
 
       this.productSingleObject  = JSON.parse($(selectors.productJson, this.$container).html());
@@ -116,12 +118,9 @@ export default class ProductDetailForm {
       this.productImageTouchZoomController = new ProductImageTouchZoomController(this.$container);
       this.productImageDesktopZoomController = new ProductImageDesktopZoomController(this.$container);
 
-      // this.productImageTouchZoomController.enable();
-
-      // console.log(this);
-
-      this.$galleryImages.first().imagesLoaded(() => {
-        this.$gallery.addClass(classes.galleryReady);
+      // Do images loaded check on the first active gallery
+      this.$galleries.filter(`.${classes.galleryActive}`).find(selectors.galleryImage).first().imagesLoaded(() => {
+        this.$galleriesWrapper.addClass(classes.galleriesAreReady);
       });
 
       this.$galleryImages.unveil(200, function() {
@@ -153,6 +152,7 @@ export default class ProductDetailForm {
     this.updateProductPrices(variant);
     this.updateAddToCartState(variant);
     this.updateVariantOptionValues(variant);
+    this.updateGalleries(variant);
   }
 
   /**
@@ -225,8 +225,46 @@ export default class ProductDetailForm {
         var $variantOptionValueList = $(selectors.variantOptionValueList, this.$container).filter('[data-option-position="'+i+'"]');
         var $variantOptionValueUI = $('[data-variant-option-value="'+variantOptionValue+'"]', $variantOptionValueList);
 
-        $variantOptionValueUI.addClass( classes.variantOptionValueActive );
-        $variantOptionValueUI.siblings().removeClass( classes.variantOptionValueActive );
+        $variantOptionValueUI.addClass( classes.variantOptionValueSelected );
+        $variantOptionValueUI.siblings().removeClass( classes.variantOptionValueSelected );
+      }
+    }
+  }
+
+  /**
+   * If there are multiple galleries, look for a gallery matching one of the selected variant's options and switch to that gallery
+   *
+   * @param {Object} variant - Shopify variant object
+   */
+  updateGalleries(variant) {
+    if(!variant || this.$galleries.length == 1) return;
+
+    const self = this;
+    const $activeGalleries = this.$galleries.filter(`.${classes.galleryActive}`);
+    
+    function getVariantGalleryForOption(option) {
+      return self.$galleries.filter(function() {
+        return $(this).data('variant-option-gallery') == option;
+      });
+    }
+
+    for (var i = 3; i >= 1; i--) {
+      const $vGallery = getVariantGalleryForOption(variant['option' + i]);
+
+      if ($vGallery.length && !$vGallery.hasClass(classes.galleryActive)) {
+        
+        // Do the hiding / showing of the correct gallery
+        $activeGalleries.first().one(this.transitionEndEvent, () => {
+          $activeGalleries.css('display', 'none');
+          this.productImageDesktopZoomController.zoomOut();
+          $window.scrollTop(0);
+          $vGallery.css('display', 'block');
+          void $vGallery.get(0).offsetWidth;
+          $vGallery.addClass(classes.galleryActive);
+        });
+
+        $activeGalleries.removeClass(classes.galleryActive);
+        break;
       }
     }
   }
@@ -242,7 +280,7 @@ export default class ProductDetailForm {
 
     const $option = $(e.currentTarget);
 
-    if ($option.hasClass(classes.variantOptionValueActive) || $option.hasClass(classes.variantOptionValueDisabled) || $option.attr('disabled') != undefined) {
+    if ($option.hasClass(classes.variantOptionValueSelected) || $option.hasClass(classes.variantOptionValueDisabled) || $option.attr('disabled') != undefined) {
       return;
     }
 
@@ -253,8 +291,8 @@ export default class ProductDetailForm {
     $selector.val(value);
     $selector.trigger('change');
 
-    $option.addClass(classes.variantOptionValueActive);
-    $option.siblings().removeClass( classes.variantOptionValueActive );      
+    $option.addClass(classes.variantOptionValueSelected);
+    $option.siblings().removeClass( classes.variantOptionValueSelected );      
   }
 
   onVariantOptionValueMouseenter(e) {

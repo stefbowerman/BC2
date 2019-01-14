@@ -114,6 +114,7 @@ body.is-loading {
       image: url({{ 'circumflex.png' | asset_url }});
       size: contain;
       repeat: no-repeat;
+      position: center;
     }
     @include translate(-50%, -50%);
   }

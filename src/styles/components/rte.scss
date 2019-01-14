@@ -16,7 +16,13 @@
 
   ul,
   ol {
-    margin: 0 0 ($grid-gutter-width / 2) $grid-gutter-width;
+    // margin: 0 0 ($grid-gutter-width / 2) $grid-gutter-width;
+    margin: 0 0 $spacer 0;
+    padding-left: $spacer * 2;
+
+    li:not(:last-child) {
+      margin-bottom: 4px;
+    }
   }
 
   // Match the styles from RTE nested lists
@@ -30,6 +36,11 @@
         list-style: square outside;
       }
     }
+  }
+
+  p + ul,
+  p + ol {
+    margin-top: -2px;
   }
 }
 

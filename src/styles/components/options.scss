@@ -33,7 +33,7 @@
     }
   }
 
-  &.is-active {
+  &.is-selected {
     &:after {
       border-bottom-color: $color-black;
     }

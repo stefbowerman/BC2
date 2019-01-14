@@ -76,34 +76,30 @@
 
 <body id="{{ page_title | handle }}" class="{{ body_class | strip | strip_newlines }}">
 
-  <script type="text/javascript">document.body.className += ' is-loading';</script>
+  <div class="wrap">
 
-  <a class="in-page-link visually-hidden skip-link" href="#MainContent">{{ 'general.accessibility.skip_to_content' | t }}</a>
+    <script type="text/javascript">document.body.className += ' is-loading';</script>
 
-  <div id="loader"></div>
+    <a class="in-page-link visually-hidden skip-link" href="#MainContent">{{ 'general.accessibility.skip_to_content' | t }}</a>
 
-  {% include 'title' %}
+    <div id="loader"></div>
 
-  {% section 'mobile-menu' %}
+    {% include 'title' %}
 
-  <div class="layout-wrapper">
-
+    {% section 'mobile-menu' %}
     {% section 'header' %}
     {% section 'nav' %}
 
-    <main role="main" id="MainContent">
-      <div class="layout-main-content">
+    <main id="view-container" class="view-container" role="main">
+      <div id="view-content" class="view-content">
         {{ content_for_layout }}
       </div>
     </main>
 
     {% section 'footer' %}
+    {% section 'ajax-cart' %}
 
   </div>
-
-  {% unless template == 'cart' %}
-    {% section 'ajax-cart' %}
-  {% endunless %}
 
 </body>
 </html>

@@ -4,6 +4,8 @@
 
 .product-card {
   height: 100%;
+  max-width: 400px;
+  margin: 0 auto;
 }
 
 .product-card__gallery {
@@ -21,20 +23,6 @@
   }
 }
 
-.product-card__gallery-image--alt {
-  @include stretch-within;
-  background: $body-bg;
-  opacity: 0;
-  @include transition(opacity $transition-timing-function-out $transition-duration-base);
-
-  // We add the class 'alt-loaded' to the product card so we know it's safe to display the alt image
-  .product-card.alt-loaded:hover &,
-  .product-card.alt-loaded:focus & {
-    opacity: 1;
-    @include transition(opacity $transition-timing-function-in $transition-duration-fast);    
-  }
-}
-
 .product-card__gallery-placeholder {
   @include stretch-within;
   background: $body-bg;
@@ -44,12 +32,32 @@
   .is-loaded & {
     opacity: 0;
     pointer-events: none;
-    @include transition(opacity $transition-timing-function-out $transition-duration-base);
+    @include transition(opacity $transition-duration-base $transition-timing-function-out);
   }
 }
 
 .product-card__info {
+  font-size: $font-size-small;
   text-align: $product-card-text-align;
+
+  p {
+    margin-bottom: 0;
+
+    & + p {
+      margin-top: 2px;
+    }
+  }
+}
+
+html:not(.touchevents) {
+  .product-card__info {
+    opacity: 0;
+    @include transition(opacity $transition-duration-fast $transition-timing-function-base);
+  }
+
+  .product-card:hover .product-card__info {
+    opacity: 1;
+  }
 }
 
 .product-card__info-title,
@@ -58,11 +66,10 @@
 }
 
 .product-card__info-title {
-  font-size: $product-card-title-size;
+  font-weight: bold;
 }
 
 .product-card__info-price {
-  font-size: $product-card-price-size;
   
   // Grey out crossed out price
   s {

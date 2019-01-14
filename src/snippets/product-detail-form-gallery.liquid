@@ -5,26 +5,84 @@
 
   {% include 'product-detail-form-gallery',
               product: { product } - required
-  %}  
-
-  Requires:
-  - product.liquid
-  - product-detail.scss
-  - product.js
-  - slate/slideshow.js
+  %}
 
 {% endcomment -%}
 
 {% assign photo_main_dimension = '2000x2000' %}
 
-<div class="product-gallery" data-gallery>
-  <ul class="product-gallery__list">
-    {% for image in product.images %}
-      <li class="product-gallery__item" data-image="{{ image.id }}" data-gallery-item>   
-        <img {% if forloop.index0 == 0 %}src={% else %}data-src={% endif%}"{{ image | img_url: photo_main_dimension }}" alt="{{ image.alt | escape }}" class="product-gallery__image" data-gallery-image>
-      </li>
+{% comment %}
+  This block of logic loops through all product images and checks if we have at least 1 with valid alt text for *each* color option.
+{% endcomment %}
+{% assign color_galleries_possible = false %}
+
+{% for option in product.options_with_values %}
+  {% assign option_name_upcase = option.name | upcase %}
+  {% if option_name_upcase == "COLOR" %}
+    {% assign colors_with_images = 0 %}
+    {% for color in option.values %}
+      {% assign color_upcase = color | upcase %}
+      {% for image in product.images %}
+        {% assign image_alt_upcase = image.alt | upcase %}
+        {% if image_alt_upcase contains color_upcase %}
+          {% assign colors_with_images = colors_with_images | plus: 1 %}
+          {% break %}
+        {% endif %}
+      {% endfor %}
     {% endfor %}
-  </ul>
+    {% if colors_with_images == option.values.size %}
+      {% assign color_galleries_possible = true %}
+    {% endif %}
+  {% endif %}
+{% endfor %}
+
+<div class="product-galleries-wrapper" data-galleries-wrapper>
+  {% if color_galleries_possible %}
+
+    {% comment %} Make a gallery for each variant {% endcomment %}
+    {% for option in product.options_with_values %}
+      {% assign option_name_upcase = option.name | upcase %}
+      {% if option_name_upcase == "COLOR" %}
+        {% for color in option.values %}
+          {% assign color_upcase = color | upcase %}
+
+          <div class="product-gallery {% if forloop.index0 == 0 %}is-active{% endif %}" {% if forloop.index0 != 0 %}style="display: none"{% endif %} data-gallery data-variant-option-gallery="{{ color }}">
+            <ul class="product-gallery__list">
+              {% assign outputted_image_count = 0 %}
+              {% for image in product.images %}
+                {% assign image_alt_upcase = image.alt | upcase %}
+                {% comment %} Looking for an exact match here {% endcomment %}
+                {% if image_alt_upcase contains color_upcase %}            
+                  <li class="product-gallery__item" data-image="{{ image.id }}" data-gallery-item>   
+                    <img {% if outputted_image_count == 0 %}src={% else %}data-src={% endif%}"{{ image | img_url: photo_main_dimension }}" 
+                         alt="{{ image.alt | escape }}"
+                         class="product-gallery__image"
+                         data-gallery-image>
+                  </li>
+                  {% assign outputted_image_count = outputted_image_count | plus: 1 %}
+                {% endif %}
+              {% endfor %}
+            </ul>
+          </div>
+
+        {% endfor %}
+      {% endif %}
+    {% endfor %}
+
+  {% else %}
+
+    {% comment %} Make one gallery for the product {% endcomment %}
+    <div class="product-gallery is-active" data-gallery>
+      <ul class="product-gallery__list">
+        {% for image in product.images %}
+          <li class="product-gallery__item" data-image="{{ image.id }}" data-gallery-item>   
+            <img {% if forloop.index0 == 0 %}src={% else %}data-src={% endif%}"{{ image | img_url: photo_main_dimension }}" alt="{{ image.alt | escape }}" class="product-gallery__image" data-gallery-image>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+
+  {% endif %}
 </div>
 
 <div class="blowup" data-blowup>

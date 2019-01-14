@@ -29,9 +29,26 @@
   {% include 'product-detail-form-size-guide-drawer', product: product %}
 {% endcapture %}
 
-{% assign selection_required = true %}
-{% if product.available and product.variants.size == 1 %}
-  {% assign selection_required = false %}
+{% comment %}
+  If the product has variants for something other than color, force selection
+  We don't care about color because it's very obvious what color is being selected
+  if a product comes in color and size, we want the selection required text to just say "Select Size"
+{% endcomment %}
+{% assign selection_required = false %}
+{% assign non_color_variant_options_count = 0 %}
+{% assign single_non_color_variant_option_name = '' %}
+{% for option in product.options_with_values %}
+  {% assign option_name_upcase = option.name | upcase %}
+  {% if option_name_upcase != "COLOR" and option.values.size > 1 %}
+    {% assign selection_required = true %}
+    {% assign single_non_color_variant_option_name = option.name %}
+    {% assign non_color_variant_options_count = non_color_variant_options_count | plus: 1 %}
+  {% endif %}
+{% endfor %}
+
+{% assign selection_required_text = 'products.product.select_options' | t %}
+{% if non_color_variant_options_count == 1 %}
+  {% assign selection_required_text = 'Select ' | append: single_non_color_variant_option_name %}
 {% endif %}
 
 <div class="product-detail-form" data-product-detail-form>
@@ -41,13 +58,23 @@
 
     <div class="product-essential" data-product-essential>
 
-      <div class="hidden-xs">
-        {% include 'product-detail-price', product: product, current_variant: current_variant %}
-        <h1 class="h4">{{ product.title }}</h1>
+      <div class="pdf-spaced-el hidden-xs">
+        <div class="pdf-price">
+          {% include 'product-detail-price', product: product, current_variant: current_variant %}
+        </div>
+      </div>
+      <div class="pdf-spaced-el hidden-xs">
+        <h1 class="pdf-title">{{ product.title }}</h1>
+        {% if product.metafields.subtitle.text %}
+          <h3 class="pdf-subtitle">{{ product.metafields.subtitle.text }}</h3>
+        {% endif %}
+      </div>
+      <div class="pdf-spaced-el hidden-xs hidden-sm">
+        <div class="pdf-description rte">{{ product.description }}</div>
       </div>
 
-      <div class="hidden-xs hidden-sm">
-        <div class="pdf-description">{{ product.description }}</div>
+      <div class="hidden-xs">
+        <hr />
       </div>
 
       {% comment %} Sticky row {% endcomment %}
@@ -71,7 +98,15 @@
               {% unless product.has_only_default_variant %}
                 {% for option in product.options_with_values %}
                   
-                  {% assign option_name_downcase = option.name | downcase %}
+                  {% assign option_name_upcase = option.name | upcase %}
+                  {% assign is_color = false %}
+                  {% assign is_size  = false %}
+                  {% if option_name_upcase == "COLOR" %}
+                    {% assign is_color = true %}
+                  {% endif %}
+                  {% if option_name_upcase == "SIZE" %}
+                    {% assign is_size = true %}
+                  {% endif %}
 
                   {% capture option_alt_ui %}
                     <div class="option-value-list" data-option-position="{{ option.position }}" data-variant-option-value-list>
@@ -88,7 +123,12 @@
                           {% endfor %}
                         {% endif %}
 
-                        <a href="#" class="option-value{% if is_disabled %} is-disabled{% endif %}" data-variant-option-value="{{ value }}" {% if is_disabled %} disabled="disabled" aria-disabled="true"{% endif %}>
+                        {% assign is_selected = false %}
+                        {% if is_color and forloop.index0 == 0 %}
+                          {% assign is_selected = true %}
+                        {% endif %}
+
+                        <a href="#" class="option-value{% if is_disabled %} is-disabled {% elsif is_selected %} is-selected{% endif %}" data-variant-option-value="{{ value }}" {% if is_disabled %} disabled="disabled" aria-disabled="true"{% endif %}>
                           {{ value }}
                         </a>
                       {% endfor %}
@@ -96,6 +136,10 @@
                   {% endcapture %}
 
                   <div class="selector-wrapper form-group js">
+
+                    {% if is_size and size_guide_drawer_html != blank %}
+                      <a href="#" class="hidden-xs u-fs-xsmall u-float-right u-pos-rel" style="top: 4px;" data-size-guide-show>See Size Guide</a>
+                    {% endif %}
 
                     <label for="SingleOptionSelector-{{ forloop.index0 }}">
                       {{ option.name }}
@@ -170,11 +214,7 @@
                 <span data-add-to-cart-text>
                   {% if product.available %}
                     {% if selection_required %}
-                      {% if product.options.size == 1 %}
-                        Select {{ product.options[0] | captitalize }}
-                      {% else %}
-                        {{ 'products.product.select_options' | t }}
-                      {% endif %}
+                      {{ selection_required_text }}
                     {% else %}
                       {{ 'products.product.add_to_cart' | t }}
                     {% endif %}
@@ -188,10 +228,6 @@
 
             Sold out
 
-            {% endif %}
-            
-            {% if size_guide_drawer_html != blank %}
-              <br /><br /><a href="#" class="hidden-xs hidden-sm u-fs-small" data-size-guide-show>See Size Guide</a>
             {% endif %}
 
           </form>
