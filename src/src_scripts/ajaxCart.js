@@ -19,8 +19,6 @@ const selectors = {
   footer: '[data-ajax-cart-footer]',
   item: '[data-ajax-item][data-id][data-qty]',
   itemRemove: '[data-ajax-cart-item-remove]',
-  itemIncrement: '[data-ajax-cart-item-increment]',
-  itemDecrement: '[data-ajax-cart-item-decrement]',
   cartBadge: '[data-cart-badge]'
 };
 
@@ -87,8 +85,6 @@ export default class AJAXCart {
       $body.on('click', selectors.trigger, this.onTriggerClick.bind(this));
       $body.on('click', selectors.close, this.onCloseClick.bind(this));
       $body.on('click', selectors.itemRemove, this.onItemRemoveClick.bind(this));
-      $body.on('click', selectors.itemIncrement, this.onItemIncrementClick.bind(this));
-      $body.on('click', selectors.itemDecrement, this.onItemDecrementClick.bind(this));
       $window.on(this.events.RENDER, this.onCartRender.bind(this));
       $window.on(this.events.DESTROY, this.onCartDestroy.bind(this));
 
@@ -356,39 +352,6 @@ export default class AJAXCart {
 
     this._onRequestStart();
     ShopifyAPI.changeLineItemQuantity(attrs.line, 0).then(ShopifyAPI.getCart).then(this.buildCart.bind(this));
-  }
-
- /**
-  * Increase the quantity of an item by 1
-  *
-  * @param {event} e - Click event
-  */
-  onItemIncrementClick(e) {
-    e.preventDefault();
-
-    if(this.requestInProgress) return;
-
-    var attrs = this._getItemRowAttributes(e.target);
-
-    this._onRequestStart();
-    ShopifyAPI.changeLineItemQuantity(attrs.line, attrs.qty + 1).then(ShopifyAPI.getCart).then(this.buildCart.bind(this));
-  }
-
- /**
-  * Decrease the quantity of an item by 1
-  *
-  * @param {event} e - Click event
-  */
-  onItemDecrementClick(e) {
-    e.preventDefault();
-
-    if(this.requestInProgress) return;
-
-    var attrs = this._getItemRowAttributes(e.target);
-    var newQty = (attrs.qty < 1 ? 0 : attrs.qty - 1);
-
-    this._onRequestStart();
-    ShopifyAPI.changeLineItemQuantity(attrs.line, newQty).then(ShopifyAPI.getCart).then(this.buildCart.bind(this));
   }
 
  /**

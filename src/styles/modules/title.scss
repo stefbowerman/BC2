@@ -1,0 +1,17 @@
+#title {
+  position: fixed;
+  z-index: $z-index-title;
+  bottom: 0;
+  right: 20px;
+  transform: rotate(-90deg) translate(100%, 0);
+  transform-origin: right bottom;
+  font-size: 30px;
+  font-size: calc(20px + 1.4vw);
+  pointer-events: none;
+
+  display: none;
+
+  @media (min-width: $screen-sm-min) {
+    display: block;
+  }
+}

@@ -39,10 +39,6 @@
                   <li>
                     <a href="#" class="ajax-cart__item-remove" data-ajax-cart-item-remove>Remove</a>
                   </li>
-                  <li>
-                    <a href="#" data-ajax-cart-item-increment>Increment</a>
-                    <a href="#" data-ajax-cart-item-decrement>Decrement</a>
-                  </li>
                 </ul>
               </div>
             </li>
@@ -51,11 +47,7 @@
         {{else}}
           <div class="ajax-cart__empty-message">
             {% endraw %}
-            {% if section.settings.empty_text != blank %}
-              {{ section.settings.empty_text }}
-            {% else %}
               {{ 'cart.general.empty' | t }}
-            {% endif %}
             {% raw %}
           </div>
         {{/if}}
@@ -88,18 +80,6 @@
   {
     "name": "Ajax Cart",
     "settings": [
-      {
-        "id": "empty_text",
-        "type": "richtext",
-        "label": "Empty Text",
-        "default": "<p>Your bag is empty</p>"
-      },
-      {
-        "id": "footer_text",
-        "type": "richtext",
-        "label": "Footer Text",
-        "default": "<p>Promotional Message Here</p>"
-      }
     ]
   }
 {% endschema %}

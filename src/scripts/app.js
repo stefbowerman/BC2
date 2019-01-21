@@ -2322,8 +2322,6 @@ var selectors = {
   footer: '[data-ajax-cart-footer]',
   item: '[data-ajax-item][data-id][data-qty]',
   itemRemove: '[data-ajax-cart-item-remove]',
-  itemIncrement: '[data-ajax-cart-item-increment]',
-  itemDecrement: '[data-ajax-cart-item-decrement]',
   cartBadge: '[data-cart-badge]'
 };
 
@@ -2392,8 +2390,6 @@ var AJAXCart = function () {
       $body.on('click', selectors.trigger, this.onTriggerClick.bind(this));
       $body.on('click', selectors.close, this.onCloseClick.bind(this));
       $body.on('click', selectors.itemRemove, this.onItemRemoveClick.bind(this));
-      $body.on('click', selectors.itemIncrement, this.onItemIncrementClick.bind(this));
-      $body.on('click', selectors.itemDecrement, this.onItemDecrementClick.bind(this));
       $window.on(this.events.RENDER, this.onCartRender.bind(this));
       $window.on(this.events.DESTROY, this.onCartDestroy.bind(this));
 
@@ -2676,43 +2672,6 @@ var AJAXCart = function () {
   };
 
   /**
-   * Increase the quantity of an item by 1
-   *
-   * @param {event} e - Click event
-   */
-
-
-  AJAXCart.prototype.onItemIncrementClick = function onItemIncrementClick(e) {
-    e.preventDefault();
-
-    if (this.requestInProgress) return;
-
-    var attrs = this._getItemRowAttributes(e.target);
-
-    this._onRequestStart();
-    _shopifyAPI2.default.changeLineItemQuantity(attrs.line, attrs.qty + 1).then(_shopifyAPI2.default.getCart).then(this.buildCart.bind(this));
-  };
-
-  /**
-   * Decrease the quantity of an item by 1
-   *
-   * @param {event} e - Click event
-   */
-
-
-  AJAXCart.prototype.onItemDecrementClick = function onItemDecrementClick(e) {
-    e.preventDefault();
-
-    if (this.requestInProgress) return;
-
-    var attrs = this._getItemRowAttributes(e.target);
-    var newQty = attrs.qty < 1 ? 0 : attrs.qty - 1;
-
-    this._onRequestStart();
-    _shopifyAPI2.default.changeLineItemQuantity(attrs.line, newQty).then(_shopifyAPI2.default.getCart).then(this.buildCart.bind(this));
-  };
-
-  /**
    * Click the 'ajaxCart - trigger' selector
    *
    * @param {event} e - Click event
@@ -2811,7 +2770,7 @@ var AJAXCart = function () {
 
 exports.default = AJAXCart;
 
-},{"./currency":8,"./images":9,"./shopifyAPI":25,"./utils":27}],4:[function(require,module,exports){
+},{"./currency":8,"./images":9,"./shopifyAPI":26,"./utils":29}],4:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3137,7 +3096,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 // Sections
 // import SectionManager  from './sectionManager';
 
-},{"./appRouter":6,"./sections/ajaxCart":15,"./sections/footer":19,"./sections/header":20,"./sections/mobileMenu":21,"./sections/nav":22,"./utils":27}],6:[function(require,module,exports){
+},{"./appRouter":6,"./sections/ajaxCart":15,"./sections/footer":20,"./sections/header":21,"./sections/mobileMenu":22,"./sections/nav":23,"./utils":29}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3165,6 +3124,10 @@ var _collection2 = _interopRequireDefault(_collection);
 var _cart = require('./views/cart');
 
 var _cart2 = _interopRequireDefault(_cart);
+
+var _contact = require('./views/contact');
+
+var _contact2 = _interopRequireDefault(_contact);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -3198,7 +3161,8 @@ var AppRouter = function () {
       'index': _index2.default,
       'product': _product2.default,
       'collection': _collection2.default,
-      'cart': _cart2.default
+      'cart': _cart2.default,
+      'contact': _contact2.default
     };
 
     this.router = new Navigo(window.location.origin, false, '#!');
@@ -3236,7 +3200,12 @@ var AppRouter = function () {
     });
 
     this.router.on('/pages/:slug', function (params) {
-      _this.doRoute('/pages/' + params.slug, 'page');
+      // @TODO - What to do about this hmmm
+      if (params.slug.indexOf('contact') > -1) {
+        _this.doRoute('/pages/' + params.slug, 'contact');
+      } else {
+        _this.doRoute('/pages/' + params.slug, 'page');
+      }
     });
 
     this.router.on('/', function () {
@@ -3347,7 +3316,7 @@ var AppRouter = function () {
 
 exports.default = AppRouter;
 
-},{"./views/base":28,"./views/cart":29,"./views/collection":30,"./views/index":31,"./views/product":32,"navigo":2}],7:[function(require,module,exports){
+},{"./views/base":30,"./views/cart":31,"./views/collection":32,"./views/contact":33,"./views/index":34,"./views/product":35,"navigo":2}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3524,7 +3493,7 @@ exports.default = {
   }
 };
 
-},{"./utils":27}],9:[function(require,module,exports){
+},{"./utils":29}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4028,7 +3997,7 @@ var ProductDetailForm = function () {
 
 exports.default = ProductDetailForm;
 
-},{"../breakpoints":7,"../currency":8,"../utils":27,"./productImageDesktopZoomController":11,"./productImageTouchZoomController":12,"./productVariants":13}],11:[function(require,module,exports){
+},{"../breakpoints":7,"../currency":8,"../utils":29,"./productImageDesktopZoomController":11,"./productImageTouchZoomController":12,"./productVariants":13}],11:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4490,7 +4459,7 @@ var ProductVariants = function () {
 
 exports.default = ProductVariants;
 
-},{"../utils":27}],14:[function(require,module,exports){
+},{"../utils":29}],14:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4507,7 +4476,7 @@ exports.default = {
   test: _test2.default
 };
 
-},{"./sections/test":24}],15:[function(require,module,exports){
+},{"./sections/test":25}],15:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4757,6 +4726,57 @@ var _base = require("./base");
 
 var _base2 = _interopRequireDefault(_base);
 
+var _contactForm = require("../uiComponents/contactForm");
+
+var _contactForm2 = _interopRequireDefault(_contactForm);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
+
+var selectors = {
+  form: 'form#contact_form'
+};
+
+var classes = {};
+
+var ContactSection = function (_BaseSection) {
+  _inherits(ContactSection, _BaseSection);
+
+  function ContactSection(container) {
+    _classCallCheck(this, ContactSection);
+
+    var _this = _possibleConstructorReturn(this, _BaseSection.call(this, container));
+
+    _this.name = 'cart';
+    _this.namespace = "." + _this.name;
+
+    _this.form = new _contactForm2.default($(selectors.form, _this.$container).first());
+    return _this;
+  }
+
+  return ContactSection;
+}(_base2.default);
+
+exports.default = ContactSection;
+
+},{"../uiComponents/contactForm":27,"./base":16}],20:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _base = require("./base");
+
+var _base2 = _interopRequireDefault(_base);
+
 var _ajaxMailchimpForm = require("../ajaxMailchimpForm");
 
 var _ajaxMailchimpForm2 = _interopRequireDefault(_ajaxMailchimpForm);
@@ -4787,7 +4807,7 @@ var FooterSection = function (_BaseSection) {
 
     _this.AJAXMailchimpForm = new _ajaxMailchimpForm2.default(_this.$subscribeForm, {
       onInit: function onInit() {
-        console.log('init footer subscribe!');
+        // console.log('init footer subscribe!');
       },
       onSubscribeFail: function onSubscribeFail(msg) {
         console.log('subscribed fail - ' + msg);
@@ -4804,7 +4824,7 @@ var FooterSection = function (_BaseSection) {
 
 exports.default = FooterSection;
 
-},{"../ajaxMailchimpForm":4,"./base":16}],20:[function(require,module,exports){
+},{"../ajaxMailchimpForm":4,"./base":16}],21:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4850,7 +4870,7 @@ var HeaderSection = function (_BaseSection) {
 
 exports.default = HeaderSection;
 
-},{"./base":16}],21:[function(require,module,exports){
+},{"./base":16}],22:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4951,7 +4971,7 @@ var MobileMenuSection = function (_BaseSection) {
 
 exports.default = MobileMenuSection;
 
-},{"../uiComponents/drawer":26,"./base":16}],22:[function(require,module,exports){
+},{"../uiComponents/drawer":28,"./base":16}],23:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5052,7 +5072,7 @@ var NavSection = function (_BaseSection) {
 
 exports.default = NavSection;
 
-},{"./base":16}],23:[function(require,module,exports){
+},{"./base":16}],24:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5127,7 +5147,7 @@ var ProductSection = function (_BaseSection) {
 
 exports.default = ProductSection;
 
-},{"../product/productDetailForm":10,"../uiComponents/drawer":26,"./base":16}],24:[function(require,module,exports){
+},{"../product/productDetailForm":10,"../uiComponents/drawer":28,"./base":16}],25:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5169,7 +5189,7 @@ var TestSection = function (_BaseSection) {
 
 exports.default = TestSection;
 
-},{"./base":16}],25:[function(require,module,exports){
+},{"./base":16}],26:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5266,7 +5286,79 @@ exports.default = {
   }
 };
 
-},{}],26:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var selectors = {
+  form: 'form#contact_form',
+  inputEmail: '[data-input-email]',
+  inputMessage: '[data-input-message]'
+};
+
+var ContactForm = function () {
+  function ContactForm(form) {
+    _classCallCheck(this, ContactForm);
+
+    this.$form = $(form);
+
+    if (!this.$form.is(selectors.form)) {
+      console.warn('Valis form element required to initialize');
+      return;
+    }
+
+    this.$inputEmail = this.$form.find(selectors.inputEmail);
+    this.$inputMessage = this.$form.find(selectors.inputMessage);
+
+    this.$form.on('submit', this.onSubmit.bind(this));
+  }
+
+  ContactForm.prototype.onSubmit = function onSubmit(e) {
+    e.preventDefault();
+
+    if (this.$inputMessage.val().length == 0) {
+      console.log('Please enter a message');
+      return false;
+    }
+
+    if (this.$inputEmail.val().length == 0) {
+      console.log('Please enter an email address');
+      return false;
+    }
+
+    var url = this.$form.attr('action');
+    var data = this.$form.serialize();
+
+    $.ajax({
+      type: "POST",
+      url: url,
+      data: data
+    }).done(function (AJAXResponse) {
+      var $responseHtml = $(document.createElement("html"));
+
+      $responseHtml.get(0).innerHTML = AJAXResponse;
+
+      var $responseHead = $responseHtml.find('head');
+      var $responseBody = $responseHtml.find('body');
+      var $form = $responseBody.find(selectors.form);
+
+      console.log($form);
+    }).fail(function () {
+      console.log('something went wrong, try again later');
+    });
+  };
+
+  return ContactForm;
+}();
+
+exports.default = ContactForm;
+
+},{}],28:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5455,7 +5547,7 @@ var Drawer = function () {
 
 exports.default = Drawer;
 
-},{"../utils":27}],27:[function(require,module,exports){
+},{"../utils":29}],29:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5821,7 +5913,7 @@ exports.default = {
   }
 };
 
-},{}],28:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5913,7 +6005,7 @@ var BaseView = function () {
 
 exports.default = BaseView;
 
-},{"../sectionConstructorDictionary":14,"../sections/base":16}],29:[function(require,module,exports){
+},{"../sectionConstructorDictionary":14,"../sections/base":16}],31:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5957,7 +6049,7 @@ var CartView = function (_BaseView) {
 
 exports.default = CartView;
 
-},{"../sections/cart":17,"./base":28}],30:[function(require,module,exports){
+},{"../sections/cart":17,"./base":30}],32:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6006,7 +6098,51 @@ var CollectionView = function (_BaseView) {
 
 exports.default = CollectionView;
 
-},{"../sections/collection":18,"./base":28}],31:[function(require,module,exports){
+},{"../sections/collection":18,"./base":30}],33:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _base = require('./base');
+
+var _base2 = _interopRequireDefault(_base);
+
+var _contact = require('../sections/contact');
+
+var _contact2 = _interopRequireDefault(_contact);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
+
+var ContactView = function (_BaseView) {
+  _inherits(ContactView, _BaseView);
+
+  function ContactView($el) {
+    _classCallCheck(this, ContactView);
+
+    var _this = _possibleConstructorReturn(this, _BaseView.call(this, $el));
+
+    _this.contactSection = new _contact2.default($el.find('[data-section-type="contact"]'));
+
+    _this.sections.push(_this.contactSection);
+    return _this;
+  }
+
+  return ContactView;
+}(_base2.default);
+
+exports.default = ContactView;
+
+},{"../sections/contact":19,"./base":30}],34:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6052,7 +6188,7 @@ var IndexView = function (_BaseView) {
 
 exports.default = IndexView;
 
-},{"../sections/base":16,"./base":28}],32:[function(require,module,exports){
+},{"../sections/base":16,"./base":30}],35:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6113,4 +6249,4 @@ var ProductView = function (_BaseView) {
 
 exports.default = ProductView;
 
-},{"../sections/product":23,"./base":28}]},{},[5]);
+},{"../sections/product":24,"./base":30}]},{},[5]);

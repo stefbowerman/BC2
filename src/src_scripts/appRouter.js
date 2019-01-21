@@ -6,6 +6,7 @@ import IndexView      from './views/index';
 import ProductView    from './views/product';
 import CollectionView from './views/collection';
 import CartView       from './views/cart';
+import ContactView    from './views/contact';
 
 // TODO - Move the loader and view-container bits to variables that get passed in
 const $body = $(document.body);
@@ -27,7 +28,8 @@ export default class AppRouter {
       'index': IndexView,
       'product': ProductView,
       'collection': CollectionView,
-      'cart': CartView
+      'cart': CartView,
+      'contact': ContactView
     }
 
     this.router = new Navigo(window.location.origin, false, '#!');
@@ -65,7 +67,13 @@ export default class AppRouter {
     });
 
     this.router.on('/pages/:slug', (params) => {
-      this.doRoute(`/pages/${params.slug}`, 'page');
+      // @TODO - What to do about this hmmm
+      if(params.slug.indexOf('contact') > -1) {
+        this.doRoute(`/pages/${params.slug}`, 'contact');
+      }
+      else {
+        this.doRoute(`/pages/${params.slug}`, 'page');
+      }
     })
 
     this.router.on('/', () => {

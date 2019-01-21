@@ -73,7 +73,7 @@
         {% endif %}
       </div>
       <div class="pdf-spaced-el hidden-xs hidden-sm">
-        <div class="pdf-description rte">{{ product.description }}</div>
+        <div class="pdf-description">{{ product.description }}</div>
       </div>
 
       <hr class="hidden-xs" />
@@ -234,6 +234,7 @@
                   type="submit"
                   name="add"
                   class="btn btn-primary"
+                  style="margin-top: 15px;"
                   data-add-to-cart
                   {% if selection_required or product.available == false %}disabled="disabled"{% endif %}>
                   <span data-add-to-cart-text>

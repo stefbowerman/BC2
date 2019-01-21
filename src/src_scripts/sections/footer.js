@@ -14,7 +14,7 @@ export default class FooterSection extends BaseSection {
 
     this.AJAXMailchimpForm = new AJAXMailchimpForm(this.$subscribeForm, {
       onInit: () => {
-        console.log('init footer subscribe!');
+        // console.log('init footer subscribe!');
       },
       onSubscribeFail: (msg) => {
         console.log('subscribed fail - ' + msg);

@@ -10,16 +10,27 @@ $product-image-fade-transition: opacity 1200ms cubic-bezier(0.63, 0.16, 0.17, 1.
 $product-image-fade-transition-fast: opacity 500ms cubic-bezier(0.63, 0.16, 0.17, 1.02);
 
 
-// @TODO - These are temp styles
-body.template-product .layout-content-wrapper {
-  @media (min-width: $screen-md-min) {
-    margin-top: 0;
-    margin-bottom: 0;
+// @TODO - Should these go in here or in layout.scss?
+body.template-product {
+  
+  .wrap {
+    padding-right: 0;
+    padding-left: 0;
+    @include justify-content(flex-start);
   }
 
-  // @media (max-width: $screen-sm-max) {
-  //   margin-bottom: 250px;
-  // }
+  .layout-content-wrapper {
+    margin-top: $header-height-mobile;
+
+    @media (min-width: $screen-md-min) {
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+
+    // @media (max-width: $screen-sm-max) {
+    //   margin-bottom: 250px;
+    // }
+  }
 }
 
 // Responsive Form Visibility
