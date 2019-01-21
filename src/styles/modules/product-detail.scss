@@ -22,26 +22,41 @@ body.template-product .layout-content-wrapper {
   // }
 }
 
-// Essential
+// Responsive Form Visibility
 // --------------------------------------------------------
 
-.product-essential {
+.sticky-form {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
   background-color: $color-white;
-  padding: $grid-gutter-width/2;
+  padding: 15px;
   padding-top: 0;
   border-top: 1px solid black;
   text-align: center;
 
   button[type="submit"] {
     width: 100%;
-    // min-width: 300px;
-    // max-width: 100%;
-  }
+  }  
 
+  @media (min-width: $screen-sm-min) {
+    display: none;
+  }
+}
+
+.desktop-form {
+  display: none;
+
+  @media (min-width: $screen-sm-min) {
+    display: block;
+  }
+}
+
+// Essential
+// --------------------------------------------------------
+
+.product-essential {
 
   @media (min-width: $screen-sm-min) {
     width: $product-essential-width-small;
@@ -101,11 +116,20 @@ body.template-product .layout-content-wrapper {
 
 .sticky-row {
   @include display-flex;
-  margin: 0 -25px;
-  padding: 0 25px;
-  border-bottom: 1px solid #e1e1e1;
+  margin: 0 -15px;
+  padding: 0 15px;
   font-size: $font-size-small;
+
+  &.sticky-row--add-to-cart {
+    padding-top: 15px;
+  }
+
+  & + & {
+    border-top: 1px solid #e1e1e1;
+  }
+
 }
+
 
 .sticky-row__entry {
   padding: 5px;

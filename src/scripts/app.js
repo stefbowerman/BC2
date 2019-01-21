@@ -3668,6 +3668,7 @@ var selectors = {
   productJson: '[data-product-json]',
   productPrice: '[data-product-price]',
   singleOptionSelector: '[data-single-option-selector]',
+  stickyOptionSelector: '[data-sticky-option-selector]',
   variantOptionValueList: '[data-variant-option-value-list][data-option-position]',
   variantOptionValue: '[data-variant-option-value]'
 };
@@ -3706,6 +3707,7 @@ var ProductDetailForm = function () {
 
     this.events = {
       RESIZE: 'resize' + this.namespace,
+      CHANGE: 'change' + this.namespace,
       CLICK: 'click' + this.namespace,
       READY: 'ready' + this.namespace,
       MOUSEENTER: 'mouseenter' + this.namespace,
@@ -3783,6 +3785,7 @@ var ProductDetailForm = function () {
 
       // See productVariants
       this.$container.on('variantChange' + this.namespace, this.onVariantChange.bind(this));
+      this.$container.on(this.events.CHANGE, selectors.stickyOptionSelector, this.onStickyOptionSelectorChange.bind(this));
       this.$container.on(this.events.CLICK, selectors.variantOptionValue, this.onVariantOptionValueClick.bind(this));
       this.$container.on(this.events.MOUSEENTER, selectors.variantOptionValue, this.onVariantOptionValueMouseenter.bind(this));
       this.$container.on(this.events.MOUSELEAVE, selectors.variantOptionValue, this.onVariantOptionValueMouseleave.bind(this));
@@ -3804,6 +3807,8 @@ var ProductDetailForm = function () {
     this.updateAddToCartState(variant);
     this.updateVariantOptionValues(variant);
     this.updateGalleries(variant);
+
+    console.log('TODO - update stickySelect');
   };
 
   /**
@@ -3964,6 +3969,27 @@ var ProductDetailForm = function () {
     $option.siblings().removeClass(classes.variantOptionValueSelected);
   };
 
+  ProductDetailForm.prototype.onStickyOptionSelectorChange = function onStickyOptionSelectorChange(e) {
+    e.preventDefault();
+
+    // console.log('change');
+
+    var $stickySelect = $(e.currentTarget);
+    var value = $stickySelect.val();
+    var position = $stickySelect.data('option-position');
+    var $selector = $(selectors.singleOptionSelector, this.$container).filter('[data-index="option' + position + '"]');
+
+    // console.log(value);
+
+    // TODO - Clean this up
+    var $placeholder = $stickySelect.siblings('.sticky-select-placeholder');
+    $placeholder.find('.sticky-select-placeholder-text').text(value);
+    $placeholder.find('.sticky-select-label').css('display', value ? 'inline-block' : 'none');
+
+    $selector.val(value);
+    $selector.trigger('change');
+  };
+
   ProductDetailForm.prototype.onVariantOptionValueMouseenter = function onVariantOptionValueMouseenter(e) {
     var $option = $(e.currentTarget);
     var $list = $option.parents(selectors.variantOptionValueList);
@@ -3991,7 +4017,7 @@ var ProductDetailForm = function () {
     }
 
     if (window.innerWidth < this.stickyMaxWidth) {
-      $('.product-detail-form').css('margin-bottom', $('.product-essential').outerHeight());
+      $('.product-detail-form').css('margin-bottom', $('.sticky-form').outerHeight());
     } else {
       $('.product-detail-form').css('margin-bottom', '');
     }
