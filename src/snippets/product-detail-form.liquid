@@ -57,109 +57,89 @@
 <div class="product-detail-form" data-product-detail-form>
 
   <div data-product-scroll-container>
+    
     {% include 'product-detail-form-gallery', product: product %}
 
-    <div class="product-essential" data-product-essential>
-
-      <div class="pdf-spaced-el hidden-xs">
-        <div class="pdf-price">
-          {% include 'product-detail-price', product: product, current_variant: current_variant %}
-        </div>
-      </div>
-      <div class="pdf-spaced-el hidden-xs">
-        <h1 class="pdf-title">{{ product.title }}</h1>
-        {% if product.metafields.subtitle.text %}
-          <h3 class="pdf-subtitle">{{ product.metafields.subtitle.text }}</h3>
-        {% endif %}
-      </div>
-      <div class="pdf-spaced-el hidden-xs hidden-sm">
+    {% comment %} Secondary description - Shows on mobile and when vertical space is too tight {% endcomment %}
+    <div class="product-secondary-description">
+      <hr style="width: 100%; margin: 3rem 0;" />
+      <div class="container">
         <div class="pdf-description">{{ product.description }}</div>
       </div>
+    </div>
 
-      <hr class="hidden-xs" />
+  </div>
 
-      <div itemprop="offers" itemscope itemtype="http://schema.org/Offer">
-        <meta itemprop="priceCurrency" content="{{ shop.currency }}">
-        <meta itemprop="price" content="{{ current_variant.price | divided_by: 100.00 }}">
-        <link itemprop="availability" href="http://schema.org/{% if current_variant.available %}InStock{% else %}OutOfStock{% endif %}">
+  <div class="product-essential" data-product-essential>
 
-        <div data-add-to-cart-form-wrapper>
-          <form action="/cart/add" method="post" enctype="multipart/form-data" data-add-to-cart-form>     
+    <div class="pdf-spaced-el hidden-xs">
+      <div class="pdf-price">
+        {% include 'product-detail-price', product: product, current_variant: current_variant %}
+      </div>
+    </div>
+    <div class="pdf-spaced-el hidden-xs">
+      <h1 class="pdf-title">{{ product.title }}</h1>
+      {% if product.metafields.subtitle.text %}
+        <h3 class="pdf-subtitle">{{ product.metafields.subtitle.text }}</h3>
+      {% endif %}
+    </div>
+    <div class="pdf-spaced-el hidden-xs hidden-sm">
+      <div class="pdf-description">{{ product.description }}</div>
+    </div>
 
-            {% comment %} Since we split the form into 2 pieces (desktop and mobile) - capture the form elements so we only need to do all the product variant logic once {% endcomment %}
+    <hr class="hidden-xs" />
 
-            {% if product.available %}
-              {% unless product.has_only_default_variant %}
-                {% for option in product.options_with_values %}
-                  
-                  {% assign option_name_upcase = option.name | upcase %}
-                  {% assign is_color = false %}
-                  {% assign is_size  = false %}
-                  {% if option_name_upcase == "COLOR" %}
-                    {% assign is_color = true %}
-                  {% endif %}
-                  {% if option_name_upcase == "SIZE" %}
-                    {% assign is_size = true %}
-                  {% endif %}
+    <div itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+      <meta itemprop="priceCurrency" content="{{ shop.currency }}">
+      <meta itemprop="price" content="{{ current_variant.price | divided_by: 100.00 }}">
+      <link itemprop="availability" href="http://schema.org/{% if current_variant.available %}InStock{% else %}OutOfStock{% endif %}">
 
-                  {% capture desktop_option_html %}
-                    <div class="selector-wrapper form-group js">
+      <div data-add-to-cart-form-wrapper>
+        <form action="/cart/add" method="post" enctype="multipart/form-data" data-add-to-cart-form>     
 
-                      {% if is_size and size_guide_drawer_html != blank %}
-                        <a href="#" class="hidden-xs u-fs-xsmall u-float-right u-pos-rel" style="top: 4px;" data-size-guide-show>See Size Guide</a>
-                      {% endif %}
+          {% comment %} Since we split the form into 2 pieces (desktop and mobile) - capture the form elements so we only need to do all the product variant logic once {% endcomment %}
 
-                      <label for="SingleOptionSelector-{{ forloop.index0 }}">
-                        {{ option.name }}
-                      </label>
+          {% if product.available %}
+            {% unless product.has_only_default_variant %}
+              {% for option in product.options_with_values %}
+                
+                {% assign option_name_upcase = option.name | upcase %}
+                {% assign is_color = false %}
+                {% assign is_size  = false %}
+                {% if option_name_upcase == "COLOR" %}
+                  {% assign is_color = true %}
+                {% endif %}
+                {% if option_name_upcase == "SIZE" %}
+                  {% assign is_size = true %}
+                {% endif %}
 
-                      <select
-                        id="SingleOptionSelector-{{ forloop.index0 }}"
-                        class="form-control"
-                        data-single-option-selector
-                        data-index="option{{ option.position }}"
-                        style="display: none">
-                        {% for value in option.values %}
-                          <option
-                            value="{{ value | escape }}"
-                            {% if option.selected_value == value %}selected="selected"{% endif %}>
-                              {{ value }}
-                          </option>
-                        {% endfor %}
-                      </select>
+                {% capture desktop_option_html %}
+                  <div class="selector-wrapper form-group js">
 
-                      <div class="option-value-list" data-option-position="{{ option.position }}" data-variant-option-value-list>
-                        {% for value in option.values %}
+                    {% if is_size and size_guide_drawer_html != blank %}
+                      <a href="#" class="hidden-xs u-fs-xsmall u-float-right u-pos-rel" style="top: 4px;" data-size-guide-show>See Size Guide</a>
+                    {% endif %}
 
-                          {% comment %} If the product only has one option (like size) then we can show values as sold out by checking the variant for that option {% endcomment %}
-                          {% assign is_disabled = false %}
-                          {% if product.options.size == 1 %}
-                            {% for v in product.variants %}
-                              {% assign variant_option_prop = 'option' | append: option.position %}
-                              {% if v[variant_option_prop] == value and v.available == false %}
-                                {% assign is_disabled = true %}
-                              {% endif %}
-                            {% endfor %}
-                          {% endif %}
+                    <label for="SingleOptionSelector-{{ forloop.index0 }}">
+                      {{ option.name }}
+                    </label>
 
-                          {% assign is_selected = false %}
-                          {% if is_color and forloop.index0 == 0 %}
-                            {% assign is_selected = true %}
-                          {% endif %}
-
-                          <a href="#" class="option-value{% if is_disabled %} is-disabled {% elsif is_selected %} is-selected{% endif %}" data-variant-option-value="{{ value }}" {% if is_disabled %} disabled="disabled" aria-disabled="true"{% endif %}>
+                    <select
+                      id="SingleOptionSelector-{{ forloop.index0 }}"
+                      class="form-control"
+                      data-single-option-selector
+                      data-index="option{{ option.position }}"
+                      style="display: none">
+                      {% for value in option.values %}
+                        <option
+                          value="{{ value | escape }}"
+                          {% if option.selected_value == value %}selected="selected"{% endif %}>
                             {{ value }}
-                          </a>
-                        {% endfor %}
-                      </div>
+                        </option>
+                      {% endfor %}
+                    </select>
 
-                    </div>
-                  {% endcapture %}              
-
-                  {% capture sticky_row_option_html %}
-
-                    {% assign selected_value = '' %}
-                    {% capture sticky_row_options %}
+                    <div class="option-value-list" data-option-position="{{ option.position }}" data-variant-option-value-list>
                       {% for value in option.values %}
 
                         {% comment %} If the product only has one option (like size) then we can show values as sold out by checking the variant for that option {% endcomment %}
@@ -176,132 +156,153 @@
                         {% assign is_selected = false %}
                         {% if is_color and forloop.index0 == 0 %}
                           {% assign is_selected = true %}
-                          {% assign selected_value = value %}
                         {% endif %}
 
-                        <option
-                          value="{{ value | escape }}"
-                          {% if is_disabled %}disabled="disabled"{% endif %}
-                          {% if is_selected %}selected="selected"{% endif %}>
-                            {{ value | upcase }} {% if is_disabled %}- {{ 'products.product.sold_out' | t | upcase }}{% endif %}
-                        </option>
-                      {% endfor %}  
-                    {% endcapture %}
-
-                    <div class="sticky-row__entry">
-                      {% comment %} @TODO - Checks for if selection is required, clean this up is option.values.size == 1 {% endcomment %}
-                      <div style="position: relative;">
-                        <select style="position: absolute; top: 0; left: 0; right: 0; width: 100%; z-index: 1; opacity: 0; font-size: 16px;" data-sticky-option-selector data-option-position="{{ option.position }}">
-                          {{ sticky_row_options }}
-                        </select>
-                        <div class="sticky-select-placeholder">
-                          <strong class="sticky-select-label" {% if selected_value == blank %}style="display: none"{% endif %}>{{ option.name }}:</strong>
-                            <span class="sticky-select-placeholder-text">
-                            {% if selected_value != blank %}
-                              {{ selected_value }}
-                            {% else %}
-                              Select {{ option.name }}
-                            {% endif %}
-                          </span>
-                        </div>
-                      </div>
+                        <a href="#" class="option-value{% if is_disabled %} is-disabled {% elsif is_selected %} is-selected{% endif %}" data-variant-option-value="{{ value }}" {% if is_disabled %} disabled="disabled" aria-disabled="true"{% endif %}>
+                          {{ value }}
+                        </a>
+                      {% endfor %}
                     </div>
+
+                  </div>
+                {% endcapture %}              
+
+                {% capture sticky_row_option_html %}
+
+                  {% assign selected_value = '' %}
+                  {% capture sticky_row_options %}
+                    {% for value in option.values %}
+
+                      {% comment %} If the product only has one option (like size) then we can show values as sold out by checking the variant for that option {% endcomment %}
+                      {% assign is_disabled = false %}
+                      {% if product.options.size == 1 %}
+                        {% for v in product.variants %}
+                          {% assign variant_option_prop = 'option' | append: option.position %}
+                          {% if v[variant_option_prop] == value and v.available == false %}
+                            {% assign is_disabled = true %}
+                          {% endif %}
+                        {% endfor %}
+                      {% endif %}
+
+                      {% assign is_selected = false %}
+                      {% if is_color and forloop.index0 == 0 %}
+                        {% assign is_selected = true %}
+                        {% assign selected_value = value %}
+                      {% endif %}
+
+                      <option
+                        value="{{ value | escape }}"
+                        {% if is_disabled %}disabled="disabled"{% endif %}
+                        {% if is_selected %}selected="selected"{% endif %}>
+                          {{ value | upcase }} {% if is_disabled %}- {{ 'products.product.sold_out' | t | upcase }}{% endif %}
+                      </option>
+                    {% endfor %}  
                   {% endcapture %}
 
-                  {% assign desktop_options_html    = desktop_options_html | append: desktop_option_html %}
-                  {% assign sticky_row_options_html = sticky_row_options_html | append: sticky_row_option_html %}
+                  <div class="sticky-row__entry">
+                    {% comment %} @TODO - Checks for if selection is required, clean this up is option.values.size == 1 {% endcomment %}
+                    <div style="position: relative;">
+                      <select style="position: absolute; top: 0; left: 0; right: 0; width: 100%; z-index: 1; opacity: 0; font-size: 16px;" data-sticky-option-selector data-option-position="{{ option.position }}">
+                        {{ sticky_row_options }}
+                      </select>
+                      <div class="sticky-select-placeholder">
+                        <strong class="sticky-select-label" {% if selected_value == blank %}style="display: none"{% endif %}>{{ option.name }}:</strong>
+                          <span class="sticky-select-placeholder-text">
+                          {% if selected_value != blank %}
+                            {{ selected_value }}
+                          {% else %}
+                            Select {{ option.name }}
+                          {% endif %}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                {% endcapture %}
 
+                {% assign desktop_options_html    = desktop_options_html | append: desktop_option_html %}
+                {% assign sticky_row_options_html = sticky_row_options_html | append: sticky_row_option_html %}
+
+              {% endfor %}
+            {% endunless %}
+
+            {% comment %} Desktop Form Elements {% endcomment %}              
+
+            <div class="desktop-form">
+              {{ desktop_options_html }}
+
+              <select name="id" class="no-js" data-product-select>
+                {% for variant in product.variants %}
+                  <option
+                    {% if variant == current_variant %}selected="selected"{% endif %}
+                    {% unless variant.available %}disabled="disabled"{% endunless %}
+                    value="{{ variant.id }}">
+                      {{ variant.title }}
+                  </option>
                 {% endfor %}
-              {% endunless %}
+              </select>
 
-              {% comment %} Desktop Form Elements {% endcomment %}              
+              <button
+                type="submit"
+                name="add"
+                class="btn btn-primary"
+                style="margin-top: 15px;"
+                data-add-to-cart
+                {% if selection_required or product.available == false %}disabled="disabled"{% endif %}>
+                <span data-add-to-cart-text>
+                  {% if selection_required %}
+                    {{ selection_required_text }}
+                  {% else %}
+                    {{ 'products.product.add_to_cart' | t }}
+                  {% endif %}
+                </span>
+              </button>
+            </div>
 
-              <div class="desktop-form">
-                {{ desktop_options_html }}
+          {% else %}
 
-                <select name="id" class="no-js" data-product-select>
-                  {% for variant in product.variants %}
-                    <option
-                      {% if variant == current_variant %}selected="selected"{% endif %}
-                      {% unless variant.available %}disabled="disabled"{% endunless %}
-                      value="{{ variant.id }}">
-                        {{ variant.title }}
-                    </option>
-                  {% endfor %}
-                </select>
+            Sold out
 
+          {% endif %}
+
+          {% comment %} Mobile Sticky Form Elements {% endcomment %}
+
+          {% comment %} Sticky row {% endcomment %}
+          <div class="sticky-form">
+            <div class="sticky-row">
+              <div class="sticky-row__entry u-fw-bold">{{ product.title }}</div>
+              <div class="sticky-row__entry" style="flex-basis: 60px; flex: 0;">
+                {% include 'product-detail-price', product: product, current_variant: current_variant %}
+              </div>
+            </div>
+            {% if sticky_row_options_html != blank %}
+              <div class="sticky-row">
+                {{ sticky_row_options_html }}
+              </div>
+            {% endif %}
+            <div class="sticky-row sticky-row--add-to-cart">
+              {% if product.available %}
+                {% comment %} Button mark up is the same as the desktop form except for the inner text {% endcomment %}
                 <button
                   type="submit"
                   name="add"
                   class="btn btn-primary"
-                  style="margin-top: 15px;"
                   data-add-to-cart
                   {% if selection_required or product.available == false %}disabled="disabled"{% endif %}>
                   <span data-add-to-cart-text>
-                    {% if selection_required %}
-                      {{ selection_required_text }}
-                    {% else %}
-                      {{ 'products.product.add_to_cart' | t }}
-                    {% endif %}
+                    {{ 'products.product.add_to_cart' | t }}
                   </span>
                 </button>
-              </div>
-
-            {% else %}
-
-              Sold out
-
-            {% endif %}
-
-            {% comment %} Mobile Sticky Form Elements {% endcomment %}
-
-            {% comment %} Sticky row {% endcomment %}
-            <div class="sticky-form">
-              <div class="sticky-row">
-                <div class="sticky-row__entry u-fw-bold">{{ product.title }}</div>
-                <div class="sticky-row__entry" style="flex-basis: 60px; flex: 0;">
-                  {% include 'product-detail-price', product: product, current_variant: current_variant %}
-                </div>
-              </div>
-              {% if sticky_row_options_html != blank %}
-                <div class="sticky-row">
-                  {{ sticky_row_options_html }}
-                </div>
+              {% else %}
+                <div class="u-ta-center u-color-grey" style="flex: 1">{{ 'products.product.sold_out' | t }}</div>
               {% endif %}
-              <div class="sticky-row sticky-row--add-to-cart">
-                {% if product.available %}
-                  {% comment %} Button mark up is the same as the desktop form except for the inner text {% endcomment %}
-                  <button
-                    type="submit"
-                    name="add"
-                    class="btn btn-primary"
-                    data-add-to-cart
-                    {% if selection_required or product.available == false %}disabled="disabled"{% endif %}>
-                    <span data-add-to-cart-text>
-                      {{ 'products.product.add_to_cart' | t }}
-                    </span>
-                  </button>
-                {% else %}
-                  <div class="u-ta-center u-color-grey" style="flex: 1">{{ 'products.product.sold_out' | t }}</div>
-                {% endif %}
-              </div>       
-            </div>            
+            </div>       
+          </div>            
 
-          </form>
-        </div>
-
+        </form>
       </div>
+
     </div>
   </div>
-
-  <div class="visible-xs visible-sm">
-    <div class="container">
-      <div class="pdf-description">{{ product.description }}</div>
-      {% if size_guide_drawer_html != blank %}
-        <br /><br /><a href="#" class="hidden-xs hidden-sm u-fs-small" data-size-guide-show>See Size Guide</a>
-      {% endif %}
-    </div>
-  </div>  
        
   {{ size_guide_drawer_html }}
 

@@ -2,12 +2,36 @@
 // Product Detail
 // --------------------------------------------------------
 
-$product-essential-width-small: 340px;
+$product-essential-width-small: 310px;
 $product-essential-width:       520px;
-$product-elements-gutter-small: 60px;
+$product-elements-gutter-small: 40px;
 $product-elements-gutter:       100px;
 $product-image-fade-transition: opacity 1200ms cubic-bezier(0.63, 0.16, 0.17, 1.02) 200ms;
 $product-image-fade-transition-fast: opacity 500ms cubic-bezier(0.63, 0.16, 0.17, 1.02);
+
+@mixin pdf-scrollable {
+  @include display-flex;
+  @include flex-direction(column);
+  @include align-items(center);
+  @include justify-content(center);
+  margin: 0;
+
+  @media (min-width: $screen-xs-min) {
+    max-width: 100%;
+    margin-left: $menu-clearance-min;
+  }
+
+  @media (min-width: $screen-sm-min) {
+    min-height: calc(100vh - 200px);
+    margin-right: 0;
+    width: calc(100% - #{ $product-essential-width-small + $grid-gutter-width/2 + $menu-clearance-min });   
+  }
+
+  @media (min-width: $screen-lg-min) {
+    width: calc(100% - #{ $product-essential-width + $grid-gutter-width + $menu-clearance-max });
+    margin-left: $menu-clearance-max;
+  }
+}
 
 
 // @TODO - Should these go in here or in layout.scss?
@@ -22,7 +46,7 @@ body.template-product {
   .layout-content-wrapper {
     margin-top: $header-height-mobile;
 
-    @media (min-width: $screen-md-min) {
+    @media (min-width: $screen-sm-min) {
       margin-top: 0;
       margin-bottom: 0;
     }
@@ -30,6 +54,14 @@ body.template-product {
     // @media (max-width: $screen-sm-max) {
     //   margin-bottom: 250px;
     // }
+  }
+}
+
+.product-detail-form {
+  padding-bottom: $spacer;
+
+  @media (min-width: $screen-sm-min) {
+    padding-bottom: 0;
   }
 }
 
@@ -79,7 +111,6 @@ body.template-product {
     transform: translateY(-50%);
     padding: 0;
     padding-left: $product-elements-gutter-small;
-    padding-right: $product-elements-gutter-small/2;
     text-align: left;
     background-color: transparent;
     border-top: none;
@@ -88,7 +119,6 @@ body.template-product {
       width: 100%;
       min-width: 0;
     }
- 
   }
 
   @media (min-width: $screen-lg-min) {
@@ -150,9 +180,19 @@ body.template-product {
     padding-left: 0;
     text-align: left;
   }
-  &:last-child {
+  &:last-child:not(:only-child) {
     padding-right: 0;
     text-align: right;
+  }
+}
+
+// Secondary description at the bottom of the scroll container
+
+.product-secondary-description {
+  @include pdf-scrollable;
+
+  @media (min-width: $screen-lg-min) {
+    display: none;
   }
 }
 
@@ -172,22 +212,7 @@ body.template-product {
 
 // Scroll Gallery
 .product-gallery {
-  @include display-flex;
-  @include align-items(center);
-  @include justify-content(center);
-  margin: 0 $grid-gutter-width/2;
-
-  @media (min-width: $screen-sm-min) {
-    min-height: calc(100vh - 200px);
-    max-width: 100%;
-    width: calc(100% - #{ $product-essential-width-small + $grid-gutter-width + $menu-clearance-min });
-    margin: 0 auto 0 $menu-clearance-min;    
-  }
-
-  @media (min-width: $screen-lg-min) {
-    width: calc(100% - #{ $product-essential-width + $grid-gutter-width + $menu-clearance-max });
-    margin-left: $menu-clearance-max;
-  }
+  @include pdf-scrollable;
 
   html.js & {
     opacity: 0;
@@ -208,7 +233,7 @@ body.template-product {
 .product-gallery__list {
   @include list-unstyled;
   margin: 0 auto;
-  max-width: 400px;
+  // max-width: 400px;
 
   @media (min-width: $screen-sm-min) {
     margin: 0;
@@ -221,10 +246,10 @@ body.template-product {
   margin-bottom: 0;
   @include display-flex;
   @include align-items(center);
-  min-height: 50vh;
+  min-height: 70vh;
 
   @media (min-width: $screen-sm-min) {
-    min-height: 65vh;  
+    min-height: 100vh;  
   }
 
   @media (min-width: $screen-lg-min) {
@@ -237,6 +262,13 @@ body.template-product {
 
   &:last-child:not(:only-child) {
     min-height: auto;
+  }
+
+  // Since space is tight on tiny screens, make the first one auto height so it doesn't get pushed down for any vertical centering reasons
+  @media (max-width: $screen-xs-max) {
+    &:first-child {
+      min-height: auto;
+    }
   }
 
   & + & {
