@@ -39,7 +39,9 @@
     "jquery-zoom": "^1.7.20",
     "js-cookie": "^2.2.0",
     "navigo": "^7.1.2",
-    "slick-carousel": "^1.7.1"
+    "slick-carousel": "^1.7.1",
+    "smooth-scroll": "^15.0.0",
+    "throttle-debounce": "^2.1.0"
   },
   "scripts": {
     "start": "npm i -g @shopify/slate && npm i",

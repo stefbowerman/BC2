@@ -10,7 +10,7 @@ export default class ProductView extends BaseView {
 
     this.sections.push(this.productSection);
 
-    window.scrollTop = 0;
+    $(window).scrollTop(0);
   }
 
   transitionIn() {

@@ -54,6 +54,8 @@
 {% assign desktop_options_html = '' %}
 {% assign sticky_options_html  = '' %}
 
+{% comment %}{% include 'pdp-logic-test' %}{% endcomment %}
+
 <div class="product-detail-form" data-product-detail-form>
 
   <div data-product-scroll-container>
@@ -61,11 +63,8 @@
     {% include 'product-detail-form-gallery', product: product %}
 
     {% comment %} Secondary description - Shows on mobile and when vertical space is too tight {% endcomment %}
-    <div class="product-secondary-description">
-      <hr style="width: 100%; margin: 3rem 0;" />
-      <div class="container">
-        <div class="pdf-description">{{ product.description }}</div>
-      </div>
+    <div class="secondary-description" data-secondary-description>
+      <div class="pdf-description">{{ product.description }}</div>
     </div>
 
   </div>
@@ -83,8 +82,13 @@
         <h3 class="pdf-subtitle">{{ product.metafields.subtitle.text }}</h3>
       {% endif %}
     </div>
-    <div class="pdf-spaced-el hidden-xs hidden-sm">
-      <div class="pdf-description">{{ product.description }}</div>
+    <div class="pdf-spaced-el">
+      <div class="fixed-description" data-fixed-description>
+        <div class="pdf-description">{{ product.description }}</div>
+        {% if size_guide_drawer_html != blank %}
+          <a href="#" class="secondary-link hidden-xs hidden-sm" data-size-guide-show>→ See Size Guide</a>
+        {% endif %}   
+      </div>
     </div>
 
     <hr class="hidden-xs" />
@@ -115,10 +119,6 @@
 
                 {% capture desktop_option_html %}
                   <div class="selector-wrapper form-group js">
-
-                    {% if is_size and size_guide_drawer_html != blank %}
-                      <a href="#" class="hidden-xs u-fs-xsmall u-float-right u-pos-rel" style="top: 4px;" data-size-guide-show>See Size Guide</a>
-                    {% endif %}
 
                     <label for="SingleOptionSelector-{{ forloop.index0 }}">
                       {{ option.name }}
@@ -200,9 +200,8 @@
                   {% endcapture %}
 
                   <div class="sticky-row__entry">
-                    {% comment %} @TODO - Checks for if selection is required, clean this up is option.values.size == 1 {% endcomment %}
-                    <div style="position: relative;">
-                      <select style="position: absolute; top: 0; left: 0; right: 0; width: 100%; z-index: 1; opacity: 0; font-size: 16px;" data-sticky-option-selector data-option-position="{{ option.position }}">
+                    <div class="sticky-select-wrap">
+                      <select data-sticky-option-selector data-option-position="{{ option.position }}">
                         {{ sticky_row_options }}
                       </select>
                       <div class="sticky-select-placeholder">
@@ -239,13 +238,13 @@
                       {{ variant.title }}
                   </option>
                 {% endfor %}
-              </select>
+              </select>           
 
               <button
                 type="submit"
                 name="add"
                 class="btn btn-primary"
-                style="margin-top: 15px;"
+                style="margin: 15px 0;"
                 data-add-to-cart
                 {% if selection_required or product.available == false %}disabled="disabled"{% endif %}>
                 <span data-add-to-cart-text>
@@ -256,26 +255,29 @@
                   {% endif %}
                 </span>
               </button>
+
             </div>
 
           {% else %}
 
-            Sold out
+            <span class="u-fw-bold">Sold out</span>
 
           {% endif %}
+
+          <a href="#" class="secondary-link" style="display: none; margin-top: 10px;" data-secondary-description-link>→ See Product Description</a>
 
           {% comment %} Mobile Sticky Form Elements {% endcomment %}
 
           {% comment %} Sticky row {% endcomment %}
-          <div class="sticky-form">
+          <div class="sticky-form" data-sticky-form>
             <div class="sticky-row">
               <div class="sticky-row__entry u-fw-bold">{{ product.title }}</div>
-              <div class="sticky-row__entry" style="flex-basis: 60px; flex: 0;">
+              <div class="sticky-row__entry" style="flex-basis: 60px; flex: 0.1; text-align: right; align-self: stretch;">
                 {% include 'product-detail-price', product: product, current_variant: current_variant %}
               </div>
             </div>
             {% if sticky_row_options_html != blank %}
-              <div class="sticky-row">
+              <div class="sticky-row sticky-row--options">
                 {{ sticky_row_options_html }}
               </div>
             {% endif %}

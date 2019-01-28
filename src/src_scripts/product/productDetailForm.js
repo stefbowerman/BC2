@@ -20,6 +20,8 @@ const selectors = {
 
   productJson: '[data-product-json]',
   productPrice: '[data-product-price]',
+  productDetailForm: '[data-product-detail-form]',
+  stickyForm: '[data-sticky-form]',
   singleOptionSelector: '[data-single-option-selector]',
   stickyOptionSelector: '[data-sticky-option-selector]',
   variantOptionValueList: '[data-variant-option-value-list][data-option-position]',
@@ -35,7 +37,8 @@ const classes = {
   zoomedIn: 'is-zoomed',
   galleriesAreReady: 'is-ready',
   galleryActive: 'is-active',
-  galleryImageLoaded: 'is-loaded'
+  galleryImageLoaded: 'is-loaded',
+  stickyFormReady: 'is-ready'
 };
 
 const $window = $(window);
@@ -75,10 +78,11 @@ export default class ProductDetailForm {
         return;
       }
 
-      this.stickyMaxWidth = Breakpoints.getBreakpointMinWidth('sm') - 1;
-      this.zoomMinWidth = Breakpoints.getBreakpointMinWidth('sm');
+      this.stickyMaxWidth     = Breakpoints.getBreakpointMinWidth('sm') - 1;
+      this.zoomMinWidth       = Breakpoints.getBreakpointMinWidth('sm');
+      this.desktopMinWidth    = Breakpoints.getBreakpointMinWidth('lg');
       this.transitionEndEvent = Utils.whichTransitionEnd();
-      this.settings = $.extend({}, defaults, config);
+      this.settings           = $.extend({}, defaults, config);
 
       if (!this.settings.$el || this.settings.$el == undefined) {
         console.warn('['+this.name+'] - $el required to initialize');
@@ -102,6 +106,8 @@ export default class ProductDetailForm {
       // this.$productPrice               = $(selectors.productPrice, this.$container);
       // this.$comparePrice               = $(selectors.comparePrice, this.$container);
       // this.$comparePriceText           = $(selectors.comparePriceText, this.$container);
+      this.$stickyForm           = $(selectors.stickyForm, this.$container);
+      this.$productDetailForm    = $(selectors.productDetailForm, this.$container);
       this.$galleriesWrapper     = $(selectors.galleriesWrapper, this.$container);
       this.$galleries            = $(selectors.gallery, this.$container); // can have multiple
       this.$galleryImages        = $(selectors.galleryImage, this.$container);      
@@ -135,12 +141,15 @@ export default class ProductDetailForm {
       // See productVariants
       this.$container.on('variantChange' + this.namespace, this.onVariantChange.bind(this));
       this.$container.on(this.events.CHANGE, selectors.stickyOptionSelector, this.onStickyOptionSelectorChange.bind(this));
+      this.$container.on(this.events.CLICK, selectors.stickyOptionSelector, this.onStickyOptionSelectorChange.bind(this));
       this.$container.on(this.events.CLICK, selectors.variantOptionValue, this.onVariantOptionValueClick.bind(this));
       this.$container.on(this.events.MOUSEENTER, selectors.variantOptionValue, this.onVariantOptionValueMouseenter.bind(this));
       this.$container.on(this.events.MOUSELEAVE, selectors.variantOptionValue, this.onVariantOptionValueMouseleave.bind(this));
       $window.on('resize', $.throttle(50, this.onResize.bind(this)));
 
       this.onResize();
+
+      setTimeout(this.$stickyForm.addClass.bind(this.$stickyForm, classes.stickyFormReady), 1000);
 
       var e = $.Event(this.events.READY);
       this.$el.trigger(e);
@@ -155,9 +164,8 @@ export default class ProductDetailForm {
     this.updateProductPrices(variant);
     this.updateAddToCartState(variant);
     this.updateVariantOptionValues(variant);
+    // this.updateOptionValuesForVariant(variant);
     this.updateGalleries(variant);
-
-    console.log('TODO - update stickySelect');
   }
 
   /**
@@ -214,27 +222,150 @@ export default class ProductDetailForm {
 
   /**
    * Updates the DOM state of the elements matching the variantOption Value selector based on the currently selected variant
+   * These dom elements include the option link elements as well as the sticky option selectors
    *
    * @param {Object} variant - Shopify variant object
    */
   updateVariantOptionValues(variant) {
     if(variant) {
       // Loop through all the options and update the option value
-      for (var i = 1; i <= 3; i++) {
-        var variantOptionValue = variant['option' + i];
+      for (let i = 1; i <= 3; i++) {
+        const variantOptionValue = variant['option' + i];
 
         if(!variantOptionValue) break; // Break if the product doesn't have an option at this index
 
         // Since we are finding the variantOptionValueUI based on the *actual* value, we need to scope to the correct list
         // As some products can have the same values for different variant options (waist + inseam both use "32", "34", etc..)
-        var $variantOptionValueList = $(selectors.variantOptionValueList, this.$container).filter('[data-option-position="'+i+'"]');
-        var $variantOptionValueUI = $('[data-variant-option-value="'+variantOptionValue+'"]', $variantOptionValueList);
+        const $variantOptionValueList = $(selectors.variantOptionValueList, this.$container).filter('[data-option-position="'+i+'"]');
+        const $variantOptionValueUI = $('[data-variant-option-value="'+variantOptionValue+'"]', $variantOptionValueList);
 
         $variantOptionValueUI.addClass( classes.variantOptionValueSelected );
         $variantOptionValueUI.siblings().removeClass( classes.variantOptionValueSelected );
+
+        const $stickySelect = $(selectors.stickyOptionSelector, this.$container).filter('[data-option-position="'+i+'"]');
+        // console.log('update the following sticky select with value = ' + variantOptionValue);
+        // console.log($stickySelect.get(0));
+
+        $stickySelect.val(variantOptionValue);
+        const $placeholder = $stickySelect.siblings('.sticky-select-placeholder');
+        $placeholder.find('.sticky-select-placeholder-text').text(variantOptionValue);
+        $placeholder.find('.sticky-select-label').css('display', (variantOptionValue ? 'inline-block' : 'none'));
+
       }
     }
   }
+
+  /**
+   * Updates the DOM state of the elements matching the variantOption Value selector based on the currently selected variant
+   *
+   * @param {Object} variant - Shopify variant object
+   */
+  // updateOptionValuesForVariant(variant) {
+  //   if(variant) {
+
+  //     const selectedOption1 = variant.option1;
+  //     const selectedOption2 = variant.option2;
+  //     const selectedOption3 = variant.option3;
+
+  //     // Loop through all the options and update the option value
+  //     for (var i = 1; i <= 3; i++) {
+  //       var variantOptionValue = variant['option' + i];
+
+  //       if(!variantOptionValue) break; // Break if the product doesn't have an option at this index
+
+  //       // Since we are finding the variantOptionValueUI based on the *actual* value, we need to scope to the correct list
+  //       // As some products can have the same values for different variant options (waist + inseam both use "32", "34", etc..)
+  //       var $variantOptionValueList = $(selectors.variantOptionValueList, this.$container).filter('[data-option-position="'+i+'"]');
+  //       var $variantOptionValueUI = $('[data-variant-option-value="'+variantOptionValue+'"]', $variantOptionValueList);
+
+  //       $variantOptionValueUI.addClass( classes.variantOptionValueSelected );
+  //       $variantOptionValueUI.siblings().removeClass( classes.variantOptionValueSelected );
+  //     }
+
+  //     // console.log(variant);
+
+  //     // console.log(this.productSingleObject);
+  //     const p = this.productSingleObject;
+
+  //     // Product has a second option
+  //     if(p.options[1]) {
+
+  //       console.log('selected option - ' + variant.option1);
+
+  //       // Loop through each value for second option
+  //       for (var i = p.options_with_values[1].values.length - 1; i >= 0; i--) {
+  //         let secondOptionValue = p.options_with_values[1].values[i];
+  //         let valueHasAvailableVariants = false;
+  //         // console.log('-- checking value - ' + secondOptionValue + ' --');
+
+  //         // Loop through each variant
+  //         for (var j = p.variants.length - 1; j >= 0; j--) {
+  //           var _v = p.variants[j];
+  //           // console.log('checking variant with option 1 - ' + _v.option1);
+  //           // console.log('checking variant with option 2 - ' + _v.option2);
+
+  //           if(_v.option1 == variant.option1 && _v.option2 == secondOptionValue) {
+  //             // console.log('found a matching variant');
+  //             // console.log(_v);
+  //             if(_v.available) {
+  //               valueHasAvailableVariants = true;
+  //             }
+  //             else {
+
+  //             }
+  //           }
+  //         }
+
+  //         if(valueHasAvailableVariants == false) {
+  //           console.log('disable UI for - ' + secondOptionValue);
+  //           $('[data-variant-option-value="'+ secondOptionValue +'"]').addClass('is-disabled');
+  //         }
+  //         else {
+  //           $('[data-variant-option-value="'+ secondOptionValue +'"]').removeClass('is-disabled');
+  //         }
+
+  //         // product has a third option
+  //         if(p.options[2]) {
+
+  //           console.log('selected secondary option - ' + variant.option2);
+  //           // Loop through each value for the third option
+  //           for (var k = p.options_with_values[2].values.length - 1; k >= 0; k--) {
+  //             let thirdOptionValue = p.options_with_values[2].values[k];
+  //             let _valueHasAvailableVariants = false;
+
+  //             // Loop through each variant
+  //             for (var y = p.variants.length - 1; y >= 0; y--) {
+  //               var __v = p.variants[y];
+  //               // console.log('checking variant with option 2 - ' + __v.option2);
+  //               // console.log('checking variant with option 3 - ' + __v.option3);
+
+  //               if(__v.option1 == variant.option1 && __v.option2 == variant.option2 && __v.option3 == thirdOptionValue) {
+  //                 console.log('found a matching variant');
+  //                 console.log(_v);
+  //                 if(__v.available) {
+  //                   _valueHasAvailableVariants = true;
+  //                 }
+  //                 else {
+
+  //                 }
+  //               }
+  //             }
+
+  //             if(_valueHasAvailableVariants == false) {
+  //               console.log('disable UI for - ' + thirdOptionValue);
+  //               $('[data-variant-option-value="'+ thirdOptionValue +'"]').addClass('is-disabled');
+  //             }
+  //             else {
+  //               $('[data-variant-option-value="'+ thirdOptionValue +'"]').removeClass('is-disabled');
+  //             }
+  //           }
+  //         }
+
+  //       }
+  //     }
+
+  //   }
+  // }  
 
   /**
    * If there are multiple galleries, look for a gallery matching one of the selected variant's options and switch to that gallery
@@ -262,10 +393,17 @@ export default class ProductDetailForm {
         $activeGalleries.first().one(this.transitionEndEvent, () => {
           $activeGalleries.css('display', 'none');
           this.productImageDesktopZoomController.zoomOut();
-          $window.scrollTop(0);
+          
+          // Only scroll to the top if we're on a larger screen with fixed elements
+          // Otherwise it's annoying on mobile
+          if(window.innerWidth > this.desktopMinWidth) {
+            $window.scrollTop(0);  
+          }
+          
           $vGallery.css('display', 'block');
           void $vGallery.get(0).offsetWidth;
           $vGallery.addClass(classes.galleryActive);
+          $window.trigger('lookup'); // For unveil plugin
         });
 
         $activeGalleries.removeClass(classes.galleryActive);
@@ -332,7 +470,6 @@ export default class ProductDetailForm {
   }
 
   onVariantOptionValueMouseleave(e) {
-    console.log('leave');
     const $option = $(e.currentTarget);
     const $list = $option.parents(selectors.variantOptionValueList);
     $list.find(selectors.variantOptionValue).removeClass(classes.variantOptionValueNotHovered);
@@ -350,10 +487,10 @@ export default class ProductDetailForm {
     }
 
     if(window.innerWidth < this.stickyMaxWidth) {
-      $('.product-detail-form').css('margin-bottom', $('.sticky-form').outerHeight());
+      this.$productDetailForm.css('margin-bottom', $('.sticky-form').outerHeight());
     }
     else {
-      $('.product-detail-form').css('margin-bottom', '');
+      this.$productDetailForm.css('margin-bottom', '');
     }
   }
 }

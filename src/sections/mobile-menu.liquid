@@ -15,11 +15,13 @@
                     <a href="{{ link.url }}" {% if link.active or link.child_active %}class="is-active"{% endif %}>{{ link.title }}</a>
 
                     {% if link.links.size > 0 %}
+                      {% comment %}
                       <ul>
                         {% for l in link.links %}
                           <li><a href="{{ l.url }}">{{ l.title }}</a></li>
                         {% endfor %}
                       </ul>
+                      {% endcomment %}
                     {% endif %}
                   </li>
                 {% endfor %}

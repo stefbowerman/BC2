@@ -2280,6 +2280,154 @@ if ( typeof module != 'undefined' && module.exports ) {
 
 
 },{}],3:[function(require,module,exports){
+(function (global){
+/*! smooth-scroll v15.0.0 | (c) 2018 Chris Ferdinandi | MIT License | http://github.com/cferdinandi/smooth-scroll */
+window.Element&&!Element.prototype.closest&&(Element.prototype.closest=function(e){var t,n=(this.document||this.ownerDocument).querySelectorAll(e),o=this;do{for(t=n.length;--t>=0&&n.item(t)!==o;);}while(t<0&&(o=o.parentElement));return o}),(function(){function e(e,t){t=t||{bubbles:!1,cancelable:!1,detail:void 0};var n=document.createEvent("CustomEvent");return n.initCustomEvent(e,t.bubbles,t.cancelable,t.detail),n}if("function"==typeof window.CustomEvent)return!1;e.prototype=window.Event.prototype,window.CustomEvent=e})(),(function(){for(var e=0,t=["ms","moz","webkit","o"],n=0;n<t.length&&!window.requestAnimationFrame;++n)window.requestAnimationFrame=window[t[n]+"RequestAnimationFrame"],window.cancelAnimationFrame=window[t[n]+"CancelAnimationFrame"]||window[t[n]+"CancelRequestAnimationFrame"];window.requestAnimationFrame||(window.requestAnimationFrame=function(t,n){var o=(new Date).getTime(),i=Math.max(0,16-(o-e)),r=window.setTimeout((function(){t(o+i)}),i);return e=o+i,r}),window.cancelAnimationFrame||(window.cancelAnimationFrame=function(e){clearTimeout(e)})})(),(function(e,t){"function"==typeof define&&define.amd?define([],(function(){return t(e)})):"object"==typeof exports?module.exports=t(e):e.SmoothScroll=t(e)})("undefined"!=typeof global?global:"undefined"!=typeof window?window:this,(function(e){"use strict";var t={ignore:"[data-scroll-ignore]",header:null,topOnEmptyHash:!0,speed:500,speedAsDuration:!1,durationMax:null,durationMin:null,clip:!0,offset:0,easing:"easeInOutCubic",customEasing:null,updateURL:!0,popstate:!0,emitEvents:!0},n=function(){return"querySelector"in document&&"addEventListener"in e&&"requestAnimationFrame"in e&&"closest"in e.Element.prototype},o=function(){var e={};return Array.prototype.forEach.call(arguments,(function(t){for(var n in t){if(!t.hasOwnProperty(n))return;e[n]=t[n]}})),e},i=function(t){return!!("matchMedia"in e&&e.matchMedia("(prefers-reduced-motion)").matches)},r=function(t){return parseInt(e.getComputedStyle(t).height,10)},a=function(e){var t;try{t=decodeURIComponent(e)}catch(n){t=e}return t},u=function(e){"#"===e.charAt(0)&&(e=e.substr(1));for(var t,n=String(e),o=n.length,i=-1,r="",a=n.charCodeAt(0);++i<o;){if(0===(t=n.charCodeAt(i)))throw new InvalidCharacterError("Invalid character: the input contains U+0000.");t>=1&&t<=31||127==t||0===i&&t>=48&&t<=57||1===i&&t>=48&&t<=57&&45===a?r+="\\"+t.toString(16)+" ":r+=t>=128||45===t||95===t||t>=48&&t<=57||t>=65&&t<=90||t>=97&&t<=122?n.charAt(i):"\\"+n.charAt(i)}var u;try{u=decodeURIComponent("#"+r)}catch(e){u="#"+r}return u},c=function(e,t){var n;return"easeInQuad"===e.easing&&(n=t*t),"easeOutQuad"===e.easing&&(n=t*(2-t)),"easeInOutQuad"===e.easing&&(n=t<.5?2*t*t:(4-2*t)*t-1),"easeInCubic"===e.easing&&(n=t*t*t),"easeOutCubic"===e.easing&&(n=--t*t*t+1),"easeInOutCubic"===e.easing&&(n=t<.5?4*t*t*t:(t-1)*(2*t-2)*(2*t-2)+1),"easeInQuart"===e.easing&&(n=t*t*t*t),"easeOutQuart"===e.easing&&(n=1- --t*t*t*t),"easeInOutQuart"===e.easing&&(n=t<.5?8*t*t*t*t:1-8*--t*t*t*t),"easeInQuint"===e.easing&&(n=t*t*t*t*t),"easeOutQuint"===e.easing&&(n=1+--t*t*t*t*t),"easeInOutQuint"===e.easing&&(n=t<.5?16*t*t*t*t*t:1+16*--t*t*t*t*t),e.customEasing&&(n=e.customEasing(t)),n||t},s=function(){return Math.max(document.body.scrollHeight,document.documentElement.scrollHeight,document.body.offsetHeight,document.documentElement.offsetHeight,document.body.clientHeight,document.documentElement.clientHeight)},l=function(t,n,o,i){var r=0;if(t.offsetParent)do{r+=t.offsetTop,t=t.offsetParent}while(t);return r=Math.max(r-n-o,0),i&&(r=Math.min(r,s()-e.innerHeight)),r},m=function(e){return e?r(e)+e.offsetTop:0},d=function(e,t){var n=t.speedAsDuration?t.speed:Math.abs(e/1e3*t.speed);return t.durationMax&&n>t.durationMax?t.durationMax:t.durationMin&&n<t.durationMin?t.durationMin:n},f=function(e,t,n){t||history.pushState&&n.updateURL&&history.pushState({smoothScroll:JSON.stringify(n),anchor:e.id},document.title,e===document.documentElement?"#top":"#"+e.id)},h=function(t,n,o){0===t&&document.body.focus(),o||(t.focus(),document.activeElement!==t&&(t.setAttribute("tabindex","-1"),t.focus(),t.style.outline="none"),e.scrollTo(0,n))},p=function(t,n,o,i){if(n.emitEvents&&"function"==typeof e.CustomEvent){var r=new CustomEvent(t,{bubbles:!0,detail:{anchor:o,toggle:i}});document.dispatchEvent(r)}};return function(r,g){var v,w,y,E,b,S,A,C={};C.cancelScroll=function(e){cancelAnimationFrame(A),A=null,e||p("scrollCancel",v)},C.animateScroll=function(n,i,r){var a=o(v||t,r||{}),u="[object Number]"===Object.prototype.toString.call(n),g=u||!n.tagName?null:n;if(u||g){var w=e.pageYOffset;a.header&&!E&&(E=document.querySelector(a.header)),b||(b=m(E));var y,S,O,I=u?n:l(g,b,parseInt("function"==typeof a.offset?a.offset(n,i):a.offset,10),a.clip),q=I-w,M=s(),F=0,L=d(q,a),x=function(t,o){var r=e.pageYOffset;if(t==o||r==o||(w<o&&e.innerHeight+r)>=M)return C.cancelScroll(!0),h(n,o,u),p("scrollStop",a,n,i),y=null,A=null,!0},H=function(t){y||(y=t),F+=t-y,S=F/parseInt(L,10),S=S>1?1:S,O=w+q*c(a,S),e.scrollTo(0,Math.floor(O)),x(O,I)||(A=e.requestAnimationFrame(H),y=t)};0===e.pageYOffset&&e.scrollTo(0,0),f(n,u,a),p("scrollStart",a,n,i),C.cancelScroll(!0),e.requestAnimationFrame(H)}};var O=function(t){if(!i()&&0===t.button&&!t.metaKey&&!t.ctrlKey&&"closest"in t.target&&(y=t.target.closest(r))&&"a"===y.tagName.toLowerCase()&&!t.target.closest(v.ignore)&&y.hostname===e.location.hostname&&y.pathname===e.location.pathname&&/#/.test(y.href)){var n=u(a(y.hash)),o=v.topOnEmptyHash&&"#"===n?document.documentElement:document.querySelector(n);o=o||"#top"!==n?o:document.documentElement,o&&(t.preventDefault(),C.animateScroll(o,y))}},I=function(e){if(null!==history.state&&history.state.smoothScroll&&history.state.smoothScroll===JSON.stringify(v)&&history.state.anchor){var t=document.querySelector(u(a(history.state.anchor)));t&&C.animateScroll(t,null,{updateURL:!1})}},q=function(e){S||(S=setTimeout((function(){S=null,b=m(E)}),66))};return C.destroy=function(){v&&(document.removeEventListener("click",O,!1),e.removeEventListener("resize",q,!1),e.removeEventListener("popstate",I,!1),C.cancelScroll(),v=null,w=null,y=null,E=null,b=null,S=null,A=null)},C.init=function(i){if(!n())throw"Smooth Scroll: This browser does not support the required JavaScript methods and browser APIs.";C.destroy(),v=o(t,i||{}),E=v.header?document.querySelector(v.header):null,b=m(E),document.addEventListener("click",O,!1),E&&e.addEventListener("resize",q,!1),v.updateURL&&v.popstate&&e.addEventListener("popstate",I,!1)},C.init(g),C}}));
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],4:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
+/* eslint-disable no-undefined,no-param-reassign,no-shadow */
+
+/**
+ * Throttle execution of a function. Especially useful for rate limiting
+ * execution of handlers on events like resize and scroll.
+ *
+ * @param  {Number}    delay          A zero-or-greater delay in milliseconds. For event callbacks, values around 100 or 250 (or even higher) are most useful.
+ * @param  {Boolean}   [noTrailing]   Optional, defaults to false. If noTrailing is true, callback will only execute every `delay` milliseconds while the
+ *                                    throttled-function is being called. If noTrailing is false or unspecified, callback will be executed one final time
+ *                                    after the last throttled-function call. (After the throttled-function has not been called for `delay` milliseconds,
+ *                                    the internal counter is reset)
+ * @param  {Function}  callback       A function to be executed after delay milliseconds. The `this` context and all arguments are passed through, as-is,
+ *                                    to `callback` when the throttled-function is executed.
+ * @param  {Boolean}   [debounceMode] If `debounceMode` is true (at begin), schedule `clear` to execute after `delay` ms. If `debounceMode` is false (at end),
+ *                                    schedule `callback` to execute after `delay` ms.
+ *
+ * @return {Function}  A new, throttled, function.
+ */
+function throttle (delay, noTrailing, callback, debounceMode) {
+  /*
+   * After wrapper has stopped being called, this timeout ensures that
+   * `callback` is executed at the proper times in `throttle` and `end`
+   * debounce modes.
+   */
+  var timeoutID;
+  var cancelled = false; // Keep track of the last time `callback` was executed.
+
+  var lastExec = 0; // Function to clear existing timeout
+
+  function clearExistingTimeout() {
+    if (timeoutID) {
+      clearTimeout(timeoutID);
+    }
+  } // Function to cancel next exec
+
+
+  function cancel() {
+    clearExistingTimeout();
+    cancelled = true;
+  } // `noTrailing` defaults to falsy.
+
+
+  if (typeof noTrailing !== 'boolean') {
+    debounceMode = callback;
+    callback = noTrailing;
+    noTrailing = undefined;
+  }
+  /*
+   * The `wrapper` function encapsulates all of the throttling / debouncing
+   * functionality and when executed will limit the rate at which `callback`
+   * is executed.
+   */
+
+
+  function wrapper() {
+    var self = this;
+    var elapsed = Date.now() - lastExec;
+    var args = arguments;
+
+    if (cancelled) {
+      return;
+    } // Execute `callback` and update the `lastExec` timestamp.
+
+
+    function exec() {
+      lastExec = Date.now();
+      callback.apply(self, args);
+    }
+    /*
+     * If `debounceMode` is true (at begin) this is used to clear the flag
+     * to allow future `callback` executions.
+     */
+
+
+    function clear() {
+      timeoutID = undefined;
+    }
+
+    if (debounceMode && !timeoutID) {
+      /*
+       * Since `wrapper` is being called for the first time and
+       * `debounceMode` is true (at begin), execute `callback`.
+       */
+      exec();
+    }
+
+    clearExistingTimeout();
+
+    if (debounceMode === undefined && elapsed > delay) {
+      /*
+       * In throttle mode, if `delay` time has been exceeded, execute
+       * `callback`.
+       */
+      exec();
+    } else if (noTrailing !== true) {
+      /*
+       * In trailing throttle mode, since `delay` time has not been
+       * exceeded, schedule `callback` to execute `delay` ms after most
+       * recent execution.
+       *
+       * If `debounceMode` is true (at begin), schedule `clear` to execute
+       * after `delay` ms.
+       *
+       * If `debounceMode` is false (at end), schedule `callback` to
+       * execute after `delay` ms.
+       */
+      timeoutID = setTimeout(debounceMode ? clear : exec, debounceMode === undefined ? delay - elapsed : delay);
+    }
+  }
+
+  wrapper.cancel = cancel; // Return the wrapper function.
+
+  return wrapper;
+}
+
+/* eslint-disable no-undefined */
+/**
+ * Debounce execution of a function. Debouncing, unlike throttling,
+ * guarantees that a function is only executed a single time, either at the
+ * very beginning of a series of calls, or at the very end.
+ *
+ * @param  {Number}   delay         A zero-or-greater delay in milliseconds. For event callbacks, values around 100 or 250 (or even higher) are most useful.
+ * @param  {Boolean}  [atBegin]     Optional, defaults to false. If atBegin is false or unspecified, callback will only be executed `delay` milliseconds
+ *                                  after the last debounced-function call. If atBegin is true, callback will be executed only at the first debounced-function call.
+ *                                  (After the throttled-function has not been called for `delay` milliseconds, the internal counter is reset).
+ * @param  {Function} callback      A function to be executed after delay milliseconds. The `this` context and all arguments are passed through, as-is,
+ *                                  to `callback` when the debounced-function is executed.
+ *
+ * @return {Function} A new, debounced function.
+ */
+
+function debounce (delay, atBegin, callback) {
+  return callback === undefined ? throttle(delay, atBegin, false) : throttle(delay, callback, atBegin !== false);
+}
+
+exports.throttle = throttle;
+exports.debounce = debounce;
+
+},{}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2770,7 +2918,7 @@ var AJAXCart = function () {
 
 exports.default = AJAXCart;
 
-},{"./currency":8,"./images":9,"./shopifyAPI":26,"./utils":29}],4:[function(require,module,exports){
+},{"./currency":10,"./images":11,"./shopifyAPI":28,"./utils":31}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2979,7 +3127,7 @@ var AJAXMailchimpForm = function () {
 
 exports.default = AJAXMailchimpForm;
 
-},{}],5:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 'use strict';
 
 var _utils = require('./utils');
@@ -3096,7 +3244,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 // Sections
 // import SectionManager  from './sectionManager';
 
-},{"./appRouter":6,"./sections/ajaxCart":15,"./sections/footer":20,"./sections/header":21,"./sections/mobileMenu":22,"./sections/nav":23,"./utils":29}],6:[function(require,module,exports){
+},{"./appRouter":8,"./sections/ajaxCart":17,"./sections/footer":22,"./sections/header":23,"./sections/mobileMenu":24,"./sections/nav":25,"./utils":31}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3316,7 +3464,7 @@ var AppRouter = function () {
 
 exports.default = AppRouter;
 
-},{"./views/base":30,"./views/cart":31,"./views/collection":32,"./views/contact":33,"./views/index":34,"./views/product":35,"navigo":2}],7:[function(require,module,exports){
+},{"./views/base":32,"./views/cart":33,"./views/collection":34,"./views/contact":35,"./views/index":36,"./views/product":37,"navigo":2}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3400,7 +3548,7 @@ $(function () {
 exports.getBreakpointMinWidth = getBreakpointMinWidth;
 exports.getBreakpointMinWidthKeyForWidth = getBreakpointMinWidthKeyForWidth;
 
-},{}],8:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3493,7 +3641,7 @@ exports.default = {
   }
 };
 
-},{"./utils":29}],9:[function(require,module,exports){
+},{"./utils":31}],11:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3584,7 +3732,7 @@ exports.default = {
   }
 };
 
-},{}],10:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3636,6 +3784,8 @@ var selectors = {
 
   productJson: '[data-product-json]',
   productPrice: '[data-product-price]',
+  productDetailForm: '[data-product-detail-form]',
+  stickyForm: '[data-sticky-form]',
   singleOptionSelector: '[data-single-option-selector]',
   stickyOptionSelector: '[data-sticky-option-selector]',
   variantOptionValueList: '[data-variant-option-value-list][data-option-position]',
@@ -3651,7 +3801,8 @@ var classes = {
   zoomedIn: 'is-zoomed',
   galleriesAreReady: 'is-ready',
   galleryActive: 'is-active',
-  galleryImageLoaded: 'is-loaded'
+  galleryImageLoaded: 'is-loaded',
+  stickyFormReady: 'is-ready'
 };
 
 var $window = $(window);
@@ -3697,6 +3848,7 @@ var ProductDetailForm = function () {
 
       this.stickyMaxWidth = Breakpoints.getBreakpointMinWidth('sm') - 1;
       this.zoomMinWidth = Breakpoints.getBreakpointMinWidth('sm');
+      this.desktopMinWidth = Breakpoints.getBreakpointMinWidth('lg');
       this.transitionEndEvent = _utils2.default.whichTransitionEnd();
       this.settings = $.extend({}, defaults, config);
 
@@ -3722,6 +3874,8 @@ var ProductDetailForm = function () {
       // this.$productPrice               = $(selectors.productPrice, this.$container);
       // this.$comparePrice               = $(selectors.comparePrice, this.$container);
       // this.$comparePriceText           = $(selectors.comparePriceText, this.$container);
+      this.$stickyForm = $(selectors.stickyForm, this.$container);
+      this.$productDetailForm = $(selectors.productDetailForm, this.$container);
       this.$galleriesWrapper = $(selectors.galleriesWrapper, this.$container);
       this.$galleries = $(selectors.gallery, this.$container); // can have multiple
       this.$galleryImages = $(selectors.galleryImage, this.$container);
@@ -3755,12 +3909,15 @@ var ProductDetailForm = function () {
       // See productVariants
       this.$container.on('variantChange' + this.namespace, this.onVariantChange.bind(this));
       this.$container.on(this.events.CHANGE, selectors.stickyOptionSelector, this.onStickyOptionSelectorChange.bind(this));
+      this.$container.on(this.events.CLICK, selectors.stickyOptionSelector, this.onStickyOptionSelectorChange.bind(this));
       this.$container.on(this.events.CLICK, selectors.variantOptionValue, this.onVariantOptionValueClick.bind(this));
       this.$container.on(this.events.MOUSEENTER, selectors.variantOptionValue, this.onVariantOptionValueMouseenter.bind(this));
       this.$container.on(this.events.MOUSELEAVE, selectors.variantOptionValue, this.onVariantOptionValueMouseleave.bind(this));
       $window.on('resize', $.throttle(50, this.onResize.bind(this)));
 
       this.onResize();
+
+      setTimeout(this.$stickyForm.addClass.bind(this.$stickyForm, classes.stickyFormReady), 1000);
 
       var e = $.Event(this.events.READY);
       this.$el.trigger(e);
@@ -3775,9 +3932,8 @@ var ProductDetailForm = function () {
     this.updateProductPrices(variant);
     this.updateAddToCartState(variant);
     this.updateVariantOptionValues(variant);
+    // this.updateOptionValuesForVariant(variant);
     this.updateGalleries(variant);
-
-    console.log('TODO - update stickySelect');
   };
 
   /**
@@ -3838,6 +3994,7 @@ var ProductDetailForm = function () {
 
   /**
    * Updates the DOM state of the elements matching the variantOption Value selector based on the currently selected variant
+   * These dom elements include the option link elements as well as the sticky option selectors
    *
    * @param {Object} variant - Shopify variant object
    */
@@ -3858,9 +4015,130 @@ var ProductDetailForm = function () {
 
         $variantOptionValueUI.addClass(classes.variantOptionValueSelected);
         $variantOptionValueUI.siblings().removeClass(classes.variantOptionValueSelected);
+
+        var $stickySelect = $(selectors.stickyOptionSelector, this.$container).filter('[data-option-position="' + i + '"]');
+        // console.log('update the following sticky select with value = ' + variantOptionValue);
+        // console.log($stickySelect.get(0));
+
+        $stickySelect.val(variantOptionValue);
+        var $placeholder = $stickySelect.siblings('.sticky-select-placeholder');
+        $placeholder.find('.sticky-select-placeholder-text').text(variantOptionValue);
+        $placeholder.find('.sticky-select-label').css('display', variantOptionValue ? 'inline-block' : 'none');
       }
     }
   };
+
+  /**
+   * Updates the DOM state of the elements matching the variantOption Value selector based on the currently selected variant
+   *
+   * @param {Object} variant - Shopify variant object
+   */
+  // updateOptionValuesForVariant(variant) {
+  //   if(variant) {
+
+  //     const selectedOption1 = variant.option1;
+  //     const selectedOption2 = variant.option2;
+  //     const selectedOption3 = variant.option3;
+
+  //     // Loop through all the options and update the option value
+  //     for (var i = 1; i <= 3; i++) {
+  //       var variantOptionValue = variant['option' + i];
+
+  //       if(!variantOptionValue) break; // Break if the product doesn't have an option at this index
+
+  //       // Since we are finding the variantOptionValueUI based on the *actual* value, we need to scope to the correct list
+  //       // As some products can have the same values for different variant options (waist + inseam both use "32", "34", etc..)
+  //       var $variantOptionValueList = $(selectors.variantOptionValueList, this.$container).filter('[data-option-position="'+i+'"]');
+  //       var $variantOptionValueUI = $('[data-variant-option-value="'+variantOptionValue+'"]', $variantOptionValueList);
+
+  //       $variantOptionValueUI.addClass( classes.variantOptionValueSelected );
+  //       $variantOptionValueUI.siblings().removeClass( classes.variantOptionValueSelected );
+  //     }
+
+  //     // console.log(variant);
+
+  //     // console.log(this.productSingleObject);
+  //     const p = this.productSingleObject;
+
+  //     // Product has a second option
+  //     if(p.options[1]) {
+
+  //       console.log('selected option - ' + variant.option1);
+
+  //       // Loop through each value for second option
+  //       for (var i = p.options_with_values[1].values.length - 1; i >= 0; i--) {
+  //         let secondOptionValue = p.options_with_values[1].values[i];
+  //         let valueHasAvailableVariants = false;
+  //         // console.log('-- checking value - ' + secondOptionValue + ' --');
+
+  //         // Loop through each variant
+  //         for (var j = p.variants.length - 1; j >= 0; j--) {
+  //           var _v = p.variants[j];
+  //           // console.log('checking variant with option 1 - ' + _v.option1);
+  //           // console.log('checking variant with option 2 - ' + _v.option2);
+
+  //           if(_v.option1 == variant.option1 && _v.option2 == secondOptionValue) {
+  //             // console.log('found a matching variant');
+  //             // console.log(_v);
+  //             if(_v.available) {
+  //               valueHasAvailableVariants = true;
+  //             }
+  //             else {
+
+  //             }
+  //           }
+  //         }
+
+  //         if(valueHasAvailableVariants == false) {
+  //           console.log('disable UI for - ' + secondOptionValue);
+  //           $('[data-variant-option-value="'+ secondOptionValue +'"]').addClass('is-disabled');
+  //         }
+  //         else {
+  //           $('[data-variant-option-value="'+ secondOptionValue +'"]').removeClass('is-disabled');
+  //         }
+
+  //         // product has a third option
+  //         if(p.options[2]) {
+
+  //           console.log('selected secondary option - ' + variant.option2);
+  //           // Loop through each value for the third option
+  //           for (var k = p.options_with_values[2].values.length - 1; k >= 0; k--) {
+  //             let thirdOptionValue = p.options_with_values[2].values[k];
+  //             let _valueHasAvailableVariants = false;
+
+  //             // Loop through each variant
+  //             for (var y = p.variants.length - 1; y >= 0; y--) {
+  //               var __v = p.variants[y];
+  //               // console.log('checking variant with option 2 - ' + __v.option2);
+  //               // console.log('checking variant with option 3 - ' + __v.option3);
+
+  //               if(__v.option1 == variant.option1 && __v.option2 == variant.option2 && __v.option3 == thirdOptionValue) {
+  //                 console.log('found a matching variant');
+  //                 console.log(_v);
+  //                 if(__v.available) {
+  //                   _valueHasAvailableVariants = true;
+  //                 }
+  //                 else {
+
+  //                 }
+  //               }
+  //             }
+
+  //             if(_valueHasAvailableVariants == false) {
+  //               console.log('disable UI for - ' + thirdOptionValue);
+  //               $('[data-variant-option-value="'+ thirdOptionValue +'"]').addClass('is-disabled');
+  //             }
+  //             else {
+  //               $('[data-variant-option-value="'+ thirdOptionValue +'"]').removeClass('is-disabled');
+  //             }
+  //           }
+  //         }
+
+  //       }
+  //     }
+
+  //   }
+  // }  
 
   /**
    * If there are multiple galleries, look for a gallery matching one of the selected variant's options and switch to that gallery
@@ -3892,10 +4170,17 @@ var ProductDetailForm = function () {
         $activeGalleries.first().one(_this2.transitionEndEvent, function () {
           $activeGalleries.css('display', 'none');
           _this2.productImageDesktopZoomController.zoomOut();
-          $window.scrollTop(0);
+
+          // Only scroll to the top if we're on a larger screen with fixed elements
+          // Otherwise it's annoying on mobile
+          if (window.innerWidth > _this2.desktopMinWidth) {
+            $window.scrollTop(0);
+          }
+
           $vGallery.css('display', 'block');
           void $vGallery.get(0).offsetWidth;
           $vGallery.addClass(classes.galleryActive);
+          $window.trigger('lookup'); // For unveil plugin
         });
 
         $activeGalleries.removeClass(classes.galleryActive);
@@ -3969,7 +4254,6 @@ var ProductDetailForm = function () {
   };
 
   ProductDetailForm.prototype.onVariantOptionValueMouseleave = function onVariantOptionValueMouseleave(e) {
-    console.log('leave');
     var $option = $(e.currentTarget);
     var $list = $option.parents(selectors.variantOptionValueList);
     $list.find(selectors.variantOptionValue).removeClass(classes.variantOptionValueNotHovered);
@@ -3986,9 +4270,9 @@ var ProductDetailForm = function () {
     }
 
     if (window.innerWidth < this.stickyMaxWidth) {
-      $('.product-detail-form').css('margin-bottom', $('.sticky-form').outerHeight());
+      this.$productDetailForm.css('margin-bottom', $('.sticky-form').outerHeight());
     } else {
-      $('.product-detail-form').css('margin-bottom', '');
+      this.$productDetailForm.css('margin-bottom', '');
     }
   };
 
@@ -3997,7 +4281,7 @@ var ProductDetailForm = function () {
 
 exports.default = ProductDetailForm;
 
-},{"../breakpoints":7,"../currency":8,"../utils":29,"./productImageDesktopZoomController":11,"./productImageTouchZoomController":12,"./productVariants":13}],11:[function(require,module,exports){
+},{"../breakpoints":9,"../currency":10,"../utils":31,"./productImageDesktopZoomController":13,"./productImageTouchZoomController":14,"./productVariants":15}],13:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4108,7 +4392,7 @@ var ProductImageDesktopZoomController = function () {
 
 exports.default = ProductImageDesktopZoomController;
 
-},{}],12:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4252,7 +4536,7 @@ var ProductImageTouchZoomController = function () {
 
 exports.default = ProductImageTouchZoomController;
 
-},{"../../../node_modules/iscroll/build/iscroll-zoom":1}],13:[function(require,module,exports){
+},{"../../../node_modules/iscroll/build/iscroll-zoom":1}],15:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4459,7 +4743,7 @@ var ProductVariants = function () {
 
 exports.default = ProductVariants;
 
-},{"../utils":29}],14:[function(require,module,exports){
+},{"../utils":31}],16:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4476,7 +4760,7 @@ exports.default = {
   test: _test2.default
 };
 
-},{"./sections/test":25}],15:[function(require,module,exports){
+},{"./sections/test":27}],17:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4547,7 +4831,7 @@ var AJAXCartSection = function (_BaseSection) {
 
 exports.default = AJAXCartSection;
 
-},{"../ajaxCart":3,"./base":16}],16:[function(require,module,exports){
+},{"../ajaxCart":5,"./base":18}],18:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4618,7 +4902,7 @@ var BaseSection = function () {
 
 exports.default = BaseSection;
 
-},{}],17:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4675,7 +4959,7 @@ var CartSection = function (_BaseSection) {
 
 exports.default = CartSection;
 
-},{"./base":16}],18:[function(require,module,exports){
+},{"./base":18}],20:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4715,7 +4999,7 @@ var CollectionSection = function (_BaseSection) {
 
 exports.default = CollectionSection;
 
-},{"./base":16}],19:[function(require,module,exports){
+},{"./base":18}],21:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4766,7 +5050,7 @@ var ContactSection = function (_BaseSection) {
 
 exports.default = ContactSection;
 
-},{"../uiComponents/contactForm":27,"./base":16}],20:[function(require,module,exports){
+},{"../uiComponents/contactForm":29,"./base":18}],22:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4824,7 +5108,7 @@ var FooterSection = function (_BaseSection) {
 
 exports.default = FooterSection;
 
-},{"../ajaxMailchimpForm":4,"./base":16}],21:[function(require,module,exports){
+},{"../ajaxMailchimpForm":6,"./base":18}],23:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4870,7 +5154,7 @@ var HeaderSection = function (_BaseSection) {
 
 exports.default = HeaderSection;
 
-},{"./base":16}],22:[function(require,module,exports){
+},{"./base":18}],24:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4971,7 +5255,7 @@ var MobileMenuSection = function (_BaseSection) {
 
 exports.default = MobileMenuSection;
 
-},{"../uiComponents/drawer":28,"./base":16}],23:[function(require,module,exports){
+},{"../uiComponents/drawer":30,"./base":18}],25:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5072,7 +5356,7 @@ var NavSection = function (_BaseSection) {
 
 exports.default = NavSection;
 
-},{"./base":16}],24:[function(require,module,exports){
+},{"./base":18}],26:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5091,6 +5375,18 @@ var _drawer = require('../uiComponents/drawer');
 
 var _drawer2 = _interopRequireDefault(_drawer);
 
+var _breakpoints = require('../breakpoints');
+
+var Breakpoints = _interopRequireWildcard(_breakpoints);
+
+var _smoothScroll = require('smooth-scroll');
+
+var _smoothScroll2 = _interopRequireDefault(_smoothScroll);
+
+var _throttleDebounce = require('throttle-debounce');
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
@@ -5103,8 +5399,19 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 var selectors = {
   sizeGuideDrawer: '[data-size-guide-drawer]',
-  sizeGuideShow: '[data-size-guide-show]'
+  sizeGuideShow: '[data-size-guide-show]',
+  productEssential: '[data-product-essential]',
+  fixedDescription: '[data-fixed-description]',
+  secondaryDescription: '[data-secondary-description]',
+  secondaryDescriptionLink: '[data-secondary-description-link]'
 };
+
+var classes = {
+  secondaryLinkHidden: 'is-hidden',
+  hide: 'hide'
+};
+
+var $window = $(window);
 
 var ProductSection = function (_BaseSection) {
   _inherits(ProductSection, _BaseSection);
@@ -5117,6 +5424,9 @@ var ProductSection = function (_BaseSection) {
     _this.name = 'product';
     _this.namespace = '.' + _this.name;
 
+    _this.bpTabletMin = Breakpoints.getBreakpointMinWidth('sm');
+    _this.bpDesktopMin = Breakpoints.getBreakpointMinWidth('lg');
+    _this.smoothScroll = new _smoothScroll2.default();
     _this.productDetailForm = new _productDetailForm2.default({
       $el: _this.$container,
       $container: _this.$container,
@@ -5125,6 +5435,10 @@ var ProductSection = function (_BaseSection) {
 
     _this.productDetailForm.initialize();
 
+    _this.$productEssential = $(selectors.productEssential, _this.$container);
+    _this.$fixedDescription = $(selectors.fixedDescription, _this.$container);
+    _this.$secondaryDescription = $(selectors.secondaryDescription, _this.$container);
+    _this.$secondaryDescriptionLink = $(selectors.secondaryDescriptionLink, _this.$container);
     _this.$sizeGuideDrawerEl = $(selectors.sizeGuideDrawer, _this.$container);
 
     if (_this.$sizeGuideDrawerEl.length) {
@@ -5135,11 +5449,82 @@ var ProductSection = function (_BaseSection) {
         _this.drawer.show();
       });
     }
+
+    // Description visibility stuff
+    _this.fixedFormFullHeight = null;
+    _this.fixedDescriptionHidden = false;
+    _this.secondaryDescriptionInView = false;
+
+    $window.on('scroll', (0, _throttleDebounce.throttle)(50, _this.onScroll.bind(_this)));
+    $window.on('resize', (0, _throttleDebounce.throttle)(50, _this.onResize.bind(_this)));
+    _this.$secondaryDescriptionLink.on('click', _this.onSecondaryDescriptionLinkClick.bind(_this));
+
+    _this.onResize();
+    _this.secondaryDescriptionCheck();
     return _this;
   }
 
-  ProductSection.prototype.onSelect = function onSelect(e) {
-    console.log('on select in product section');
+  ProductSection.prototype.secondaryDescriptionCheck = function secondaryDescriptionCheck() {
+    var triggerOffset = $window.scrollTop() + window.innerHeight - 100; // Make sure at least 100px of the description are in view
+    this.secondaryDescriptionInView = this.$secondaryDescription.offset()['top'] < triggerOffset;
+
+    if (this.secondaryDescriptionInView) {
+      this.$secondaryDescriptionLink.addClass(classes.secondaryLinkHidden);
+      // console.log('fixed description in view');
+    } else {
+      this.$secondaryDescriptionLink.removeClass(classes.secondaryLinkHidden);
+      // console.log('fixed description NOT in view');
+    }
+  };
+
+  ProductSection.prototype.onScroll = function onScroll() {
+    this.secondaryDescriptionCheck();
+  };
+
+  ProductSection.prototype.onResize = function onResize() {
+
+    this.secondaryDescriptionCheck();
+
+    if (this.fixedFormFullHeight == null && window.innerWidth >= this.bpDesktopMin) {
+      this.fixedFormFullHeight = this.$productEssential.outerHeight();
+    }
+
+    if (this.fixedFormFullHeight) {
+      if (window.innerHeight < this.fixedFormFullHeight && this.fixedDescriptionHidden == false) {
+        this.$fixedDescription.addClass(classes.hide);
+        this.$secondaryDescriptionLink.css('display', 'block');
+        this.$secondaryDescription.css('display', 'block');
+        this.fixedDescriptionHidden = true;
+      } else if (window.innerHeight >= this.fixedFormFullHeight && this.fixedDescriptionHidden == true) {
+        this.$fixedDescription.removeClass(classes.hide);
+        this.$secondaryDescriptionLink.css('display', 'none');
+        this.$secondaryDescription.css('display', '');
+        this.fixedDescriptionHidden = false;
+      }
+    } else {
+      if (window.innerWidth >= this.bpTabletMin) {
+        // If we don't have the fixed form full height that means we aren't above the 1200px breakpoint
+        // but the secondary description is still visible so show the link to view it
+        this.$secondaryDescriptionLink.css('display', 'block');
+      } else {
+        this.$secondaryDescriptionLink.css('display', 'none');
+      }
+    }
+  };
+
+  ProductSection.prototype.onSecondaryDescriptionLinkClick = function onSecondaryDescriptionLinkClick(e) {
+    e.preventDefault();
+
+    if (this.secondaryDescriptionInView) return;
+
+    var scrollToOffset = this.$secondaryDescription.offset()['top'] - 80;
+    this.smoothScroll.animateScroll(scrollToOffset, 0, {
+      speed: 1000,
+      durationMax: 1000,
+      updateURL: false,
+      popstate: false,
+      easing: 'easeOutQuart'
+    });
   };
 
   return ProductSection;
@@ -5147,7 +5532,7 @@ var ProductSection = function (_BaseSection) {
 
 exports.default = ProductSection;
 
-},{"../product/productDetailForm":10,"../uiComponents/drawer":28,"./base":16}],25:[function(require,module,exports){
+},{"../breakpoints":9,"../product/productDetailForm":12,"../uiComponents/drawer":30,"./base":18,"smooth-scroll":3,"throttle-debounce":4}],27:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5189,7 +5574,7 @@ var TestSection = function (_BaseSection) {
 
 exports.default = TestSection;
 
-},{"./base":16}],26:[function(require,module,exports){
+},{"./base":18}],28:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5286,7 +5671,7 @@ exports.default = {
   }
 };
 
-},{}],27:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5358,7 +5743,7 @@ var ContactForm = function () {
 
 exports.default = ContactForm;
 
-},{}],28:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5547,7 +5932,7 @@ var Drawer = function () {
 
 exports.default = Drawer;
 
-},{"../utils":29}],29:[function(require,module,exports){
+},{"../utils":31}],31:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5913,7 +6298,7 @@ exports.default = {
   }
 };
 
-},{}],30:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6005,7 +6390,7 @@ var BaseView = function () {
 
 exports.default = BaseView;
 
-},{"../sectionConstructorDictionary":14,"../sections/base":16}],31:[function(require,module,exports){
+},{"../sectionConstructorDictionary":16,"../sections/base":18}],33:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6049,7 +6434,7 @@ var CartView = function (_BaseView) {
 
 exports.default = CartView;
 
-},{"../sections/cart":17,"./base":30}],32:[function(require,module,exports){
+},{"../sections/cart":19,"./base":32}],34:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6098,7 +6483,7 @@ var CollectionView = function (_BaseView) {
 
 exports.default = CollectionView;
 
-},{"../sections/collection":18,"./base":30}],33:[function(require,module,exports){
+},{"../sections/collection":20,"./base":32}],35:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6142,7 +6527,7 @@ var ContactView = function (_BaseView) {
 
 exports.default = ContactView;
 
-},{"../sections/contact":19,"./base":30}],34:[function(require,module,exports){
+},{"../sections/contact":21,"./base":32}],36:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6188,7 +6573,7 @@ var IndexView = function (_BaseView) {
 
 exports.default = IndexView;
 
-},{"../sections/base":16,"./base":30}],35:[function(require,module,exports){
+},{"../sections/base":18,"./base":32}],37:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6225,7 +6610,7 @@ var ProductView = function (_BaseView) {
 
     _this.sections.push(_this.productSection);
 
-    window.scrollTop = 0;
+    $(window).scrollTop(0);
     return _this;
   }
 
@@ -6249,4 +6634,4 @@ var ProductView = function (_BaseView) {
 
 exports.default = ProductView;
 
-},{"../sections/product":24,"./base":30}]},{},[5]);
+},{"../sections/product":26,"./base":32}]},{},[7]);

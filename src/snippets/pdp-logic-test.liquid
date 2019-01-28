@@ -1,0 +1,178 @@
+<div class="container" style="text-transform: none;">
+  <h1>Logic test!</h1>
+
+  {% comment %} Variables to hold the options html that we shove in the desktop / mobile forms {% endcomment %}
+  {% assign html_desktop = '' %}
+  {% assign html_mobile  = '' %}
+
+  {% comment %} Any option that has more than one available value and isn't color must be selected by the user {% endcomment %}
+  {% assign required_selection_option_count = 0 %}
+  {% assign selected_color = false %}
+
+  {% for option in product.options_with_values %}
+    {% assign selected_option_value = false %}
+    {% assign option_name_upcase = option.name | upcase %}
+
+    <h5>Checking option "{{ option.name }}" at position {{ option.position }}</h5>
+    
+    {% comment %} Number of option values with available variants - need this to know if the option requires selection{% endcomment %}
+    {% assign available_option_value_count = 0 %}
+
+    {% assign variant_option_key = 'option' | append: option.position %}
+
+    {% for value in option.values %}
+      <p>Checking value <strong>{{ value }}</strong></p>  
+      {% assign variants_available_for_option_value = false %}
+      {% comment %}{% assign value_upcase = value | upcase %}{% endcomment %}
+
+      {% comment %} Just need to check if a variant is available for that option value {% endcomment %}
+      {% for variant in product.variants %}
+        {% if variant[variant_option_key] == value and variant.available %}
+          {% assign available_option_value_count = available_option_value_count | plus: 1 %}
+          {% assign variants_available_for_option_value = true %}
+          {% break %}
+        {% endif %}
+      {% endfor %}
+
+      <p>Any variants available for option value? <strong>{% if variants_available_for_option_value %}Yes{% else %}No{% endif %}</strong></p>
+      {% if variants_available_for_option_value == true %}
+        {% comment %} Set this variable to the value if variants are available.  It's okay if it gets overwritten in this loop since we *only* use it if only one value (it wouldn't get overwritten in that case) {% endcomment %}
+        {% assign selected_option_value = value %}
+      {% else %}
+        <p>Since no variants are available with this value, disable this UI and set it as <strong>Sold Out</strong> in the sticky dropdown</p>
+      {% endif %}
+
+      {% if selected_color == false and option_name_upcase == "COLOR" and variants_available_for_option_value %}
+        {% assign selected_color = value %}
+      {% endif %}
+
+    {% endfor %}
+
+
+    <p class="u-fw-bold">Summary for Option</p>
+
+    {% if available_option_value_count == 0 %}
+      <p>All values for option "{{ option.name }}" are sold out.</p>
+    {% elsif available_option_value_count == 1 %}
+      <p>Only a single option value is available.  Default to the single available value - <strong>{{ selected_option_value }}</strong></p>
+    {% else %}
+      <p>Multiple option values ({{ available_option_value_count }}) are available for selection</p>
+    {% endif %}
+
+    {% if selected_color == false and option_name_upcase == "COLOR" %}
+      <p>This option is a color and the first available color is <strong>{{ selected_color }}</strong></p>
+    {% endif %}
+
+    {% if option_name_upcase != "COLOR" and available_option_value_count > 1 %}
+      {% assign required_selection_option_count = required_selection_option_count | plus: 1 %}
+    {% endif %}    
+
+    {% comment %} Now that we have those variables, lets loop through the options once again and generate the HTML {% endcomment %}
+    {% assign option_value_list_html = '' %}
+    {% assign select_options_html    = '' %}
+    {% assign sticky_select_options_html = '' %}
+    {% for value in option.values %}
+      {% assign is_disabled = false %}
+      {% assign is_selected = false %}
+
+      {% comment %} Just need to check if atleast one variant is available for that option value {% endcomment %}
+      {% assign variants_available_for_option_value = false %}
+      {% for variant in product.variants %}
+        {% if variant[variant_option_key] == value and variant.available %}
+          {% assign variants_available_for_option_value = true %}
+          {% break %}
+        {% endif %}
+      {% endfor %}      
+
+      {% comment %} If there's only one available value for this option and this is it {% endcomment %}
+      {% if available_option_value_count == 1 and selected_option_value == value %}
+        {% assign is_selected = true %}
+      {% comment %} Selection isn't required for color, we default to the first color with available variants {% endcomment %}
+      {% elsif option_name_upcase == "COLOR" and value == selected_color and variants_available_for_option_value %}
+        {% assign is_selected = true %}
+      {% comment %} If there are no variants available for this value then it's sold out.   {% endcomment %}
+      {% elsif variants_available_for_option_value == false and option_name_upcase != "COLOR" %}
+        {% assign is_disabled = true %}
+      {% endif %}
+
+      {% capture option_value_list_value_html %}
+        <a href="#" class="option-value{% if is_disabled %} is-disabled {% elsif is_selected %} is-selected{% endif %}" data-variant-option-value="{{ value }}" {% if is_disabled %} disabled="disabled" aria-disabled="true"{% endif %}>
+          {{ value }}
+        </a> 
+      {% endcapture %}
+      {% assign option_value_list_html = option_value_list_html | append: option_value_list_value_html %}
+
+      {% capture select_options_option_html %}
+        <option
+          value="{{ value | escape }}"
+          {% if is_selected %}selected="selected"{% endif %}
+          {% if is_disabled %}disabled="disabled"{% endif %}>
+            {{ value }}{% if is_disabled %} - {{ 'products.product.sold_out' | t | upcase }}{% endif %}
+        </option>
+      {% endcapture %}
+      {% assign select_options_html = select_options_html | append: select_options_option_html %}
+      {% assign sticky_select_options_html = sticky_select_options_html | append: select_options_option_html %}
+ 
+    {% endfor %}
+
+    {% comment %} Now do the HTML {% endcomment %}
+    {% capture desktop_option_html %}
+      <div class="selector-wrapper form-group js">
+        <label for="SingleOptionSelector-{{ option.position | minus: 1 }}">
+          {{ option.name }}
+        </label>
+        <select
+          id="SingleOptionSelector-{{ option.position | minus: 1 }}"
+          class="form-control"
+          data-single-option-selector
+          data-index="option{{ option.position }}"
+          style="display: block">
+          {{ select_options_html }}
+        </select>
+        <div class="option-value-list" data-option-position="{{ option.position }}" data-variant-option-value-list>
+          {{ option_value_list_html }}
+        </div>   
+      </div>
+    {% endcapture %}
+    {% assign html_desktop = html_desktop | append: desktop_option_html %}
+
+    {% capture mobile_option_html %}
+      <div class="sticky-row__entry">
+        <div style="position: relative;">
+          {% comment %}<select style="position: absolute; top: 0; left: 0; right: 0; width: 100%; z-index: 1; opacity: 0; font-size: 16px;" data-sticky-option-selector data-option-position="{{ option.position }}">{% endcomment %}
+          <select data-sticky-option-selector data-option-position="{{ option.position }}">
+            {{ sticky_select_options_html }}
+          </select>
+          <div class="sticky-select-placeholder">
+            <strong class="sticky-select-label" {% if selected_option_value == blank %}style="display: none"{% endif %}>{{ option.name }}:</strong>
+            <span class="sticky-select-placeholder-text">
+              {% if option_name_upcase == "COLOR" %}
+                {{ selected_color }}
+              {% elsif available_option_value_count == 1 %}
+                {{ selected_option_value }}
+              {% else %}
+                Select {{ option.name }}
+              {% endif %}
+            </span>
+          </div>
+        </div>
+      </div>
+    {% endcapture %}
+    {% assign html_mobile = html_mobile | append: mobile_option_html %}
+
+  {% endfor %}
+
+  <h3>Logic Summary</h3>
+  <p>Total Option Count - {{ product.options.size }}</p>
+  <p>Required selection option count - <strong>{{ required_selection_option_count }}</strong></p>
+  {% if selected_color %}
+    <p>Selected color - <strong>{{ selected_color }}</strong></p>
+  {% endif %}
+
+  <h5>HTML Desktop</h5>
+  {{ html_desktop }}
+
+  <h5>HTML Mobile</h5>
+  {{ html_mobile }}
+
+</div>

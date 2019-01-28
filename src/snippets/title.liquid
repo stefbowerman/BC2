@@ -3,6 +3,8 @@
     {% comment %}{% endcomment %}
   {% elsif template.name == 'collection' or template.name == 'list-collections' %}
     Shop
+  {% elsif template.name == 'cart' %}
+    Cart
   {% elsif template.name == 'page' %}
     {{ page.title }}
   {% endif %}

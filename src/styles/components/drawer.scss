@@ -27,7 +27,7 @@ body.drawer-open {
     background: radial-gradient(ellipse at top left, rgba(255,255,255,1) 50%,rgba(255,255,255,0.07) 86%);
     opacity: 0;
     transform: translate(-100%, -100%);
-    transition: opacity 900ms cubic-bezier(0.19, 0.04, 0.43, 0.96) 150ms,transform 800ms cubic-bezier(0.84, 0.01, 0.65, 0.99);
+    transition: opacity 700ms cubic-bezier(0.19, 0.04, 0.43, 0.96) 150ms,transform 800ms cubic-bezier(0.84, 0.01, 0.65, 0.99);
     transform-origin: top left;
   }
 
@@ -53,7 +53,7 @@ body.drawer-open {
     &:before {
       transform: translate(0, 0);
       opacity: 1;
-      transition: opacity 700ms cubic-bezier(0.19, 0.04, 0.43, 0.96), transform 1000ms cubic-bezier(0.19, 0.04, 0.03, 0.99) 0ms;
+      transition: opacity 500ms cubic-bezier(0.19, 0.04, 0.43, 0.96), transform 700ms cubic-bezier(0.19, 0.04, 0.03, 0.99) 0ms;
     }
   }
 
@@ -62,11 +62,11 @@ body.drawer-open {
 .drawer__inner,
 .drawer__close {
   opacity: 0;
-  transition: opacity 900ms cubic-bezier(0.19, 0.04, 0.03, 0.99);
+  transition: opacity 700ms cubic-bezier(0.19, 0.04, 0.03, 0.99);
 
   .drawer.is-visible & {
     opacity: 1;
-    transition-delay: 150ms;
+    transition-delay: 80ms;
   }
 }
 

@@ -30,18 +30,19 @@
   min-height: 100vh;
 
   @media (min-width: $screen-xs-min) {
-    padding-left: $menu-clearance-min;
     margin-left: auto;
+    padding-left: $menu-clearance-min;
   }
 
   @media (min-width: $screen-sm-min) {
-    padding-right: $menu-clearance-min;
     margin-right: auto;
+    // Instead of menu clearance, use clearance for the title at the bottom right of the screen
+    padding-right: 80px; // $menu-clearance-min;
   }
 
   @media (min-width: $screen-lg-min) {
     padding-left: $menu-clearance-max;
-    padding-right: $menu-clearance-max;    
+    padding-right: 100px; // $menu-clearance-max;    
   }
 }
 

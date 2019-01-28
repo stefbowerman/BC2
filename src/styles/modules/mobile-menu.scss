@@ -2,6 +2,22 @@
 // Mobile Menu
 // -------------------------
 
+$h: 13px;
+$w: 20px;
+$t: 1px;
+$icon-transition-duration: 180ms;
+
+// Active state
+@include keyframes(menu-icon-active-top) {
+  50% { top: 0; transform: rotate(0deg); }
+  100% { top: 0; transform: rotate(45deg); }
+}
+
+@include keyframes(menu-icon-active-bottom) {
+  50% { bottom: 0; transform: rotate(0deg); }
+  100% { bottom: 0; transform: rotate(-45deg); }
+}
+
 .mobile-menu {
   // @include list-unstyled;
   // margin-bottom: 0;
@@ -13,11 +29,6 @@
   } 
 }
 
-$h: 13px;
-$w: 20px;
-$t: 1px;
-$d: 1000ms;
-
 .mobile-menu-icon {
   height: $h;
   width: $w;
@@ -27,6 +38,7 @@ $d: 1000ms;
 .mobile-menu-icon__inner {
   
   top: $h/2 - $t/2;
+  transition: background-color 0s linear $icon-transition-duration/2;
 
   &, &:before, &:after {
     position: absolute;
@@ -43,15 +55,33 @@ $d: 1000ms;
 
   &:before {
     top: -#{ ($h/2) + ($t/2) };
+    transform: rotate(0deg);
+    transition: top $icon-transition-duration/2 ease-out $icon-transition-duration/2, transform $icon-transition-duration/2 ease-out 0s;
   }
 
   &:after {
     bottom: -#{ ($h/2) + ($t/2) };
+    transform: rotate(0deg);
+    transition: bottom $icon-transition-duration/2 ease-out $icon-transition-duration/2, transform $icon-transition-duration/2 ease-out 0s;
   }
 
-  &.is-active {
-
+  // when parent element is active
+  .is-active & {
+    background-color: transparent;
   }
+
+  .is-active &:before {
+    // @include animation(menu-icon-active-top $icon-transition-duration ease-out forwards);
+    top: 0;
+    transform: rotate(45deg);
+    transition: top $icon-transition-duration/2 ease-out 0s, transform $icon-transition-duration/2 ease-out $icon-transition-duration/2;
+  }
+
+  .is-active &:after {
+    bottom: 0;
+    transform: rotate(-45deg);
+    transition: bottom $icon-transition-duration/2 ease-out 0s, transform $icon-transition-duration/2 ease-out $icon-transition-duration/2;
+  }  
 
 }
 
@@ -68,7 +98,7 @@ $d: 1000ms;
   }
 
   &.is-visible .mobile-menu > li {
-      $base-transition-delay: 500ms;   
+      $base-transition-delay: 250ms;   
 
       opacity: 1;
       transform: translateX(0px);
@@ -76,11 +106,11 @@ $d: 1000ms;
       transition-delay: $base-transition-delay;
 
       // Transitions + delays get longer with each element
-      &:nth-child(2) { transition-delay: ($base-transition-delay + 120ms); transition-duration: 500ms, 750ms; }
-      &:nth-child(3) { transition-delay: ($base-transition-delay + 240ms); transition-duration: 550ms, 775ms; }
-      &:nth-child(4) { transition-delay: ($base-transition-delay + 400ms); transition-duration: 600ms, 800ms; }
-      &:nth-child(5) { transition-delay: ($base-transition-delay + 600ms); transition-duration: 650ms, 825ms; }
-      &:nth-child(6) { transition-delay: ($base-transition-delay + 900ms); transition-duration: 700ms, 850ms; }     
+      &:nth-child(2) { transition-delay: ($base-transition-delay + 50ms); transition-duration: 500ms, 750ms; }
+      &:nth-child(3) { transition-delay: ($base-transition-delay + 150ms); transition-duration: 550ms, 775ms; }
+      &:nth-child(4) { transition-delay: ($base-transition-delay + 250ms); transition-duration: 600ms, 800ms; }
+      &:nth-child(5) { transition-delay: ($base-transition-delay + 350ms); transition-duration: 650ms, 825ms; }
+      &:nth-child(6) { transition-delay: ($base-transition-delay + 450ms); transition-duration: 700ms, 850ms; }     
   }
 }
 
