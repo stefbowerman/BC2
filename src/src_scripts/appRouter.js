@@ -63,7 +63,7 @@ export default class AppRouter {
     });    
 
     this.router.on('/cart', (params) => {
-      this.doRoute('/cart');
+      this.doRoute('/cart', 'cart');
     });
 
     this.router.on('/pages/:slug', (params) => {

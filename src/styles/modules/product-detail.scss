@@ -379,7 +379,7 @@ body.template-product {
     min-height: 100vh;  
   }
 
-  @media (min-width: $screen-lg-min) {
+  @media (min-width: $screen-lg-min) and (min-height: 750px) {
     height: 100vh;
 
     .product-gallery.is-zoomed & {

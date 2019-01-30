@@ -2,7 +2,8 @@ import BaseSection from "./base";
 
 const selectors = {
   form: '[data-cart-form]',
-  itemQtySelect: '[data-item-quantity-select]'
+  verifyModal: '[data-verify-modal]',
+  verifyForm: '[data-verify-form]'
 };
 
 const classes = {
@@ -17,16 +18,38 @@ export default class CartSection extends BaseSection {
     this.name = 'cart';
     this.namespace = `.${this.name}`;
 
-    const $form = $(selectors.form, this.$container);
+    this.cartIsVerified = false;
+    this.userFormSubmitEvent = null;
 
-    // Since we have more than 1 quantity select per row (1 for mobile, 1 for desktop)
-    // We need to use single input per row, which is responsible for sending the form data for that line item
-    // Watch for changes on the quantity selects, and then update the input.  These two are tied together using a data attribute
-    this.$container.on('change', selectors.itemQtySelect, function(){
-      var $itemQtyInput = $('[id="' + $(this).data('item-quantity-select') + '"]'); // Have to do '[id=".."]' instead of '#id' because id is generated using {{ item.key }} which has semi-colons in it - breaks normal id select
-      $itemQtyInput.val($(this).val());
-      $form.submit();
-    });     
+    this.$form = $(selectors.form, this.$container);
+    this.$formSubmit = this.$form.find('input[type="submit"]');
+    this.$verifyModal = $(selectors.verifyModal, this.$container);
+    this.$verifyForm  = $(selectors.verifyForm, this.$container);
+
+    this.$form.on('submit', this.onFormSubmit.bind(this));
+    this.$verifyForm.on('submit', this.onVerifyFormSubmit.bind(this));
+  }
+
+  onFormSubmit(e) {
+    
+    if(!this.cartIsVerified) {
+      this.$verifyModal.modal('show');
+      return false;
+    }
+
+    console.log('cart is verified, submit as normal');
+
+    this.$formSubmit.val('Redirecting to Checkout..');
+    this.$formSubmit.prop('disabled', true);
+    window.location.href = "/checkout";
+
+    return false;
+  }
+
+  onVerifyFormSubmit(e) {
+    this.cartIsVerified = true;
+    this.$verifyModal.one('hidden.bs.modal', () => { this.onFormSubmit(); });
+    this.$verifyModal.modal('hide');
   }
   
 }

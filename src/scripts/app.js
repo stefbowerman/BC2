@@ -3344,7 +3344,7 @@ var AppRouter = function () {
     });
 
     this.router.on('/cart', function (params) {
-      _this.doRoute('/cart');
+      _this.doRoute('/cart', 'cart');
     });
 
     this.router.on('/pages/:slug', function (params) {
@@ -4925,7 +4925,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 var selectors = {
   form: '[data-cart-form]',
-  itemQtySelect: '[data-item-quantity-select]'
+  verifyModal: '[data-verify-modal]',
+  verifyForm: '[data-verify-form]'
 };
 
 var classes = {};
@@ -4941,18 +4942,44 @@ var CartSection = function (_BaseSection) {
     _this.name = 'cart';
     _this.namespace = '.' + _this.name;
 
-    var $form = $(selectors.form, _this.$container);
+    _this.cartIsVerified = false;
+    _this.userFormSubmitEvent = null;
 
-    // Since we have more than 1 quantity select per row (1 for mobile, 1 for desktop)
-    // We need to use single input per row, which is responsible for sending the form data for that line item
-    // Watch for changes on the quantity selects, and then update the input.  These two are tied together using a data attribute
-    _this.$container.on('change', selectors.itemQtySelect, function () {
-      var $itemQtyInput = $('[id="' + $(this).data('item-quantity-select') + '"]'); // Have to do '[id=".."]' instead of '#id' because id is generated using {{ item.key }} which has semi-colons in it - breaks normal id select
-      $itemQtyInput.val($(this).val());
-      $form.submit();
-    });
+    _this.$form = $(selectors.form, _this.$container);
+    _this.$formSubmit = _this.$form.find('input[type="submit"]');
+    _this.$verifyModal = $(selectors.verifyModal, _this.$container);
+    _this.$verifyForm = $(selectors.verifyForm, _this.$container);
+
+    _this.$form.on('submit', _this.onFormSubmit.bind(_this));
+    _this.$verifyForm.on('submit', _this.onVerifyFormSubmit.bind(_this));
     return _this;
   }
+
+  CartSection.prototype.onFormSubmit = function onFormSubmit(e) {
+
+    if (!this.cartIsVerified) {
+      this.$verifyModal.modal('show');
+      return false;
+    }
+
+    console.log('cart is verified, submit as normal');
+
+    this.$formSubmit.val('Redirecting to Checkout..');
+    this.$formSubmit.prop('disabled', true);
+    window.location.href = "/checkout";
+
+    return false;
+  };
+
+  CartSection.prototype.onVerifyFormSubmit = function onVerifyFormSubmit(e) {
+    var _this2 = this;
+
+    this.cartIsVerified = true;
+    this.$verifyModal.one('hidden.bs.modal', function () {
+      _this2.onFormSubmit();
+    });
+    this.$verifyModal.modal('hide');
+  };
 
   return CartSection;
 }(_base2.default);
@@ -5315,8 +5342,11 @@ var NavSection = function (_BaseSection) {
     this.$menu.find('a').each(function (i, el) {
       var $el = $(el);
       var href = $el.attr('href');
-      if (href == url || url.indexOf(href) > -1) {
+      // if(href == url || url.indexOf(href) > -1) {
+      if (href == url) {
         $el.addClass(classes.menuLinkActive);
+      } else {
+        $el.removeClass(classes.menuLinkActive);
       }
     });
   };
@@ -5501,14 +5531,12 @@ var ProductSection = function (_BaseSection) {
         this.$secondaryDescription.css('display', '');
         this.fixedDescriptionHidden = false;
       }
-    } else {
-      if (window.innerWidth >= this.bpTabletMin) {
-        // If we don't have the fixed form full height that means we aren't above the 1200px breakpoint
-        // but the secondary description is still visible so show the link to view it
-        this.$secondaryDescriptionLink.css('display', 'block');
-      } else {
-        this.$secondaryDescriptionLink.css('display', 'none');
-      }
+    }
+
+    if (window.innerWidth < this.bpDesktopMin && window.innerWidth >= this.bpTabletMin) {
+      // If we don't have the fixed form full height that means we aren't above the 1200px breakpoint
+      // but the secondary description is still visible so show the link to view it
+      this.$secondaryDescriptionLink.css('display', 'block');
     }
   };
 

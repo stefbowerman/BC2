@@ -86,7 +86,9 @@
       <div class="fixed-description" data-fixed-description>
         <div class="pdf-description">{{ product.description }}</div>
         {% if size_guide_drawer_html != blank %}
-          <a href="#" class="secondary-link hidden-xs hidden-sm" data-size-guide-show>→ See Size Guide</a>
+          <div class="hidden-xs hidden-sm" style="margin-top: 10px;">
+            <a href="#" class="secondary-link" data-size-guide-show>→ See Size Guide</a>
+          </div>
         {% endif %}   
       </div>
     </div>

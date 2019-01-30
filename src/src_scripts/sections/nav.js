@@ -35,8 +35,12 @@ export default class NavSection extends BaseSection {
     this.$menu.find('a').each((i, el) => {
       const $el = $(el);
       const href = $el.attr('href');
-      if(href == url || url.indexOf(href) > -1) {
+      // if(href == url || url.indexOf(href) > -1) {
+      if(href == url) {
         $el.addClass(classes.menuLinkActive);
+      }
+      else {
+       $el.removeClass(classes.menuLinkActive); 
       }
     });
   }

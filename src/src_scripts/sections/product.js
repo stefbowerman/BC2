@@ -108,15 +108,11 @@ export default class ProductSection extends BaseSection {
         this.fixedDescriptionHidden = false;
       }
     }
-    else {
-       if(window.innerWidth >= this.bpTabletMin) {
-        // If we don't have the fixed form full height that means we aren't above the 1200px breakpoint
-        // but the secondary description is still visible so show the link to view it
-        this.$secondaryDescriptionLink.css('display', 'block');
-       }
-       else {
-        this.$secondaryDescriptionLink.css('display', 'none');
-       }
+
+    if(window.innerWidth < this.bpDesktopMin && window.innerWidth >= this.bpTabletMin) {
+      // If we don't have the fixed form full height that means we aren't above the 1200px breakpoint
+      // but the secondary description is still visible so show the link to view it
+      this.$secondaryDescriptionLink.css('display', 'block');
     }
   }
 

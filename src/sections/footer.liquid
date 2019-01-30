@@ -10,11 +10,25 @@
       </div>
     </form>
   {% endunless %}
+  {% if section.settings.menu and linklists[section.settings.menu].links.size > 0 %}
+    <div class="u-fs-xsmall" style="margin-top: 12px;">
+      {% for link in linklists[section.settings.menu].links %}
+        <a href="{{ link.url }}">{{ link.title }}</a>
+        {% unless forloop.last %} &middot; {% endunless %}
+      {% endfor %}
+    </div>
+  {% endif %}
 </footer>
 
 {% schema %}
   {
     "name": "Footer",
-    "settings": []
+    "settings": [
+      {
+        "type": "link_list",
+        "id": "menu",
+        "label": "Menu"
+      }
+    ]
   }
 {% endschema %}

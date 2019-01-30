@@ -13,7 +13,7 @@
     display: none; // Until we fiure this out, maybe just position static?
   }
 
-  body.is-loading & {
+  .js & {
     opacity: 0;
   }
 
