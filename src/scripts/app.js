@@ -5092,6 +5092,10 @@ var _ajaxMailchimpForm = require("../ajaxMailchimpForm");
 
 var _ajaxMailchimpForm2 = _interopRequireDefault(_ajaxMailchimpForm);
 
+var _utils = require("../utils");
+
+var _utils2 = _interopRequireDefault(_utils);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
@@ -5102,7 +5106,16 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
 
-var selectors = {};
+var selectors = {
+  formContents: '[data-form-contents]',
+  formInputs: '[data-form-inputs]',
+  formMessage: '[data-form-message]'
+};
+
+var classes = {
+  showMessage: 'show-message',
+  contentsGoAway: 'go-away'
+};
 
 var FooterSection = function (_BaseSection) {
   _inherits(FooterSection, _BaseSection);
@@ -5114,17 +5127,39 @@ var FooterSection = function (_BaseSection) {
 
     _this.name = 'footer';
     _this.namespace = "." + _this.name;
+
+    _this.transitionEndEvent = _utils2.default.whichTransitionEnd();
+
     _this.$subscribeForm = _this.$container.find('form');
+    _this.$formContents = $(selectors.formContents, _this.$container);
+    _this.$formInputs = $(selectors.formInputs, _this.$container);
+    _this.$formMessage = $(selectors.formMessage, _this.$container);
 
     _this.AJAXMailchimpForm = new _ajaxMailchimpForm2.default(_this.$subscribeForm, {
-      onInit: function onInit() {
-        // console.log('init footer subscribe!');
-      },
       onSubscribeFail: function onSubscribeFail(msg) {
-        console.log('subscribed fail - ' + msg);
+        if (msg.match(/already subscribed/)) {
+          _this.$formMessage.text('This email address is already subscribed');
+        } else {
+          _this.$formMessage.text('Check your email address and try again');
+        }
+
+        _this.$formContents.addClass(classes.showMessage);
+        setTimeout(function () {
+          _this.$formContents.removeClass(classes.showMessage);
+          _this.$formContents.one(_this.transitionEndEvent, function () {
+            _this.$formMessage.text('');
+          });
+        }, 4000);
       },
       onSubscribeSuccess: function onSubscribeSuccess() {
-        console.log('subscribed successfully');
+        _this.$formMessage.text('Thank you for subscribing');
+        _this.$formContents.addClass(classes.showMessage);
+        setTimeout(function () {
+          _this.$formContents.addClass(classes.contentsGoAway);
+          _this.$formContents.one(_this.transitionEndEvent, function () {
+            _this.$formContents.remove(); // Just give them one successful subscription and then remove the form.  If they want it again they can reload the page
+          });
+        }, 4000);
       }
     });
     return _this;
@@ -5135,7 +5170,7 @@ var FooterSection = function (_BaseSection) {
 
 exports.default = FooterSection;
 
-},{"../ajaxMailchimpForm":6,"./base":18}],23:[function(require,module,exports){
+},{"../ajaxMailchimpForm":6,"../utils":31,"./base":18}],23:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {

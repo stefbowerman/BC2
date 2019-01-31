@@ -15,14 +15,15 @@
 
   {% assign has_size = false %}
   {% for option in product.options %}  
-    {% assign downcased_option = option | downcase %}
-    {% if downcased_option == "size" %}
+    {% assign option_upcase = option | upcase %}
+    {% if option_upcase == "SIZE" %}
       {% assign has_size = true %}
       {% break %}
     {% endif %}
   {% endfor %}
 
   {% assign size_guide_source = false %}
+  {% assign size_guide_source_is_metafield = false %}
   {% assign product_type_slug = product.type | handle | replace: '-', '' %}
 
   {% if product_type_slug == 'tshirt' and settings.size_guide_tshirts != blank %}
@@ -45,25 +46,37 @@
   {% comment %} If a product has it's size guide metafields filled out, that's the most specific so lets use that {% endcomment %}
   {% if product.metafields.size_guide.html != blank %}
     {% assign size_guide_source = product.metafields.size_guide.html %}
+    {% assign size_guide_source_is_metafield = true %}
   {% endif %}
 
   {% if has_size and size_guide_source != false %}
 
-    <div class="drawer" data-size-guide-drawer>
+    <div class="drawer drawer--size-guide" data-size-guide-drawer>
       <div class="drawer__inner">
         <a href="#" class="drawer__close" data-drawer-close>
           Close
         </a>         
         <div class="drawer__body">
-          <div class="drawer__body-contents">
+          <div class="drawer__body-contents" style="max-width: 450px;margin: 0 auto;">
+            <h5 style="text-align: center;">Size Guide</h5>
             <div style="font-size: 12px; width: 100%;">
-              {% if product.metafields.size_guide.model_image %}
-                <img src="{{ product.metafields.size_guide.model_image | strip }}" style="display: block; margin: 0 auto 10px; max-width: 350px;" />
-                {% if product.metafields.size_guide.model_description %}
-                  <p style="font-size: 11px; text-align: center;">{{ product.metafields.size_guide.model_description }}</p>
+              <div class="sg-source">
+                
+                {% comment %} If the size guide is at the product level, reiterate the product title for clarity {% endcomment %}
+                {% if size_guide_source_is_metafield %}
+                  <h6>{{ product.title }}</h6>
                 {% endif %}
+
+                {{ size_guide_source }}
+              </div>
+              {% if product.metafields.size_guide.model_image %}
+                <div class="sg-model">
+                  <img src="{{ product.metafields.size_guide.model_image | strip }}" />
+                  {% if product.metafields.size_guide.model_description %}
+                    <div class="sg-model__caption">{{ product.metafields.size_guide.model_description }}</p>
+                  {% endif %}
+                </div>
               {% endif %}
-              {{ size_guide_source }}
             </div>
           </div>
         </div>

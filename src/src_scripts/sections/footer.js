@@ -1,7 +1,17 @@
 import BaseSection from "./base";
 import AJAXMailchimpForm from "../ajaxMailchimpForm";
+import Utils from '../utils';
 
-const selectors = {};
+const selectors = {
+  formContents: '[data-form-contents]',
+  formInputs: '[data-form-inputs]',
+  formMessage: '[data-form-message]'
+};
+
+const classes = {
+  showMessage: 'show-message',
+  contentsGoAway: 'go-away'
+}
 
 export default class FooterSection extends BaseSection {
 
@@ -10,17 +20,40 @@ export default class FooterSection extends BaseSection {
 
     this.name = 'footer';
     this.namespace = `.${this.name}`;
+    
+    this.transitionEndEvent = Utils.whichTransitionEnd();
+
     this.$subscribeForm = this.$container.find('form');
+    this.$formContents = $(selectors.formContents, this.$container);
+    this.$formInputs   = $(selectors.formInputs, this.$container);
+    this.$formMessage  = $(selectors.formMessage, this.$container);
 
     this.AJAXMailchimpForm = new AJAXMailchimpForm(this.$subscribeForm, {
-      onInit: () => {
-        // console.log('init footer subscribe!');
-      },
       onSubscribeFail: (msg) => {
-        console.log('subscribed fail - ' + msg);
+        if(msg.match(/already subscribed/)) {
+          this.$formMessage.text('This email address is already subscribed');  
+        }
+        else {
+          this.$formMessage.text('Check your email address and try again');   
+        }
+        
+        this.$formContents.addClass(classes.showMessage);
+        setTimeout(() => {
+          this.$formContents.removeClass(classes.showMessage);
+          this.$formContents.one(this.transitionEndEvent, () => {
+            this.$formMessage.text('');
+          });
+        }, 4000);
       },
       onSubscribeSuccess: () => {
-        console.log('subscribed successfully');
+        this.$formMessage.text('Thank you for subscribing');
+        this.$formContents.addClass(classes.showMessage);
+        setTimeout(() => {
+          this.$formContents.addClass(classes.contentsGoAway);
+          this.$formContents.one(this.transitionEndEvent, () => {
+            this.$formContents.remove(); // Just give them one successful subscription and then remove the form.  If they want it again they can reload the page
+          });          
+        }, 4000);
       }
     });
   }

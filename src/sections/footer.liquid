@@ -1,17 +1,22 @@
 <footer class="footer" data-section-id="{{ section.id }}" data-section-type="footer">
   {% unless settings.mailchimp_form_url == blank %}
     <form action="{{ settings.mailchimp_form_url }}" method="post">
-      <div class="minimal-input-box">
-        <input type="email"name="EMAIL" class="minimal-input-box__input" value="" placeholder="Subscribe" required="required"/>
-        <button type="submit" class="minimal-input-box__submit">
-          {% include 'icon-arrow-right' %}
-          <span class="icon-fallback-text">Submit</span>
-        </button>
+      <div class="form-contents" data-form-contents>
+        <div class="form-inputs" data-form-inputs>
+          <div class="minimal-input-box">
+            <input type="email"name="EMAIL" class="minimal-input-box__input" value="" placeholder="Your Email" required="required"/>
+            <button type="submit" class="minimal-input-box__submit">
+              {% include 'icon-arrow-right' %}
+              <span class="icon-fallback-text">Submit</span>
+            </button>
+          </div>
+        </div>
+        <div class="form-message" data-form-message></div>
       </div>
     </form>
   {% endunless %}
   {% if section.settings.menu and linklists[section.settings.menu].links.size > 0 %}
-    <div class="u-fs-xsmall" style="margin-top: 12px;">
+    <div class="footer-menu">
       {% for link in linklists[section.settings.menu].links %}
         <a href="{{ link.url }}">{{ link.title }}</a>
         {% unless forloop.last %} &middot; {% endunless %}

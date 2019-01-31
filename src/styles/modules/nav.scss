@@ -39,11 +39,13 @@ nav.main-nav {
       transition-delay: $base-transition-delay;
 
       // Transitions + delays get longer with each element
-      &:nth-child(2) { transition-delay: ($base-transition-delay + 120ms); transition-duration: 500ms, 750ms; }
-      &:nth-child(3) { transition-delay: ($base-transition-delay + 240ms); transition-duration: 550ms, 775ms; }
-      &:nth-child(4) { transition-delay: ($base-transition-delay + 400ms); transition-duration: 600ms, 800ms; }
-      &:nth-child(5) { transition-delay: ($base-transition-delay + 600ms); transition-duration: 650ms, 825ms; }
-      &:nth-child(6) { transition-delay: ($base-transition-delay + 900ms); transition-duration: 700ms, 850ms; }       
+      &:nth-child(2) { transition-delay: ($base-transition-delay + 120ms);  transition-duration: 500ms, 750ms; }
+      &:nth-child(3) { transition-delay: ($base-transition-delay + 240ms);  transition-duration: 550ms, 775ms; }
+      &:nth-child(4) { transition-delay: ($base-transition-delay + 400ms);  transition-duration: 600ms, 800ms; }
+      &:nth-child(5) { transition-delay: ($base-transition-delay + 600ms);  transition-duration: 650ms, 825ms; }
+      &:nth-child(6) { transition-delay: ($base-transition-delay + 850ms);  transition-duration: 700ms, 850ms; }    
+      &:nth-child(7) { transition-delay: ($base-transition-delay + 1150ms); transition-duration: 750ms, 875ms; }    
+      &:nth-child(8) { transition-delay: ($base-transition-delay + 1400ms); transition-duration: 800ms, 900ms; }       
     }
 
     > li > a {

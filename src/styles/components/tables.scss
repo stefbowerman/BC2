@@ -33,6 +33,14 @@ th {
         line-height: $line-height-base;
         vertical-align: top;
         border-top: 1px solid $table-border-color;
+
+        &:first-child {
+          padding-left: 0;
+        }
+
+        &:last-child {
+          padding-right: 0;
+        }
       }
     }
   }

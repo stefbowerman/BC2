@@ -1,0 +1,38 @@
+// -------------------------
+// Drawer - Size Guide
+// -------------------------
+
+.drawer--size-guide {
+
+  // Actual size guide measurement content
+  // Can come from a page or a metafield
+  .sg-source {
+
+    margin: 50px 0;
+    text-align: center;
+
+    // This comes out of RTE / metafields so need hard core style overrides
+    table {
+      @extend .table;
+      text-align: left;
+
+      tr {
+        height: auto !important;
+      }
+
+      th, td {
+        width: auto !important;
+        height: auto !important;
+      }
+    }
+  }
+
+  .sg-model {
+    font-size: $font-size-xsmall;
+    text-align: center;
+  }
+
+  .sg-model__caption {
+    margin-top: 6px;
+  }  
+}

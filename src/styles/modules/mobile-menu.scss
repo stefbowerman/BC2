@@ -110,7 +110,9 @@ $icon-transition-duration: 180ms;
       &:nth-child(3) { transition-delay: ($base-transition-delay + 150ms); transition-duration: 550ms, 775ms; }
       &:nth-child(4) { transition-delay: ($base-transition-delay + 250ms); transition-duration: 600ms, 800ms; }
       &:nth-child(5) { transition-delay: ($base-transition-delay + 350ms); transition-duration: 650ms, 825ms; }
-      &:nth-child(6) { transition-delay: ($base-transition-delay + 450ms); transition-duration: 700ms, 850ms; }     
+      &:nth-child(6) { transition-delay: ($base-transition-delay + 450ms); transition-duration: 700ms, 850ms; } 
+      &:nth-child(7) { transition-delay: ($base-transition-delay + 550ms); transition-duration: 750ms, 875ms; } 
+      &:nth-child(8) { transition-delay: ($base-transition-delay + 650ms); transition-duration: 800ms, 900ms; }     
   }
 }
 

@@ -44,6 +44,10 @@ $content-grid-item-vertical-spacing-loose: $grid-gutter-width * 2;
   max-width: percentage(1/1);
   min-height: 80vh; // On tiny screens we don't want grid items bunched up on the screen
 
+  &:last-child {
+    min-height: 0;
+  }
+
   @media (min-width: $screen-xs-min) {
     min-height: 0;
   }
