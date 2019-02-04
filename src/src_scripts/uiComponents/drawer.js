@@ -11,7 +11,9 @@ const classes = {
   drawer: 'drawer',
   visible: 'is-visible',
   backdrop: 'drawer-backdrop',
-  backdropVisible: 'is-visible',  
+  backdropCursor: 'drawer-backdrop-cursor',
+  backdropVisible: 'is-visible',
+  backdropCursorVisible: 'is-visible',
   bodyDrawerOpen: 'drawer-open'    
 };
 
@@ -29,6 +31,7 @@ export default class Drawer {
 
     this.$el = $(el);
     this.$backdrop              = null;
+    this.$backdropCursor        = null;
     this.stateIsOpen            = false;
     this.transitionEndEvent     = Utils.whichTransitionEnd();
     this.supportsCssTransitions = Modernizr.hasOwnProperty('csstransitions') && Modernizr.csstransitions;
@@ -61,18 +64,29 @@ export default class Drawer {
 
     if(this.stateIsOpen) {
       this.$backdrop = $(document.createElement('div'));
+      this.$backdropCursor = $(document.createElement('div'));
+
+      this.$backdropCursor.addClass(classes.backdropCursor)
+                          .appendTo(this.$backdrop);
 
       this.$backdrop.addClass(classes.backdrop)
                     .appendTo($body);
 
       this.$backdrop.one(this.transitionEndEvent, cb);
       this.$backdrop.one('click', this.hide.bind(this));
+      this.$backdrop.on('mouseenter', () => { this.$backdropCursor.addClass(classes.backdropCursorVisible); });
+      this.$backdrop.on('mouseleave', () => { this.$backdropCursor.removeClass(classes.backdropCursorVisible); });
+      this.$backdrop.on('mousemove', (e) => {
+        this.$backdropCursor.css({
+          'transform': 'translate(' + e.clientX + 'px, ' + e.clientY + 'px)'
+        })
+      });      
 
       // debug this...
       setTimeout(function() {
         $body.addClass(classes.bodyDrawerOpen);          
         _this.$backdrop.addClass(classes.backdropVisible);
-      }, 10);
+      }, 20);
     }
     else {
       cb();
@@ -85,8 +99,10 @@ export default class Drawer {
 
     if(this.$backdrop) {
       this.$backdrop.one(this.transitionEndEvent, function(){
+        _this.$backdrop.off('mousemove mouseenter mouseleave');
         _this.$backdrop && _this.$backdrop.remove();
         _this.$backdrop = null;
+        _this.$backdropCursor = null;
         cb();
       });
 

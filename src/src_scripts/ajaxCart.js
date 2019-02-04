@@ -25,7 +25,9 @@ const selectors = {
 const classes = {
   bodyCartOpen: 'ajax-cart-open',
   backdrop: 'ajax-cart-backdrop',
+  backdropCursor: 'ajax-cart-backdrop-cursor',
   backdropVisible: 'is-visible',
+  backdropCursorVisible: 'is-visible',
   cartOpen: 'is-open',
   cartBadgeHasItems: 'has-items',
   cartRequestInProgress: 'request-in-progress'
@@ -39,7 +41,8 @@ export default class AJAXCart {
       RENDER:  'render'  + this.namespace,
       DESTROY: 'destroy' + this.namespace,
       SCROLL:  'scroll'  + this.namespace,
-      UPDATE:  'update'  + this.namespace //  Use this as a global event to hook into whenever the cart changes
+      UPDATE:  'update'  + this.namespace, //  Use this as a global event to hook into whenever the cart changes
+      NEEDS_UPDATE: 'needsUpdate' + this.namespace
     };   
 
     var initialized = false;
@@ -50,6 +53,7 @@ export default class AJAXCart {
 
     this.$el                = $(selectors.container);
     this.$backdrop          = null;
+    this.$backdropCursor    = null;
     this.stateIsOpen        = null;
     this.transitionEndEvent = Utils.whichTransitionEnd();
     this.requestInProgress  = false;
@@ -87,6 +91,7 @@ export default class AJAXCart {
       $body.on('click', selectors.itemRemove, this.onItemRemoveClick.bind(this));
       $window.on(this.events.RENDER, this.onCartRender.bind(this));
       $window.on(this.events.DESTROY, this.onCartDestroy.bind(this));
+      $window.on(this.events.NEEDS_UPDATE, this.onNeedsUpdate.bind(this));
 
       // Get the cart data when we initialize the instance
       ShopifyAPI.getCart().then(this.buildCart.bind(this));
@@ -182,17 +187,28 @@ export default class AJAXCart {
 
     if(this.stateIsOpen) {
       this.$backdrop = $(document.createElement('div'));
+      this.$backdropCursor = $(document.createElement('div'));
+
+      this.$backdropCursor.addClass(classes.backdropCursor)
+                          .appendTo(this.$backdrop);
 
       this.$backdrop.addClass(classes.backdrop)
                     .appendTo($body);
 
       this.$backdrop.one(this.transitionEndEvent, cb);
       this.$backdrop.one('click', this.close.bind(this));
+      this.$backdrop.on('mouseenter', () => { this.$backdropCursor.addClass(classes.backdropCursorVisible); });
+      this.$backdrop.on('mouseleave', () => { this.$backdropCursor.removeClass(classes.backdropCursorVisible); });
+      this.$backdrop.on('mousemove', (e) => {
+        this.$backdropCursor.css({
+          'transform': 'translate(' + e.clientX + 'px, ' + e.clientY + 'px)'
+        })
+      });
 
       // debug this...
       setTimeout(function() {
         _this.$backdrop.addClass(classes.backdropVisible);
-      }, 10);
+      }, 20);
     }
     else {
       cb();
@@ -206,8 +222,10 @@ export default class AJAXCart {
 
     if(!this.stateIsOpen && this.$backdrop) {
       this.$backdrop.one(this.transitionEndEvent, function(){
+        _this.$backdrop.off('mousemove mouseenter mouseleave');
         _this.$backdrop && _this.$backdrop.remove();
         _this.$backdrop = null;
+        _this.$backdropCursor = null;
         cb();
       });
 
@@ -255,6 +273,11 @@ export default class AJAXCart {
   */
   onCartDestroy(e) {
     // console.log('['+this.name+'] - onCartDestroy');
+  }
+
+  onNeedsUpdate(e) {
+    console.log('updating!');
+    ShopifyAPI.getCart().then(this.buildCart.bind(this));
   }
 
  /**
@@ -426,6 +449,9 @@ export default class AJAXCart {
     this.stateIsOpen = false;
 
     this.$el.removeClass(classes.cartOpen);
+    this.$el.one(this.transitionEndEvent, () => {
+      this.$el.scrollTop(0);
+    });
 
     if(this.settings.backdrop) {
       this.removeBackdrop(function() {

@@ -7,7 +7,7 @@
       <div style="max-width: 580px; margin-left: auto; margin-right: auto;">
 
         <div class="u-ta-center">
-          Please include as much information as possible to help us in assisting you.
+          {{ section.settings.form_message | default: 'Please include as much information as possible to help us in assisting you.' }}
         </div>
 
         <br />
@@ -83,6 +83,11 @@
           </div>
 
         {% endform %}
+
+        {% if page.content != blank %}
+          <br />
+          <div class="rte u-ta-center">{{ page.content }}</div>
+        {% endif %}
       </div>
 
     </div>
@@ -93,6 +98,12 @@
   {
     "name": "Contact Page",
     "settings": [
+      {
+        "id": "form_message",
+        "type": "textarea",
+        "label": "Form Message",
+        "info": "Content at the top of the form"
+      },
       {
         "id": "success_message",
         "type": "text",

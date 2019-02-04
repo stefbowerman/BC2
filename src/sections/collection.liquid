@@ -12,24 +12,18 @@
   <section data-section-id="{{ section.id }}" data-section-type="collection">
     <div class="container">
 
+      {% comment %}
       {% include 'page-header',
                 title: collection.title,
                 subtitle: collection.description
       %}
+      {% endcomment %}
 
       {% if collection.products.size > 0 %}    
         <div class="content-grid">
           {% for product in collection.products %}
-
-            {% comment %} Lazy load all product images below the fold.  Adjust the limit as needed {% endcomment %}
-            {% assign lazy_load = false %}
-            {% if forloop.index > 10 %}
-              {% assign lazy_load = true %}
-            {% endif %}
-
             <div class="content-grid__item">
-              {% comment %}{% include 'product-card', product: product, lazy_load: lazy_load %}{% endcomment %}
-              {% include 'product-card', product: product, lazy_load: false %}
+              {% include 'product-card', product: product, lazy_load: true %}
             </div>
           {% endfor %}
         </div>

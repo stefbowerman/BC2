@@ -49,10 +49,7 @@ export default class FooterSection extends BaseSection {
         this.$formMessage.text('Thank you for subscribing');
         this.$formContents.addClass(classes.showMessage);
         setTimeout(() => {
-          this.$formContents.addClass(classes.contentsGoAway);
-          this.$formContents.one(this.transitionEndEvent, () => {
-            this.$formContents.remove(); // Just give them one successful subscription and then remove the form.  If they want it again they can reload the page
-          });          
+          this.$formContents.addClass(classes.contentsGoAway);         
         }, 4000);
       }
     });

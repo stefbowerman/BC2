@@ -18,6 +18,7 @@
                     <div class="cart-list__col-product">
                       <img src="{{ item | img_url: '200x' }}" class="cart-list__item-image" alt="{{ item.title | escape }}">
                       <div class="cart-list__item-details">
+                        <div class="visible-xs u-float-right" style="padding-left: 10px;">{{ item.line_price | money }}</div>
                         <div class="cart-list__item-details-title">
                           <a href="{{ item.url }}">{{ item.product.title }}</a>
                         </div>
@@ -47,15 +48,12 @@
                             {% endfor %}
                           {% endunless %}
                           <li>Qty: {{ item.quantity }}</li>
-                          <li class="visible-xs">{{ item.line_price | money }}</li>
                           <li>
-                            <a href="/cart/change?line={{ forloop.index }}&amp;quantity=0" class="secondary-link">→ Remove</a>
+                            <a href="/cart/change?line={{ forloop.index }}&amp;quantity=0" class="secondary-link cart-list__item-details-remove" data-item-remove-link>
+                              → Remove <span class="hidden-xs hidden-sm">Item</span>
+                            </a>
                           </li>
                         </ul>
-
-                        <a href="/cart/change?line={{ forloop.index }}&amp;quantity=0" class="cart-list__item-details-remove">
-                          {% include 'icon-close' %}
-                        </a>
                       </div>
                     </div>            
                     <div class="cart-list__col-subtotal">{{ item.line_price | money }}</div>
@@ -122,19 +120,13 @@
           {% comment %}
           Cart empty state
           {% endcomment %}
-          <div class="supports-cookies u-ta-center">
+          <div class="u-ta-center">
             <p>{{ 'cart.general.empty' | t }}</p>
-            <p>{{ 'cart.general.continue_browsing_html' | t }}</p>
-          </div>
-
-          {% comment %}
-          Cart no cookies state
-          ---------------------
-          Browser cookies are required to use the cart. If cookies aren't enabled in the
-          browser a message is displayed prompting the user to enable them.
-          {% endcomment %}
-          <div class="supports-no-cookies u-ta-center">
-            <p>{{ 'cart.general.cookies_required' | t }}</p>
+            <div>
+              <a href="{{ section.settings.continue_shopping_url | default: '/' }}">
+                {{ 'cart.general.continue_browsing_html' | t }}
+              </a>
+            </div>
           </div>
         {% endif %}
       </div>
@@ -150,6 +142,11 @@
         "type": "richtext",
         "id": "message",
         "label": "Cart Message"
+      },
+      {
+        "type": "url",
+        "id": "continue_shopping_url",
+        "label": "Continue shopping URL"
       }
     ]
   }

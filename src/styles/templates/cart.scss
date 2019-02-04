@@ -62,8 +62,9 @@ $cart-padding-v: 15px;
   }
 }
 
-.cart-list__col-product {
-  padding-right: 20px; // Make extra room for the absolutely positioned remove button
+.cart-list__row .cart-list__col-product {
+  padding-left: 0;
+  padding-right: 0;
 }
 
 @media screen and (min-width: $screen-sm-min) {
@@ -108,12 +109,11 @@ $cart-padding-v: 15px;
 }
 
 .cart-list__item-details-remove {
-  position: absolute;
-  top: $cart-padding-v - 2px;
-  right: -4px;
-
-  @media screen and (min-width: $screen-sm-min) {
-    display: none;
+  
+  @media (min-width: $screen-xs-min) {
+    position: absolute;
+    bottom: $cart-padding-h;
+    right: 0;    
   }
 
   svg {
@@ -128,7 +128,6 @@ $cart-padding-v: 15px;
 
 .cart-list__footer {
   border-top: 1px solid $color-off-white;
-  margin-top: 25px;
   padding-top: 25px;
 }
 

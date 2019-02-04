@@ -10,9 +10,4 @@ export default class CollectionView extends BaseView {
 
     this.sections.push(this.collectionSection);
   }
-
-  transitionOut(callback) {
-    $("html, body").animate({ scrollTop: 0 }, 300);
-    setTimeout(callback, 150);
-  }
 }

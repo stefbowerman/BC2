@@ -2476,7 +2476,9 @@ var selectors = {
 var classes = {
   bodyCartOpen: 'ajax-cart-open',
   backdrop: 'ajax-cart-backdrop',
+  backdropCursor: 'ajax-cart-backdrop-cursor',
   backdropVisible: 'is-visible',
+  backdropCursorVisible: 'is-visible',
   cartOpen: 'is-open',
   cartBadgeHasItems: 'has-items',
   cartRequestInProgress: 'request-in-progress'
@@ -2492,7 +2494,8 @@ var AJAXCart = function () {
       RENDER: 'render' + this.namespace,
       DESTROY: 'destroy' + this.namespace,
       SCROLL: 'scroll' + this.namespace,
-      UPDATE: 'update' + this.namespace //  Use this as a global event to hook into whenever the cart changes
+      UPDATE: 'update' + this.namespace, //  Use this as a global event to hook into whenever the cart changes
+      NEEDS_UPDATE: 'needsUpdate' + this.namespace
     };
 
     var initialized = false;
@@ -2503,6 +2506,7 @@ var AJAXCart = function () {
 
     this.$el = $(selectors.container);
     this.$backdrop = null;
+    this.$backdropCursor = null;
     this.stateIsOpen = null;
     this.transitionEndEvent = _utils2.default.whichTransitionEnd();
     this.requestInProgress = false;
@@ -2540,6 +2544,7 @@ var AJAXCart = function () {
       $body.on('click', selectors.itemRemove, this.onItemRemoveClick.bind(this));
       $window.on(this.events.RENDER, this.onCartRender.bind(this));
       $window.on(this.events.DESTROY, this.onCartDestroy.bind(this));
+      $window.on(this.events.NEEDS_UPDATE, this.onNeedsUpdate.bind(this));
 
       // Get the cart data when we initialize the instance
       _shopifyAPI2.default.getCart().then(this.buildCart.bind(this));
@@ -2633,22 +2638,37 @@ var AJAXCart = function () {
   };
 
   AJAXCart.prototype.addBackdrop = function addBackdrop(callback) {
+    var _this2 = this;
 
     var _this = this;
     var cb = callback || $.noop;
 
     if (this.stateIsOpen) {
       this.$backdrop = $(document.createElement('div'));
+      this.$backdropCursor = $(document.createElement('div'));
+
+      this.$backdropCursor.addClass(classes.backdropCursor).appendTo(this.$backdrop);
 
       this.$backdrop.addClass(classes.backdrop).appendTo($body);
 
       this.$backdrop.one(this.transitionEndEvent, cb);
       this.$backdrop.one('click', this.close.bind(this));
+      this.$backdrop.on('mouseenter', function () {
+        _this2.$backdropCursor.addClass(classes.backdropCursorVisible);
+      });
+      this.$backdrop.on('mouseleave', function () {
+        _this2.$backdropCursor.removeClass(classes.backdropCursorVisible);
+      });
+      this.$backdrop.on('mousemove', function (e) {
+        _this2.$backdropCursor.css({
+          'transform': 'translate(' + e.clientX + 'px, ' + e.clientY + 'px)'
+        });
+      });
 
       // debug this...
       setTimeout(function () {
         _this.$backdrop.addClass(classes.backdropVisible);
-      }, 10);
+      }, 20);
     } else {
       cb();
     }
@@ -2661,8 +2681,10 @@ var AJAXCart = function () {
 
     if (!this.stateIsOpen && this.$backdrop) {
       this.$backdrop.one(this.transitionEndEvent, function () {
+        _this.$backdrop.off('mousemove mouseenter mouseleave');
         _this.$backdrop && _this.$backdrop.remove();
         _this.$backdrop = null;
+        _this.$backdropCursor = null;
         cb();
       });
 
@@ -2714,9 +2736,14 @@ var AJAXCart = function () {
    */
   ;
 
-  AJAXCart.prototype.onCartDestroy = function onCartDestroy(e) {}
-  // console.log('['+this.name+'] - onCartDestroy');
+  AJAXCart.prototype.onCartDestroy = function onCartDestroy(e) {
+    // console.log('['+this.name+'] - onCartDestroy');
+  };
 
+  AJAXCart.prototype.onNeedsUpdate = function onNeedsUpdate(e) {
+    console.log('updating!');
+    _shopifyAPI2.default.getCart().then(this.buildCart.bind(this));
+  };
 
   /**
    * Builds the HTML for the ajax cart.
@@ -2725,7 +2752,7 @@ var AJAXCart = function () {
    * @param {object} cart - JSON representation of the cart.  See https://help.shopify.com/themes/development/getting-started/using-ajax-api#get-cart
    * @return ??
    */
-  ;
+
 
   AJAXCart.prototype.buildCart = function buildCart(cart) {
 
@@ -2900,11 +2927,16 @@ var AJAXCart = function () {
 
 
   AJAXCart.prototype.close = function close() {
+    var _this3 = this;
+
     if (!this.stateIsOpen) return;
 
     this.stateIsOpen = false;
 
     this.$el.removeClass(classes.cartOpen);
+    this.$el.one(this.transitionEndEvent, function () {
+      _this3.$el.scrollTop(0);
+    });
 
     if (this.settings.backdrop) {
       this.removeBackdrop(function () {
@@ -4383,7 +4415,6 @@ var ProductImageDesktopZoomController = function () {
 
   ProductImageDesktopZoomController.prototype.onGalleryImageClick = function onGalleryImageClick(e) {
     e.preventDefault();
-    console.log(e);
     this.isZoomed ? this.zoomOut() : this.zoomIn();
   };
 
@@ -4750,6 +4781,10 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _collection = require('./sections/collection');
+
+var _collection2 = _interopRequireDefault(_collection);
+
 var _test = require('./sections/test');
 
 var _test2 = _interopRequireDefault(_test);
@@ -4757,10 +4792,11 @@ var _test2 = _interopRequireDefault(_test);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = {
+  collection: _collection2.default,
   test: _test2.default
 };
 
-},{"./sections/test":27}],17:[function(require,module,exports){
+},{"./sections/collection":20,"./sections/test":27}],17:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4925,11 +4961,14 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 var selectors = {
   form: '[data-cart-form]',
+  itemRemoveLink: '[data-item-remove-link]',
   verifyModal: '[data-verify-modal]',
   verifyForm: '[data-verify-form]'
 };
 
 var classes = {};
+
+var $window = $(window);
 
 var CartSection = function (_BaseSection) {
   _inherits(CartSection, _BaseSection);
@@ -4942,18 +4981,31 @@ var CartSection = function (_BaseSection) {
     _this.name = 'cart';
     _this.namespace = '.' + _this.name;
 
-    _this.cartIsVerified = false;
-    _this.userFormSubmitEvent = null;
-
-    _this.$form = $(selectors.form, _this.$container);
-    _this.$formSubmit = _this.$form.find('input[type="submit"]');
-    _this.$verifyModal = $(selectors.verifyModal, _this.$container);
-    _this.$verifyForm = $(selectors.verifyForm, _this.$container);
-
-    _this.$form.on('submit', _this.onFormSubmit.bind(_this));
-    _this.$verifyForm.on('submit', _this.onVerifyFormSubmit.bind(_this));
+    _this.setInstanceVars();
+    _this.bindEvents();
     return _this;
   }
+
+  CartSection.prototype.setInstanceVars = function setInstanceVars() {
+    this.cartIsVerified = false;
+    this.userFormSubmitEvent = null;
+    this.$form = $(selectors.form, this.$container);
+    this.$formSubmit = this.$form.find('input[type="submit"]');
+    this.$verifyModal = $(selectors.verifyModal, this.$container);
+    this.$verifyForm = $(selectors.verifyForm, this.$container);
+  };
+
+  CartSection.prototype.bindEvents = function bindEvents(e) {
+    this.$form.on('submit', this.onFormSubmit.bind(this));
+    this.$verifyForm.on('submit', this.onVerifyFormSubmit.bind(this));
+    this.$container.on('click', selectors.itemRemoveLink, this.onItemRemoveLinkClick.bind(this));
+  };
+
+  CartSection.prototype.removeEvents = function removeEvents(e) {
+    this.$form.off('submit');
+    this.$verifyForm.off('submit');
+    this.$container.off('click', selectors.itemRemoveLink, this.onItemRemoveLinkClick);
+  };
 
   CartSection.prototype.onFormSubmit = function onFormSubmit(e) {
 
@@ -4979,6 +5031,41 @@ var CartSection = function (_BaseSection) {
       _this2.onFormSubmit();
     });
     this.$verifyModal.modal('hide');
+  };
+
+  CartSection.prototype.onItemRemoveLinkClick = function onItemRemoveLinkClick(e) {
+    var _this3 = this;
+
+    e.preventDefault();
+    var $link = $(e.currentTarget);
+
+    $.ajax({
+      url: $link.attr('href'),
+      beforeSend: function beforeSend() {
+        _this3.$form.attr('disabled', true);
+        _this3.$formSubmit.attr('disabled', true);
+        _this3.$form.fadeTo(300, 0.5);
+      }
+    }).done(function (response) {
+
+      // Trigger this ASAP since it runs an AJAX Call
+      $window.trigger('needsUpdate.ajaxCart');
+
+      var $responseHtml = $(document.createElement("html"));
+      $responseHtml.get(0).innerHTML = response;
+
+      var $responseBody = $responseHtml.find('body');
+      var $newContainer = $responseBody.find('[data-section-type="cart"]');
+
+      _this3.removeEvents();
+      _this3.$container.replaceWith($newContainer);
+      _this3.$container = $newContainer;
+      _this3.setInstanceVars();
+      _this3.bindEvents();
+      $window.scrollTop(0);
+      _this3.$form.css('opacity', 0.5);
+      _this3.$form.fadeTo(300, 1);
+    });
   };
 
   return CartSection;
@@ -5007,6 +5094,15 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : _defaults(subClass, superClass); }
 
+var selectors = {
+  gallery: '[data-product-card-gallery]',
+  mainLazyImg: '[data-product-card-main-lazy]'
+};
+
+var classes = {
+  galleryLoaded: 'is-loaded'
+};
+
 var CollectionSection = function (_BaseSection) {
   _inherits(CollectionSection, _BaseSection);
 
@@ -5017,7 +5113,13 @@ var CollectionSection = function (_BaseSection) {
 
     _this.name = 'collection';
     _this.namespace = '.' + _this.name;
-    console.log('constructing collection view');
+
+    _this.$container.find(selectors.mainLazyImg).unveil(200, function () {
+      var $img = $(this);
+      $img.on('load', function () {
+        $img.parents(selectors.gallery).addClass(classes.galleryLoaded);
+      });
+    });
     return _this;
   }
 
@@ -5156,9 +5258,6 @@ var FooterSection = function (_BaseSection) {
         _this.$formContents.addClass(classes.showMessage);
         setTimeout(function () {
           _this.$formContents.addClass(classes.contentsGoAway);
-          _this.$formContents.one(_this.transitionEndEvent, function () {
-            _this.$formContents.remove(); // Just give them one successful subscription and then remove the form.  If they want it again they can reload the page
-          });
         }, 4000);
       }
     });
@@ -5832,7 +5931,9 @@ var classes = {
   drawer: 'drawer',
   visible: 'is-visible',
   backdrop: 'drawer-backdrop',
+  backdropCursor: 'drawer-backdrop-cursor',
   backdropVisible: 'is-visible',
+  backdropCursorVisible: 'is-visible',
   bodyDrawerOpen: 'drawer-open'
 };
 
@@ -5852,6 +5953,7 @@ var Drawer = function () {
 
     this.$el = $(el);
     this.$backdrop = null;
+    this.$backdropCursor = null;
     this.stateIsOpen = false;
     this.transitionEndEvent = _utils2.default.whichTransitionEnd();
     this.supportsCssTransitions = Modernizr.hasOwnProperty('csstransitions') && Modernizr.csstransitions;
@@ -5879,22 +5981,38 @@ var Drawer = function () {
   }
 
   Drawer.prototype.addBackdrop = function addBackdrop(callback) {
+    var _this2 = this;
+
     var _this = this;
     var cb = callback || $.noop;
 
     if (this.stateIsOpen) {
       this.$backdrop = $(document.createElement('div'));
+      this.$backdropCursor = $(document.createElement('div'));
+
+      this.$backdropCursor.addClass(classes.backdropCursor).appendTo(this.$backdrop);
 
       this.$backdrop.addClass(classes.backdrop).appendTo($body);
 
       this.$backdrop.one(this.transitionEndEvent, cb);
       this.$backdrop.one('click', this.hide.bind(this));
+      this.$backdrop.on('mouseenter', function () {
+        _this2.$backdropCursor.addClass(classes.backdropCursorVisible);
+      });
+      this.$backdrop.on('mouseleave', function () {
+        _this2.$backdropCursor.removeClass(classes.backdropCursorVisible);
+      });
+      this.$backdrop.on('mousemove', function (e) {
+        _this2.$backdropCursor.css({
+          'transform': 'translate(' + e.clientX + 'px, ' + e.clientY + 'px)'
+        });
+      });
 
       // debug this...
       setTimeout(function () {
         $body.addClass(classes.bodyDrawerOpen);
         _this.$backdrop.addClass(classes.backdropVisible);
-      }, 10);
+      }, 20);
     } else {
       cb();
     }
@@ -5906,8 +6024,10 @@ var Drawer = function () {
 
     if (this.$backdrop) {
       this.$backdrop.one(this.transitionEndEvent, function () {
+        _this.$backdrop.off('mousemove mouseenter mouseleave');
         _this.$backdrop && _this.$backdrop.remove();
         _this.$backdrop = null;
+        _this.$backdropCursor = null;
         cb();
       });
 
@@ -6536,11 +6656,6 @@ var CollectionView = function (_BaseView) {
     return _this;
   }
 
-  CollectionView.prototype.transitionOut = function transitionOut(callback) {
-    $("html, body").animate({ scrollTop: 0 }, 300);
-    setTimeout(callback, 150);
-  };
-
   return CollectionView;
 }(_base2.default);
 
@@ -6622,8 +6737,6 @@ var IndexView = function (_BaseView) {
     _classCallCheck(this, IndexView);
 
     var _this = _possibleConstructorReturn(this, _BaseView.call(this, $el));
-
-    console.log('index view');
 
     $('[data-section-id]').each(function (i, el) {
       _this._createSectionInstance($(el));

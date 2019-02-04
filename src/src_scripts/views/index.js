@@ -5,7 +5,6 @@ export default class IndexView extends BaseView {
   
   constructor($el) {
     super($el);
-    console.log('index view');
 
     $('[data-section-id]').each((i, el) => {
       this._createSectionInstance($(el));

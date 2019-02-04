@@ -39,7 +39,7 @@
   opacity: 1;
 
   // Hide the placeholder once the loading is complete
-  .is-loaded & {
+  .product-card__gallery-image.is-loaded & {
     opacity: 0;
     pointer-events: none;
     @include transition(opacity $transition-duration-base $transition-timing-function-out);

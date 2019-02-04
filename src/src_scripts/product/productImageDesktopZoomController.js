@@ -91,7 +91,6 @@ export default class ProductImageDesktopZoomController {
 
   onGalleryImageClick(e) {
     e.preventDefault();
-    console.log(e);
     this.isZoomed ? this.zoomOut() : this.zoomIn();
   }
 }

@@ -1,4 +1,4 @@
-<div class="container-fluid">
+<div class="container-fluid" data-section-id="{{ section.id }}" data-section-type="collection">
 
   {% capture collection_product_grid_items %}
     {% assign outputted_collection_count = 0 %}
@@ -7,7 +7,7 @@
 
         {% for product in collections[block.settings.collection].products limit: 500 %}
           <div class="content-grid__item">
-            {% include 'product-card', product: product %}
+            {% include 'product-card', product: product, lazy_load: true %}
           </div>
         {% endfor %} 
 
