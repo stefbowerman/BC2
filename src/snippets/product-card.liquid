@@ -22,9 +22,6 @@
   
   {% assign product_image_dimension = '1200x' %}
   {% assign product_url = product.url %}
-  {% if collection %}
-    {% assign product_url = product.url | within: collection %}
-  {% endif %}
 
   <div id="product-card-{{ product.id }}" class="product-card" data-product-card>
     <div class="product-card__contents" data-product-card-contents>

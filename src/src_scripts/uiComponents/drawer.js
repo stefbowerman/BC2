@@ -77,9 +77,11 @@ export default class Drawer {
       this.$backdrop.on('mouseenter', () => { this.$backdropCursor.addClass(classes.backdropCursorVisible); });
       this.$backdrop.on('mouseleave', () => { this.$backdropCursor.removeClass(classes.backdropCursorVisible); });
       this.$backdrop.on('mousemove', (e) => {
-        this.$backdropCursor.css({
-          'transform': 'translate(' + e.clientX + 'px, ' + e.clientY + 'px)'
-        })
+        window.requestAnimationFrame(function() {
+          this.$backdropCursor.css({
+            'transform': 'translate(' + e.clientX + 'px, ' + e.clientY + 'px)'
+          });
+        }.bind(this));
       });      
 
       // debug this...

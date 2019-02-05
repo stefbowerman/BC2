@@ -2660,9 +2660,11 @@ var AJAXCart = function () {
         _this2.$backdropCursor.removeClass(classes.backdropCursorVisible);
       });
       this.$backdrop.on('mousemove', function (e) {
-        _this2.$backdropCursor.css({
-          'transform': 'translate(' + e.clientX + 'px, ' + e.clientY + 'px)'
-        });
+        window.requestAnimationFrame(function () {
+          this.$backdropCursor.css({
+            'transform': 'translate(' + e.clientX + 'px, ' + e.clientY + 'px)'
+          });
+        }.bind(_this2));
       });
 
       // debug this...
@@ -4328,7 +4330,9 @@ var selectors = {
 };
 
 var classes = {
-  isZoomed: 'is-zoomed'
+  isZoomed: 'is-zoomed',
+  cursor: 'product-gallery__cursor',
+  cursorVisible: 'is-visible'
 };
 
 var $window = $(window);
@@ -4349,11 +4353,15 @@ var ProductImageDesktopZoomController = function () {
     this.namespace = '.' + this.name;
 
     this.events = {
-      CLICK: 'click' + this.namespace
+      CLICK: 'click' + this.namespace,
+      MOUSEENTER: 'mouseenter' + this.namespace,
+      MOUSELEAVE: 'mouseleave' + this.namespace,
+      MOUSEMOVE: 'mousemove' + this.namespace
     };
 
     this.enabled = false;
     this.isZoomed = false;
+    this.isTouch = Modernizr && Modernizr.touchevents;
 
     this.$container = $el;
 
@@ -4364,15 +4372,24 @@ var ProductImageDesktopZoomController = function () {
 
     this.$gallery = $(selectors.gallery, this.$container);
     this.$galleryImages = $(selectors.galleryImage, this.$container);
+    this.$cursor = $(document.createElement('div')).addClass(classes.cursor);
 
-    this.setCursors('in');
+    // this.setCursors('in');
   }
 
   ProductImageDesktopZoomController.prototype.enable = function enable() {
     if (this.enabled) return;
 
-    this.$galleryImages.on(this.events.CLICK, this.onGalleryImageClick.bind(this));
-    this.setCursors('in');
+    this.$gallery.on(this.events.CLICK, this.onGalleryClick.bind(this));
+
+    if (!this.isTouch) {
+      this.$gallery.append(this.$cursor);
+      this.$gallery.on(this.events.MOUSEENTER, this.onGalleryMouseenter.bind(this));
+      this.$gallery.on(this.events.MOUSEMOVE, this.onGalleryMousemove.bind(this));
+      this.$gallery.on(this.events.MOUSELEAVE, this.onGalleryMouseleave.bind(this));
+    }
+
+    // this.setCursors('in');
 
     this.enabled = true;
   };
@@ -4380,8 +4397,12 @@ var ProductImageDesktopZoomController = function () {
   ProductImageDesktopZoomController.prototype.disable = function disable() {
     if (!this.enabled) return;
 
-    this.$galleryImages.off(this.events.CLICK, this.onGalleryImageClick.bind(this));
-    this.setCursors();
+    this.$gallery.off(this.events.CLICK, this.onGalleryClick.bind(this));
+    this.$gallery.off(this.events.MOUSEENTER, this.onGalleryMouseenter.bind(this));
+    this.$gallery.off(this.events.MOUSEMOVE, this.onGalleryMousemove.bind(this));
+    this.$gallery.off(this.events.MOUSELEAVE, this.onGalleryMouseleave.bind(this));
+
+    this.$cursor.remove();
 
     this.enabled = false;
   };
@@ -4390,7 +4411,7 @@ var ProductImageDesktopZoomController = function () {
     if (this.isZoomed) return;
 
     this.$gallery.addClass(classes.isZoomed);
-    this.setCursors('out');
+    // this.setCursors('out');
     this.isZoomed = true;
   };
 
@@ -4398,7 +4419,12 @@ var ProductImageDesktopZoomController = function () {
     if (!this.isZoomed) return;
 
     this.$gallery.removeClass(classes.isZoomed);
-    this.setCursors('in');
+
+    console.log('TODO - place cursor at the bottom of the gallery if you zoom out and its too far below');
+    // if(this.$cursor.offset()['top'] > (this.$gallery.outerHeight() - this.$cursor.outerHeight())) {
+    // }
+
+    // this.setCursors('in');
     this.isZoomed = false;
   };
 
@@ -4413,7 +4439,26 @@ var ProductImageDesktopZoomController = function () {
     }
   };
 
-  ProductImageDesktopZoomController.prototype.onGalleryImageClick = function onGalleryImageClick(e) {
+  ProductImageDesktopZoomController.prototype.onGalleryMouseenter = function onGalleryMouseenter(e) {
+    this.$cursor.addClass(classes.cursorVisible);
+  };
+
+  ProductImageDesktopZoomController.prototype.onGalleryMouseleave = function onGalleryMouseleave(e) {
+    this.$cursor.removeClass(classes.cursorVisible);
+  };
+
+  ProductImageDesktopZoomController.prototype.onGalleryMousemove = function onGalleryMousemove(e) {
+    var off = this.$gallery.offset();
+    var x = e.clientX; // Math.floor(e.pageX - off.left);
+    var y = Math.floor(e.pageY - off.top);
+    window.requestAnimationFrame(function () {
+      this.$cursor.css({
+        'transform': 'translate(' + x + 'px, ' + y + 'px)'
+      });
+    }.bind(this));
+  };
+
+  ProductImageDesktopZoomController.prototype.onGalleryClick = function onGalleryClick(e) {
     e.preventDefault();
     this.isZoomed ? this.zoomOut() : this.zoomIn();
   };
@@ -6003,9 +6048,11 @@ var Drawer = function () {
         _this2.$backdropCursor.removeClass(classes.backdropCursorVisible);
       });
       this.$backdrop.on('mousemove', function (e) {
-        _this2.$backdropCursor.css({
-          'transform': 'translate(' + e.clientX + 'px, ' + e.clientY + 'px)'
-        });
+        window.requestAnimationFrame(function () {
+          this.$backdropCursor.css({
+            'transform': 'translate(' + e.clientX + 'px, ' + e.clientY + 'px)'
+          });
+        }.bind(_this2));
       });
 
       // debug this...
