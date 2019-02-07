@@ -10,9 +10,16 @@
         <form action="/cart" method="post" novalidate>
           <a href="#" class="ajax-cart__close" data-ajax-cart-close>Close</a>
           {{#if items}}
+            {{#if has_unavailable_items}}
+              <div class="alert">
+                {% endraw %}
+                  {{ 'cart.general.unavailable_message' | t }}
+                {% raw %}
+              </div>
+            {{/if}}
             <ul class="ajax-cart__list">
               {{#each items}}
-              <li class="ajax-cart__item" data-id="{{ variant_id }}" data-qty="{{ quantity }}" data-ajax-item>
+              <li class="ajax-cart__item{{#if unavailable}} ajax-cart__item--unavailable{{/if}}" data-id="{{ variant_id }}" data-qty="{{ quantity }}" data-ajax-item>
                 <img src="{{ image }}" class="ajax-cart__item-image">
                 <div class="ajax-cart__item-info">
                   <div class="ajax-cart__item-header">
@@ -34,7 +41,7 @@
                       {{/if}}
                     {{/unless}}
                     <li><span class="ajax-cart__item-qty">Qty: {{ quantity }}</span></li>
-                    <li>
+                    <li style="text-decoration: none;">
                       <a href="#" class="ajax-cart__item-remove" data-ajax-cart-item-remove>→ Remove Item</a>
                     </li>
                   </ul>
@@ -46,9 +53,10 @@
               <div class="ajax-cart__footer-row">
                 <p class="clearfix">Subtotal <span style="float: right">{{ total_price }}</span></p>  
               </div>
-              <div class="ajax-cart__footer-row">
-                <a href="/cart" class="btn btn-block btn-primary">{% endraw %}{{ 'cart.general.view' | t }}{% raw %}</a>
-                <button type="submit" name="checkout" class="btn btn-block">{% endraw %}{{ 'cart.general.checkout' | t }}{% raw %}</button>
+              <div class="ajax-cart__footer-row u-ta-center">
+                <button type="submit" name="checkout" class="btn btn-block" {{#if has_unavailable_items }}disabled="true"{{/if}}>{% endraw %}{{ 'cart.general.checkout' | t }}{% raw %}</button>
+                <br />
+                <a href="/cart" class="secondary-link">{% endraw %}{{ 'cart.general.view_cart_and_check_out' | t }}{% raw %}</a>
               </div>
               {% endraw %}
               {% if section.settings.footer_text != blank %}

@@ -2764,12 +2764,18 @@ var AJAXCart = function () {
 
     // Make adjustments to the cart object contents before we pass it off to the handlebars template
     cart.total_price = _currency2.default.formatMoney(cart.total_price, theme.moneyFormat);
-    // cart.total_price = Currency.stripZeroCents(cart.total_price);
+    cart.total_price = _currency2.default.stripZeroCents(cart.total_price);
+    cart.has_unavailable_items = false;
 
     cart.items.map(function (item) {
       item.image = _images2.default.getSizedImageUrl(item.image, '200x');
       item.price = _currency2.default.formatMoney(item.price, theme.moneyFormat);
-      // item.price = Currency.stripZeroCents(item.price);
+      item.price = _currency2.default.stripZeroCents(item.price);
+      item.unavailable = !item.available;
+
+      if (item.unavailable) {
+        cart.has_unavailable_items = true;
+      }
 
       // Adjust the item's variant options to add "name" and "value" properties
       if (item.hasOwnProperty('product')) {
@@ -2788,6 +2794,8 @@ var AJAXCart = function () {
             delete item.variant_options[i];
           }
         }
+
+        item.url = '/products/' + product.handle;
       } else {
         delete item.variant_options; // skip it and use the variant title instead
       }
@@ -4330,9 +4338,7 @@ var selectors = {
 };
 
 var classes = {
-  isZoomed: 'is-zoomed',
-  cursor: 'product-gallery__cursor',
-  cursorVisible: 'is-visible'
+  isZoomed: 'is-zoomed'
 };
 
 var $window = $(window);
@@ -4353,15 +4359,11 @@ var ProductImageDesktopZoomController = function () {
     this.namespace = '.' + this.name;
 
     this.events = {
-      CLICK: 'click' + this.namespace,
-      MOUSEENTER: 'mouseenter' + this.namespace,
-      MOUSELEAVE: 'mouseleave' + this.namespace,
-      MOUSEMOVE: 'mousemove' + this.namespace
+      CLICK: 'click' + this.namespace
     };
 
     this.enabled = false;
     this.isZoomed = false;
-    this.isTouch = Modernizr && Modernizr.touchevents;
 
     this.$container = $el;
 
@@ -4372,24 +4374,15 @@ var ProductImageDesktopZoomController = function () {
 
     this.$gallery = $(selectors.gallery, this.$container);
     this.$galleryImages = $(selectors.galleryImage, this.$container);
-    this.$cursor = $(document.createElement('div')).addClass(classes.cursor);
 
-    // this.setCursors('in');
+    this.setCursors('in');
   }
 
   ProductImageDesktopZoomController.prototype.enable = function enable() {
     if (this.enabled) return;
 
     this.$gallery.on(this.events.CLICK, this.onGalleryClick.bind(this));
-
-    if (!this.isTouch) {
-      this.$gallery.append(this.$cursor);
-      this.$gallery.on(this.events.MOUSEENTER, this.onGalleryMouseenter.bind(this));
-      this.$gallery.on(this.events.MOUSEMOVE, this.onGalleryMousemove.bind(this));
-      this.$gallery.on(this.events.MOUSELEAVE, this.onGalleryMouseleave.bind(this));
-    }
-
-    // this.setCursors('in');
+    this.setCursors('in');
 
     this.enabled = true;
   };
@@ -4398,11 +4391,7 @@ var ProductImageDesktopZoomController = function () {
     if (!this.enabled) return;
 
     this.$gallery.off(this.events.CLICK, this.onGalleryClick.bind(this));
-    this.$gallery.off(this.events.MOUSEENTER, this.onGalleryMouseenter.bind(this));
-    this.$gallery.off(this.events.MOUSEMOVE, this.onGalleryMousemove.bind(this));
-    this.$gallery.off(this.events.MOUSELEAVE, this.onGalleryMouseleave.bind(this));
-
-    this.$cursor.remove();
+    this.setCursors();
 
     this.enabled = false;
   };
@@ -4411,7 +4400,7 @@ var ProductImageDesktopZoomController = function () {
     if (this.isZoomed) return;
 
     this.$gallery.addClass(classes.isZoomed);
-    // this.setCursors('out');
+    this.setCursors('out');
     this.isZoomed = true;
   };
 
@@ -4420,11 +4409,7 @@ var ProductImageDesktopZoomController = function () {
 
     this.$gallery.removeClass(classes.isZoomed);
 
-    console.log('TODO - place cursor at the bottom of the gallery if you zoom out and its too far below');
-    // if(this.$cursor.offset()['top'] > (this.$gallery.outerHeight() - this.$cursor.outerHeight())) {
-    // }
-
-    // this.setCursors('in');
+    this.setCursors('in');
     this.isZoomed = false;
   };
 
@@ -4437,25 +4422,6 @@ var ProductImageDesktopZoomController = function () {
     } else {
       $images.css('cursor', '');
     }
-  };
-
-  ProductImageDesktopZoomController.prototype.onGalleryMouseenter = function onGalleryMouseenter(e) {
-    this.$cursor.addClass(classes.cursorVisible);
-  };
-
-  ProductImageDesktopZoomController.prototype.onGalleryMouseleave = function onGalleryMouseleave(e) {
-    this.$cursor.removeClass(classes.cursorVisible);
-  };
-
-  ProductImageDesktopZoomController.prototype.onGalleryMousemove = function onGalleryMousemove(e) {
-    var off = this.$gallery.offset();
-    var x = e.clientX; // Math.floor(e.pageX - off.left);
-    var y = Math.floor(e.pageY - off.top);
-    window.requestAnimationFrame(function () {
-      this.$cursor.css({
-        'transform': 'translate(' + x + 'px, ' + y + 'px)'
-      });
-    }.bind(this));
   };
 
   ProductImageDesktopZoomController.prototype.onGalleryClick = function onGalleryClick(e) {

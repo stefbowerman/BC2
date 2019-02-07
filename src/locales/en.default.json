@@ -86,13 +86,15 @@
       "shipping_at_checkout": "Shipping & taxes calculated at checkout",
       "update": "Update Cart",
       "checkout": "Check Out",
+      "view_cart_and_check_out": "View Cart and Check Out",
       "view": "View Cart",
       "empty": "Your cart is empty.",
       "cookies_required": "Enable cookies to use the shopping cart",
       "continue_browsing_html": "Click here to continue browsing.",
       "item_quantity": "Item quantity",
       "savings": "You're saving",
-      "subtotal": "Subtotal"
+      "subtotal": "Subtotal",
+      "unavailable_message": "Some items in your cart have become unavailable.  Please remove them before checking out."
     },
     "label": {
       "product": "Product",

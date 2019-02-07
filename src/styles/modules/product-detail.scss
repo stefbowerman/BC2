@@ -336,7 +336,6 @@ body.template-product {
 // Scroll Gallery
 .product-gallery {
   @include pdf-scrollable;
-  cursor: none; // We add a cursor via JS  
 
   @media (min-width: $screen-sm-min) {
     min-height: calc(100vh - 200px);
@@ -442,35 +441,4 @@ body.template-product {
     // @include transition(opacity $transition-duration-slow $transition-timing-function-in);
   }
 
-}
-
-.product-gallery__cursor {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 48px;
-  width: 48px;
-  transition: transform 20ms ease;
-
-  &:before {
-    content: '';
-    @include stretch-within;
-    background: {
-      image: url({{ 'cursor-zoom-in.png' | asset_url }});
-      size: cover;
-    }
-    transform: translate(-24px, -24px) rotate(0deg);
-    opacity: 0;
-    transition: opacity 200ms ease-in, transform 100ms ease-in-out;
-  }
-
-  &.is-visible:before {
-    opacity: 1;
-  }
-
-  .product-gallery.is-zoomed & {
-    &:before {
-      transform: translate(-24px, -24px) rotate(45deg);
-    }
-  }
 }

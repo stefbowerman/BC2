@@ -11,6 +11,14 @@
   "items" : [
     {% for item in cart.items %}
       {% assign product = item.product %}
+
+      {% assign available = true %}
+      {% if item.variant.available == false %}
+        {% assign available = false %}
+      {% elsif variant.inventory_management == "shopify" and variant.inventory_policy != "continue" and variant.inventory_quantity < item.quantity %}
+        {% assign available = false %}
+      {% endif %}
+
       {
         "id": {{ item.variant_id }},
         "title": {{ item.title | json }},
@@ -39,6 +47,7 @@
         "image": {{ item.image | json }},
         "handle": {{ product.handle | json }},
         "requires_shipping": {{ item.requires_shipping }},
+        "available": {{ available | json }},
         "product": {% include 'product-json', product: product %},
         "product_id": {{ product.id }},
         "product_title": {{ product.title | json }},

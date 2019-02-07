@@ -139,6 +139,17 @@ body.ajax-cart-open {
     opacity: 0;
     @include transition(opacity $transition-duration-base $transition-timing-function-in);
   }
+
+  &.ajax-cart__item--unavailable {
+    .ajax-cart__item-title,
+    .ajax-cart__item-options li,
+    .ajax-cart__item-price {
+      text-decoration: line-through;  
+    }
+    .ajax-cart__item-image {
+      opacity: 0.25;
+    }
+  }   
 }
 
 .ajax-cart__item-image {

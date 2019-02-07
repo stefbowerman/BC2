@@ -297,12 +297,18 @@ export default class AJAXCart {
 
     // Make adjustments to the cart object contents before we pass it off to the handlebars template
     cart.total_price = Currency.formatMoney(cart.total_price, theme.moneyFormat);
-    // cart.total_price = Currency.stripZeroCents(cart.total_price);
+    cart.total_price = Currency.stripZeroCents(cart.total_price);
+    cart.has_unavailable_items = false;
 
     cart.items.map(function(item){
       item.image    = Images.getSizedImageUrl(item.image, '200x');
       item.price    = Currency.formatMoney(item.price, theme.moneyFormat);
-      // item.price = Currency.stripZeroCents(item.price);
+      item.price    = Currency.stripZeroCents(item.price);
+      item.unavailable = !item.available;
+
+      if(item.unavailable) {
+        cart.has_unavailable_items = true;
+      }
 
       // Adjust the item's variant options to add "name" and "value" properties
       if(item.hasOwnProperty('product')) {
@@ -321,6 +327,8 @@ export default class AJAXCart {
             delete item.variant_options[i];
           }
         }
+        
+        item.url = `/products/${product.handle}`;
       }
       else {
         delete item.variant_options; // skip it and use the variant title instead

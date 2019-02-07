@@ -126,6 +126,29 @@ $cart-padding-v: 15px;
   font-weight: $font-weight-bold;
 }
 
+.cart-list__item-details-price {
+  float: right;
+  padding-left: 10px;
+
+  @media (min-width: $screen-sm-min) {
+    display: none;
+  }
+}
+
+// When the variant is unavailable
+.cart-list__row--unavailable {
+  .cart-list__item-details li,
+  .cart-list__item-details-title,
+  .cart-list__item-details-price,
+  .cart-list__col-subtotal {
+    text-decoration: line-through;
+  }
+
+  .cart-list__item-image {
+    opacity: 0.25;
+  }
+}
+
 .cart-list__footer {
   border-top: 1px solid $color-off-white;
   padding-top: 25px;

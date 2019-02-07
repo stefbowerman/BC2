@@ -1,9 +1,78 @@
+{% assign cart_has_unavailable_items = false %}
+{% capture cart_body %}
+  {% for item in cart.items %}
+
+    {% assign available = true %}
+    {% if item.variant.available == false %}
+      {% assign available = false %}
+    {% elsif variant.inventory_management == "shopify" and variant.inventory_policy != "continue" and variant.inventory_quantity < item.quantity %}
+      {% assign available = false %}
+    {% endif %}
+
+    {% if available == false %}
+      {% assign cart_has_unavailable_items = true %}
+    {% endif %}
+
+    <div class="cart-list__row{% if available == false %} cart-list__row--unavailable{% endif %}">
+      <div class="cart-list__col-product">
+        <img src="{{ item | img_url: '200x' }}" class="cart-list__item-image" alt="{{ item.title | escape }}">
+        <div class="cart-list__item-details">
+          <div class="cart-list__item-details-price">{{ item.line_price | money }}</div>
+          <div class="cart-list__item-details-title">
+            <a href="{{ item.url }}">{{ item.product.title }}</a>
+          </div>
+
+          <ul class="list-unstyled">
+
+            {% for option in item.product.options %}
+              {% assign option_key = 'option' | append: forloop.index %}
+              {% assign option_val = item.variant[option_key] %}
+              {% unless option == "Title" and option_val == "Default Title" %}
+                <li>{{ option }}: {{ option_val }}</li>
+              {% endunless %}
+            {% endfor %}
+
+            {% unless item.properties == empty %}
+              {% for p in item.properties %}
+                {% unless p.last == blank %}
+                <li>
+                  {{ p.first }}:
+                  {% if p.last contains '/uploads/' %}
+                    <a href="{{ p.last }}">{{ p.last | split: '/' | last }}</a>
+                  {% else %}
+                    {{ p.last }}
+                  {% endif %}
+                </li>
+                {% endunless %}
+              {% endfor %}
+            {% endunless %}
+            <li>Qty: {{ item.quantity }}</li>
+            <li style="text-decoration: none;">
+              <a href="/cart/change?line={{ forloop.index }}&amp;quantity=0" class="secondary-link cart-list__item-details-remove" data-item-remove-link>
+                → Remove <span class="hidden-xs hidden-sm">Item</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>            
+      <div class="cart-list__col-subtotal">{{ item.line_price | money }}</div>
+    </div>
+  {% endfor %}
+{% endcapture %}
+
+
+
+
 <div data-section-id="{{ section.id }}" data-section-type="cart">
   <div class="layout-content-wrapper">
     <div class="container">
       <div style="max-width: 560px; margin: 0 auto;">
 
         {% if cart.item_count > 0 %}
+
+          {% if cart_has_unavailable_items %}
+            <div class="alert u-ta-center">{{ 'cart.general.unavailable_message' | t }}</div>
+          {% endif %}
 
           <form action="/cart" method="post" novalidate data-cart-form>
 
@@ -13,52 +82,7 @@
                 <div class="cart-list__col-subtotal">{{ 'cart.general.subtotal' | t }}</div>
               </div>
               <div class="cart-list__body">
-                {% for item in cart.items %}
-                  <div class="cart-list__row">
-                    <div class="cart-list__col-product">
-                      <img src="{{ item | img_url: '200x' }}" class="cart-list__item-image" alt="{{ item.title | escape }}">
-                      <div class="cart-list__item-details">
-                        <div class="visible-xs u-float-right" style="padding-left: 10px;">{{ item.line_price | money }}</div>
-                        <div class="cart-list__item-details-title">
-                          <a href="{{ item.url }}">{{ item.product.title }}</a>
-                        </div>
-
-                        <ul class="list-unstyled">
-
-                          {% for option in item.product.options %}
-                            {% assign option_key = 'option' | append: forloop.index %}
-                            {% assign option_val = item.variant[option_key] %}
-                            {% unless option == "Title" and option_val == "Default Title" %}
-                              <li>{{ option }}: {{ option_val }}</li>
-                            {% endunless %}
-                          {% endfor %}
-
-                          {% unless item.properties == empty %}
-                            {% for p in item.properties %}
-                              {% unless p.last == blank %}
-                              <li>
-                                {{ p.first }}:
-                                {% if p.last contains '/uploads/' %}
-                                  <a href="{{ p.last }}">{{ p.last | split: '/' | last }}</a>
-                                {% else %}
-                                  {{ p.last }}
-                                {% endif %}
-                              </li>
-                              {% endunless %}
-                            {% endfor %}
-                          {% endunless %}
-                          <li>Qty: {{ item.quantity }}</li>
-                          <li>
-                            <a href="/cart/change?line={{ forloop.index }}&amp;quantity=0" class="secondary-link cart-list__item-details-remove" data-item-remove-link>
-                              → Remove <span class="hidden-xs hidden-sm">Item</span>
-                            </a>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>            
-                    <div class="cart-list__col-subtotal">{{ item.line_price | money }}</div>
-                  </div>
-                {% endfor %}
+                {{ cart_body }}
               </div>
               <div class="cart-list__footer">
 
@@ -71,7 +95,7 @@
                     <p>{{ 'cart.general.savings' | t }} {{ cart.total_discounts | money }}</p>
                   {% endif %}
                   <p>
-                    <input type="submit" name="checkout" class="btn btn-primary btn-block" value="{{ 'cart.general.checkout' | t }}">
+                    <input type="submit" name="checkout" class="btn btn-primary btn-block" value="{{ 'cart.general.checkout' | t }}"  {% if cart_has_unavailable_items %}disabled="true"{% endif %}>
                   </p>
                   {% if additional_checkout_buttons %}
                     <div class="additional-checkout-buttons">
