@@ -5,7 +5,7 @@
 nav.main-nav {
   position: fixed;
   z-index: $z-index-nav;
-  top: $grid-gutter-width/2;
+  top: 20px; // $grid-gutter-width/2;
   left: $grid-gutter-width/2;
   @include backface-visibility(hidden);
   margin-top: 48px; // Logo height + $grid-gutter-width/2

@@ -11,7 +11,7 @@
   @include backface-visibility(hidden);
 
   @media (min-width: $screen-xs-min) {
-    top: $grid-gutter-width/2;
+    top: 20px;
     left: $grid-gutter-width/2;
     right: auto;
   }

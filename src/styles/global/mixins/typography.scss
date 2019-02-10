@@ -41,12 +41,12 @@
 
 // RTE styling for long form content
 @mixin article-content {
-  font-size: $font-size-small;
+  // font-size: $font-size-small;
   text-transform: none;
   text-align: justify;
 
   h1, h2, h3, h4, h5, h6 {
-    margin: $spacer*2.5 0 $spacer*2;
+    margin: $spacer*3.5 0 $spacer*1.5;
 
     &:first-child {
       margin-top: 0;

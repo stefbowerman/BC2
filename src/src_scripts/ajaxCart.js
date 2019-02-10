@@ -2,6 +2,7 @@ import ShopifyAPI from './shopifyAPI';
 import Utils from './utils';
 import Currency from './currency';
 import Images from './images';
+import Toast from './uiComponents/toast';
 
 const $window = $(window);
 const $body = $('body');
@@ -24,7 +25,10 @@ const selectors = {
   // Verify Stuff
   verifyContainer: '[data-cart-verify-modal-container]',
   verifyTemplate: '[data-cart-verify-modal-template]',
-  verifyCheckoutLink: '[data-verify-checkout-link]'
+  verifyCheckoutLink: '[data-verify-checkout-link]',
+
+  // Alert
+  toast: '[data-ajax-cart-toast]'
 };
 
 const classes = {
@@ -82,7 +86,8 @@ export default class AJAXCart {
       this.$container      = $(selectors.container);
       this.$cartBadge      = $(selectors.cartBadge);
       this.$cartBadgeCount = $(selectors.cartBadgeCount);
-      this.$verifyContainer = $(selectors.verifyContainer);       
+      this.$verifyContainer = $(selectors.verifyContainer);  
+      this.$toast = new Toast($(selectors.toast));     
 
       // Compile this once during initialization
       this.template = Handlebars.compile($(selectors.template).html());
@@ -261,14 +266,14 @@ export default class AJAXCart {
   }
 
  /**
-  * STUB - Callback when adding an item fails
-
+  * Callback when adding an item fails
+  *
   * @param {Object} data
   * @param {string} data.message - error message
   */
   onItemAddFail(data){
-    console.log('['+this.name+'] - onItemAddFail');
-    console.warn('['+this.name+'] - ' + data.message);
+    this.$toast.setContent('Requested item is unavailable');
+    this.$toast.show();
   }
 
   /**

@@ -9,7 +9,6 @@ import FooterSection     from './sections/footer';
 import AJAXCartSection   from './sections/ajaxCart';
 import MobileMenuSection from './sections/mobileMenu';
 
-
 (($) => {
 
   // Sections Stuff 

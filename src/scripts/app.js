@@ -2450,6 +2450,10 @@ var _images = require('./images');
 
 var _images2 = _interopRequireDefault(_images);
 
+var _toast = require('./uiComponents/toast');
+
+var _toast2 = _interopRequireDefault(_toast);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -2475,7 +2479,10 @@ var selectors = {
   // Verify Stuff
   verifyContainer: '[data-cart-verify-modal-container]',
   verifyTemplate: '[data-cart-verify-modal-template]',
-  verifyCheckoutLink: '[data-verify-checkout-link]'
+  verifyCheckoutLink: '[data-verify-checkout-link]',
+
+  // Alert
+  toast: '[data-ajax-cart-toast]'
 };
 
 var classes = {
@@ -2536,6 +2543,7 @@ var AJAXCart = function () {
       this.$cartBadge = $(selectors.cartBadge);
       this.$cartBadgeCount = $(selectors.cartBadgeCount);
       this.$verifyContainer = $(selectors.verifyContainer);
+      this.$toast = new _toast2.default($(selectors.toast));
 
       // Compile this once during initialization
       this.template = Handlebars.compile($(selectors.template).html());
@@ -2721,15 +2729,16 @@ var AJAXCart = function () {
   };
 
   /**
-   * STUB - Callback when adding an item fails
-    * @param {Object} data
+   * Callback when adding an item fails
+   *
+   * @param {Object} data
    * @param {string} data.message - error message
    */
 
 
   AJAXCart.prototype.onItemAddFail = function onItemAddFail(data) {
-    console.log('[' + this.name + '] - onItemAddFail');
-    console.warn('[' + this.name + '] - ' + data.message);
+    this.$toast.setContent('Requested item is unavailable');
+    this.$toast.show();
   };
 
   /**
@@ -2994,7 +3003,7 @@ var AJAXCart = function () {
 
 exports.default = AJAXCart;
 
-},{"./currency":10,"./images":11,"./shopifyAPI":29,"./utils":32}],6:[function(require,module,exports){
+},{"./currency":10,"./images":11,"./shopifyAPI":29,"./uiComponents/toast":32,"./utils":33}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3324,7 +3333,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 // Sections
 // import SectionManager  from './sectionManager';
 
-},{"./appRouter":8,"./sections/ajaxCart":17,"./sections/footer":22,"./sections/header":23,"./sections/mobileMenu":24,"./sections/nav":25,"./utils":32}],8:[function(require,module,exports){
+},{"./appRouter":8,"./sections/ajaxCart":17,"./sections/footer":22,"./sections/header":23,"./sections/mobileMenu":24,"./sections/nav":25,"./utils":33}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3556,7 +3565,7 @@ var AppRouter = function () {
 
 exports.default = AppRouter;
 
-},{"./views/base":33,"./views/cart":34,"./views/collection":35,"./views/contact":36,"./views/index":37,"./views/product":38,"./views/stockists":39,"navigo":2}],9:[function(require,module,exports){
+},{"./views/base":34,"./views/cart":35,"./views/collection":36,"./views/contact":37,"./views/index":38,"./views/product":39,"./views/stockists":40,"navigo":2}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3733,7 +3742,7 @@ exports.default = {
   }
 };
 
-},{"./utils":32}],11:[function(require,module,exports){
+},{"./utils":33}],11:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4373,7 +4382,7 @@ var ProductDetailForm = function () {
 
 exports.default = ProductDetailForm;
 
-},{"../breakpoints":9,"../currency":10,"../utils":32,"./productImageDesktopZoomController":13,"./productImageTouchZoomController":14,"./productVariants":15}],13:[function(require,module,exports){
+},{"../breakpoints":9,"../currency":10,"../utils":33,"./productImageDesktopZoomController":13,"./productImageTouchZoomController":14,"./productVariants":15}],13:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4835,7 +4844,7 @@ var ProductVariants = function () {
 
 exports.default = ProductVariants;
 
-},{"../utils":32}],16:[function(require,module,exports){
+},{"../utils":33}],16:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5305,7 +5314,7 @@ var FooterSection = function (_BaseSection) {
 
 exports.default = FooterSection;
 
-},{"../ajaxMailchimpForm":6,"../utils":32,"./base":18}],23:[function(require,module,exports){
+},{"../ajaxMailchimpForm":6,"../utils":33,"./base":18}],23:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6220,7 +6229,167 @@ var Drawer = function () {
 
 exports.default = Drawer;
 
-},{"../utils":32}],32:[function(require,module,exports){
+},{"../utils":33}],32:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _utils = require('../utils');
+
+var _utils2 = _interopRequireDefault(_utils);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var $document = $(document);
+var $body = $(document.body);
+
+var selectors = {
+  close: '[data-toast-close]',
+  content: '.toast__content'
+};
+
+var classes = {
+  toast: 'toast',
+  visible: 'is-visible'
+};
+
+var Toast = function () {
+
+  /**
+   * Toast constructor
+   *
+   * @param {HTMLElement | $} el - The toast element
+   * @param {Object} options
+   */
+  function Toast(el, options) {
+    _classCallCheck(this, Toast);
+
+    this.name = 'toast';
+    this.namespace = '.' + this.name;
+
+    this.$el = $(el);
+    this.$content = this.$el.find(selectors.content);
+    this.stateIsOpen = false;
+    this.transitionEndEvent = _utils2.default.whichTransitionEnd();
+    this.supportsCssTransitions = Modernizr.hasOwnProperty('csstransitions') && Modernizr.csstransitions;
+    this.interactionTimeout = false;
+    this.timeoutDuration = 2000;
+
+    if (this.$el == undefined || !this.$el.hasClass(classes.toast)) {
+      console.warn('[' + this.name + '] - Element with class `' + classes.toast + '` required to initialize.');
+      return;
+    }
+
+    this.events = {
+      HIDE: 'hide' + this.namespace,
+      HIDDEN: 'hidden' + this.namespace,
+      SHOW: 'show' + this.namespace,
+      SHOWN: 'shown' + this.namespace
+    };
+
+    this.$el.on('mouseenter', this.onMouseenter.bind(this));
+    this.$el.on('mouseleave', this.onMouseleave.bind(this));
+    this.$el.on('click', selectors.close, this.onCloseClick.bind(this));
+  }
+
+  Toast.prototype.setInteractionTimeout = function setInteractionTimeout() {
+    var _this = this;
+
+    this.interactionTimeout = setTimeout(function () {
+      _this.hide();
+    }, this.timeoutDuration);
+  };
+
+  Toast.prototype.clearInteractionTimeout = function clearInteractionTimeout() {
+    clearTimeout(this.interactionTimeout);
+  };
+
+  Toast.prototype.setContent = function setContent(content) {
+    this.$content.html(content);
+  };
+
+  /**
+   * Called after the closing animation has run
+   */
+
+
+  Toast.prototype.onHidden = function onHidden() {
+    this.stateIsOpen = false;
+    this.clearInteractionTimeout();
+    var e = $.Event(this.events.HIDDEN);
+    this.$el.trigger(e);
+  };
+
+  /**
+   * Called after the opening animation has run
+   */
+
+
+  Toast.prototype.onShown = function onShown() {
+    this.setInteractionTimeout();
+    var e = $.Event(this.events.SHOWN);
+    this.$el.trigger(e);
+  };
+
+  Toast.prototype.hide = function hide() {
+    var e = $.Event(this.events.HIDE);
+    this.$el.trigger(e);
+
+    if (!this.stateIsOpen) return;
+
+    this.$el.removeClass(classes.visible);
+
+    if (this.supportsCssTransitions) {
+      this.$el.one(this.transitionEndEvent, this.onHidden.bind(this));
+    } else {
+      this.onHidden();
+    }
+  };
+
+  Toast.prototype.show = function show() {
+    var e = $.Event(this.events.SHOW);
+    this.$el.trigger(e);
+
+    if (this.stateIsOpen) return;
+
+    this.stateIsOpen = true;
+
+    this.$el.addClass(classes.visible);
+
+    if (this.supportsCssTransitions) {
+      this.$el.one(this.transitionEndEvent, this.onShown.bind(this));
+    } else {
+      this.onShown();
+    }
+  };
+
+  Toast.prototype.toggle = function toggle() {
+    return this.stateIsOpen ? this.hide() : this.show();
+  };
+
+  Toast.prototype.onCloseClick = function onCloseClick(e) {
+    e.preventDefault();
+    this.hide();
+  };
+
+  Toast.prototype.onMouseenter = function onMouseenter() {
+    this.clearInteractionTimeout();
+  };
+
+  Toast.prototype.onMouseleave = function onMouseleave() {
+    this.setInteractionTimeout();
+  };
+
+  return Toast;
+}();
+
+exports.default = Toast;
+
+},{"../utils":33}],33:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6586,7 +6755,7 @@ exports.default = {
   }
 };
 
-},{}],33:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6681,7 +6850,7 @@ var BaseView = function () {
 
 exports.default = BaseView;
 
-},{"../sectionConstructorDictionary":16,"../sections/base":18}],34:[function(require,module,exports){
+},{"../sectionConstructorDictionary":16,"../sections/base":18}],35:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6725,7 +6894,7 @@ var CartView = function (_BaseView) {
 
 exports.default = CartView;
 
-},{"../sections/cart":19,"./base":33}],35:[function(require,module,exports){
+},{"../sections/cart":19,"./base":34}],36:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6769,7 +6938,7 @@ var CollectionView = function (_BaseView) {
 
 exports.default = CollectionView;
 
-},{"../sections/collection":20,"./base":33}],36:[function(require,module,exports){
+},{"../sections/collection":20,"./base":34}],37:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6813,7 +6982,7 @@ var ContactView = function (_BaseView) {
 
 exports.default = ContactView;
 
-},{"../sections/contact":21,"./base":33}],37:[function(require,module,exports){
+},{"../sections/contact":21,"./base":34}],38:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6857,7 +7026,7 @@ var IndexView = function (_BaseView) {
 
 exports.default = IndexView;
 
-},{"../sections/base":18,"./base":33}],38:[function(require,module,exports){
+},{"../sections/base":18,"./base":34}],39:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6918,7 +7087,7 @@ var ProductView = function (_BaseView) {
 
 exports.default = ProductView;
 
-},{"../sections/product":26,"./base":33}],39:[function(require,module,exports){
+},{"../sections/product":26,"./base":34}],40:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6962,4 +7131,4 @@ var StockistsView = function (_BaseView) {
 
 exports.default = StockistsView;
 
-},{"../sections/stockists":27,"./base":33}]},{},[7]);
+},{"../sections/stockists":27,"./base":34}]},{},[7]);

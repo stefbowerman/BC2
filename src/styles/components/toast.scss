@@ -1,0 +1,49 @@
+// -------------------------
+// Toast
+// -------------------------
+
+// Mini alerts from the top of the screen
+
+.toast {
+  position: fixed;
+  z-index: $z-index-toast;
+  top: 16px;
+  left: 50%;
+  width: 500px;
+  max-width: 90%;  
+  max-width: calc(100% - #{$grid-gutter-width/2});
+  pointer-events: none;
+  opacity: 0;
+  @include translate(-50%, -3px);
+  @include transition(transform $transition-duration-base $transition-timing-function-slide-in, opacity $transition-duration-fast $transition-timing-function-slide-in);
+
+  padding: 7px 26px;
+  border: 1px solid;
+  background: $color-white;
+  color: $state-danger-text;
+  font-size: $font-size-small;
+  text-align: center;  
+
+  &.is-visible {
+    pointer-events: auto;
+    opacity: 1;
+    @include translate(-50%, 0px);
+    @include transition(transform $transition-duration-base $transition-timing-function-slide-in, opacity $transition-duration-fast $transition-timing-function-slide-in);
+  }
+}
+
+.toast__content {
+
+}
+
+.toast__close {
+  position: absolute;
+  top: 0;
+  right: 8px;
+
+  &:before {
+    content: "\00d7"; // &times;
+    color: $state-danger-text;
+    font-size: 18px;
+  }
+}
