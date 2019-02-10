@@ -50,6 +50,7 @@
     cursor: $cursor-disabled;
     @include opacity(.25);
     @include box-shadow(none);
+    border-color: #9f9f9f; // whatever...
   }
 
   // [converter] extracted a& to a.btn

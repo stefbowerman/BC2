@@ -17,9 +17,9 @@
       <div class="cart-list__col-product">
         <img src="{{ item | img_url: '200x' }}" class="cart-list__item-image" alt="{{ item.title | escape }}">
         <div class="cart-list__item-details">
-          <div class="cart-list__item-details-price">{{ item.line_price | money }}</div>
+          <div class="cart-list__item-details-price">{{ item.line_price | money_without_trailing_zeros }}</div>
           <div class="cart-list__item-details-title">
-            <a href="{{ item.url }}">{{ item.product.title }}</a>
+            <a href="{{ item.product.url }}">{{ item.product.title }}</a>
           </div>
 
           <ul class="list-unstyled">
@@ -55,7 +55,7 @@
           </ul>
         </div>
       </div>            
-      <div class="cart-list__col-subtotal">{{ item.line_price | money }}</div>
+      <div class="cart-list__col-subtotal">{{ item.line_price | money_without_trailing_zeros }}</div>
     </div>
   {% endfor %}
 {% endcapture %}
@@ -89,10 +89,10 @@
                 <div class="cart-list__footer-row">
                   <p class="clearfix u-fw-bold">
                     <span style="float: left;">{{ 'cart.general.subtotal' | t }}</span>
-                    <span style="float: right">{{ cart.total_price | money }}</span>
+                    <span style="float: right">{{ cart.total_price | money_without_trailing_zeros }}</span>
                   </p>
                   {% if cart.total_discounts > 0 %}
-                    <p>{{ 'cart.general.savings' | t }} {{ cart.total_discounts | money }}</p>
+                    <p>{{ 'cart.general.savings' | t }} {{ cart.total_discounts | money_without_trailing_zeros }}</p>
                   {% endif %}
                   <p>
                     <input type="submit" name="checkout" class="btn btn-primary btn-block" value="{{ 'cart.general.checkout' | t }}"  {% if cart_has_unavailable_items %}disabled="true"{% endif %}>
@@ -113,31 +113,6 @@
             </div>
 
           </form>
-
-          <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="verifyCartModalLabel" data-verify-modal>
-            <div class="modal-dialog" role="document">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <a href="#" class="close" data-dismiss="modal" aria-label="Close">{% include 'icon-close' %}</a>
-                  <div class="modal-title" id="verifyCartModalLabel">Verify Cart</div>
-                </div>
-                <div class="modal-body">
-                  <p class="u-ta-center u-fs-small">Please verify cart contents before proceeding to checkout</p>                  
-                  <ul class="list-unstyled">
-                    {% for item in cart.items %}
-                      <li>{{ item.product.title }}</li>
-                    {% endfor %}
-                  </ul>
-                </div>
-                <div class="modal-footer">
-                  <form data-verify-form>
-                    <p>Total: <strong>{{ cart.total_price | money }}</strong></p>
-                    <button type="submit" class="btn">Proceed to Checkout</button>
-                  </form>
-                </div>
-              </div>
-            </div>
-          </div>
 
         {% else %}
 

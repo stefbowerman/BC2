@@ -7,6 +7,7 @@ import ProductView    from './views/product';
 import CollectionView from './views/collection';
 import CartView       from './views/cart';
 import ContactView    from './views/contact';
+import StockistsView  from './views/stockists';
 
 // TODO - Move the loader and view-container bits to variables that get passed in
 const $body = $(document.body);
@@ -29,10 +30,12 @@ export default class AppRouter {
       'product': ProductView,
       'collection': CollectionView,
       'cart': CartView,
-      'contact': ContactView
+      'contact': ContactView,
+      'stockists': StockistsView
     }
 
     this.router = new Navigo(window.location.origin, false, '#!');
+    this.isTransitioning = false;
     this.currentView = null;
     this.settings = $.extend({}, defaults, options);
 
@@ -71,6 +74,9 @@ export default class AppRouter {
       if(params.slug.indexOf('contact') > -1) {
         this.doRoute(`/pages/${params.slug}`, 'contact');
       }
+      else if(params.slug.indexOf('stockists') > -1) {
+        this.doRoute(`/pages/${params.slug}`, 'stockists');
+      }      
       else {
         this.doRoute(`/pages/${params.slug}`, 'page');
       }
@@ -98,6 +104,8 @@ export default class AppRouter {
       firstRoute = false;
       return;
     }
+
+    this.isTransitioning = true;
 
     const transitionDeferred = $.Deferred();
     const ajaxDeferred       = $.Deferred();
@@ -169,6 +177,8 @@ export default class AppRouter {
       $loader.removeClass('is-visible');
       this.currentView.transitionIn();
     });
+
+    this.isTransitioning = false;
   }
 
   navigate(url) {

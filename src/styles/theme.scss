@@ -74,6 +74,7 @@
 @import url('templates/collection.scss');
 @import url('templates/gift-card.scss');
 @import url('templates/page.scss');
+@import url('templates/stockists.scss');
 
 // Necessary bottom placement for specificity w/o `!important`
 @import url('global/utilities.scss');
@@ -92,8 +93,23 @@ body.is-loading {
   }
 }
 
+@keyframes loader {
+  0% {
+    opacity: 1;
+    @include scale(1);
+  }
+  33% {
+    opacity: 0.9;
+    @include scale(0.94);
+  }
+  100% {
+    opacity: 1;
+    @include scale(1);
+  }
+}
 
-#loader {
+
+.loader {
   position: fixed;
   top: 0;
   left: 0;
@@ -105,24 +121,30 @@ body.is-loading {
   pointer-events: none;
   @include transition(opacity 600ms cubic-bezier(0.54, 0.09, 0.29, 0.99));
 
-  &:before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    height: 50px;
-    width: 50px;
-    background: {
-      image: url({{ 'circumflex.png' | asset_url }});
-      size: contain;
-      repeat: no-repeat;
-      position: center;
-    }
-    @include translate(-50%, -50%);
-  }
-
   &.is-visible {
     pointer-events: auto;
     opacity: 1;
+  }
+
+  .loader__icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    height: 45px;
+    width: 45px;
+    @include translate(-50%, -50%);
+
+    &:before {
+      content: '';
+      @include stretch-within;
+      background: {
+        image: url({{ 'circumflex.png' | asset_url }});
+        size: contain;
+        repeat: no-repeat;
+        position: center;
+      }
+
+      @include animation(loader 1.9s infinite);
+    }
   }
 }

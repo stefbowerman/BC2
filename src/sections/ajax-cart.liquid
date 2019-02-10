@@ -1,5 +1,6 @@
 <div data-section-id="{{ section.id }}" data-section-type="ajax-cart">
   <div class="ajax-cart-container" data-ajax-cart-container></div>
+  <div data-cart-verify-modal-container></div>
 </div>
 
 {% raw %}
@@ -50,11 +51,11 @@
               {{/each}}
             </ul>
             <div data-ajax-cart-footer>
-              <div class="ajax-cart__footer-row">
+              <div class="ajax-cart__footer-row u-fw-bold">
                 <p class="clearfix">Subtotal <span style="float: right">{{ total_price }}</span></p>  
               </div>
               <div class="ajax-cart__footer-row u-ta-center">
-                <button type="submit" name="checkout" class="btn btn-block" {{#if has_unavailable_items }}disabled="true"{{/if}}>{% endraw %}{{ 'cart.general.checkout' | t }}{% raw %}</button>
+                <button type="submit" class="btn btn-block" {{#if has_unavailable_items }}disabled="true"{{/if}}>{% endraw %}{{ 'cart.general.checkout' | t }}{% raw %}</button>
                 <br />
                 <a href="/cart" class="secondary-link">{% endraw %}{{ 'cart.general.view_cart_and_check_out' | t }}{% raw %}</a>
               </div>
@@ -74,6 +75,56 @@
           {{/if}}
           </div>
         </form>
+      </div>
+    </div>
+  </div>
+</script>
+
+<script type="text/x-handlebars-template" data-cart-verify-modal-template>
+  <div class="modal fade verify-modal" tabindex="-1" role="dialog" aria-labelledby="verifyCartModalLabel" data-verify-modal>
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <a href="#" class="close" data-dismiss="modal" aria-label="Close">{% endraw %}{% include 'icon-close' %}{% raw %}</a>
+          <div class="modal-title" id="verifyCartModalLabel">Verify Cart</div>
+        </div>
+        <div class="modal-body">
+          <p class="u-ta-center u-fs-small">Please verify cart contents before proceeding to checkout</p>                  
+          {{#if items}}
+            <div class="verify-table">
+              {{#each items}}
+                <div class="verify-row">
+                  <img src="{{ image }}" class="verify-row__image">
+                  <div class="verify-row__content">
+                    <div class="verify-row__price">{{ price }}</div>                    
+                    <div class="verify-row__title">{{ product_title }}{{#if has_multiple}} &times; <strong>{{ quantity }}</strong>{{/if}}</div>
+                    {{#unless has_only_default_variant}}
+                      <ul class="list-unstyled">
+                        {{#if variant_options}}
+                          {{#each variant_options}}
+                            <li>
+                              {{ name }}: <strong>{{ value }}</strong>
+                            </li>
+                          {{/each}}
+                        {{else}}
+                          {{#if variant_title}}
+                            <li>{{ variant_title }}</li>
+                          {{/if}}
+                        {{/if}}
+                      </ul>
+                    {{/unless}}
+                  </div>
+                </div>
+              {{/each}}
+            </div>
+          {{/if}}
+        </div>
+        <div class="modal-footer">
+          <p>Cart Total: <strong>{{ total_price }}</strong></p>
+          <a href="/checkout" class="btn" data-verify-checkout-link>
+            Proceed to Checkout
+          </a>
+        </div>
       </div>
     </div>
   </div>

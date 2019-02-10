@@ -1,0 +1,31 @@
+// -------------------------
+// Stockists page
+// -------------------------
+
+.stockist-block {
+  text-align: center;
+
+  & + & {
+    margin-top: 80px;
+  }
+}
+
+.stockist-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: $font-size-small;
+
+  li {
+    display: block;
+
+    &:not(:last-child) {
+      margin-bottom: 30px;
+    }
+
+    strong {
+      display: block;
+      margin-bottom: 2px;
+    }
+  }
+}

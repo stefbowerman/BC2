@@ -102,3 +102,10 @@
     }
   }
 }
+
+// Product Template - don't show footer on small screens
+@media (max-width: $screen-xs-max) {
+  .template-product .footer {
+    display: none;
+  }  
+}

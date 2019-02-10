@@ -74,6 +74,7 @@ body.template-product {
 
 .sticky-form {
   position: fixed;
+  z-index: $z-index-sticky-form;
   bottom: 0;
   left: 0;
   right: 0;
@@ -193,7 +194,7 @@ body.template-product {
   @include align-items(center);
   // margin: 0 -15px;
   // padding: 0 15px;
-  font-size: $font-size-small;
+  font-size: $font-size-xsmall;
 
   // This is the row with product title + price
   &:first-child {
@@ -233,9 +234,27 @@ body.template-product {
   }
 }
 
+// On tiny screens, stack the options
+@media (max-width: $screen-xs-min - 1px) {
+  .sticky-row--options {
+    @include flex-direction(column);
+
+    .sticky-row__entry {
+      width: 100%;
+      border-left: none;
+      border-right: none;
+      padding-left: 0;
+      padding-right: 0;
+
+      & + .sticky-row__entry {
+        border-top: 1px solid $color-off-white;
+      }
+    }
+  }
+}
+
 .sticky-select-wrap {
   position: relative;
-  max-width: 130px;
 
   select {
     @include stretch-within;
@@ -262,6 +281,14 @@ body.template-product {
       size: contain;
       repeat: no-repeat;
       position: center;
+    }
+  }
+
+  &.sticky-select-placeholder--no-select {
+    padding-right: 0;
+
+    &:after {
+      display: none;
     }
   }
 }
@@ -343,11 +370,11 @@ body.template-product {
 
   html.js & {
     opacity: 0;
-    @include transition(opacity 450ms cubic-bezier(0.12, 0.27, 0.61, 0.93));
+    @include transition(opacity 250ms cubic-bezier(0.65, 0.27, 0.79, 0.76));
 
     &.is-active {
       opacity: 1;
-      transition: opacity 700ms cubic-bezier(0.42, 0.1, 0.37, 0.97);
+      @include transition(opacity 1200ms cubic-bezier(0.23, 0.31, 0.3, 0.96));
     }
   }
 

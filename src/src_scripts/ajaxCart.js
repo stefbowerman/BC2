@@ -19,7 +19,12 @@ const selectors = {
   footer: '[data-ajax-cart-footer]',
   item: '[data-ajax-item][data-id][data-qty]',
   itemRemove: '[data-ajax-cart-item-remove]',
-  cartBadge: '[data-cart-badge]'
+  cartBadge: '[data-cart-badge]',
+
+  // Verify Stuff
+  verifyContainer: '[data-cart-verify-modal-container]',
+  verifyTemplate: '[data-cart-verify-modal-template]',
+  verifyCheckoutLink: '[data-verify-checkout-link]'
 };
 
 const classes = {
@@ -57,6 +62,7 @@ export default class AJAXCart {
     this.stateIsOpen        = null;
     this.transitionEndEvent = Utils.whichTransitionEnd();
     this.requestInProgress  = false;
+    this.cartIsVerified     = false;
 
    /**
     * Initialize the cart
@@ -75,10 +81,12 @@ export default class AJAXCart {
 
       this.$container      = $(selectors.container);
       this.$cartBadge      = $(selectors.cartBadge);
-      this.$cartBadgeCount = $(selectors.cartBadgeCount);        
+      this.$cartBadgeCount = $(selectors.cartBadgeCount);
+      this.$verifyContainer = $(selectors.verifyContainer);       
 
       // Compile this once during initialization
       this.template = Handlebars.compile($(selectors.template).html());
+      this.verifyTemplate = Handlebars.compile($(selectors.verifyTemplate).html());
 
       // Add the AJAX part
       if(!this.settings.disableAjaxCart) {
@@ -89,6 +97,8 @@ export default class AJAXCart {
       $body.on('click', selectors.trigger, this.onTriggerClick.bind(this));
       $body.on('click', selectors.close, this.onCloseClick.bind(this));
       $body.on('click', selectors.itemRemove, this.onItemRemoveClick.bind(this));
+      this.$container.on('submit', 'form', this.onFormSubmit.bind(this));
+      this.$verifyContainer.on('click', selectors.verifyCheckoutLink, this.onVerifyCheckoutLinkClick.bind(this));
       $window.on(this.events.RENDER, this.onCartRender.bind(this));
       $window.on(this.events.DESTROY, this.onCartDestroy.bind(this));
       $window.on(this.events.NEEDS_UPDATE, this.onNeedsUpdate.bind(this));
@@ -266,7 +276,9 @@ export default class AJAXCart {
   * Allows us to add event handlers for events that don't bubble
   */
   onCartRender(e) {
-    // console.log('['+this.name+'] - onCartRender');
+    // We only re-render the cart when something has changed.
+    // If something changed, the user has to re-verify
+    this.cartIsVerified = false;
   }
 
  /**
@@ -305,6 +317,7 @@ export default class AJAXCart {
       item.price    = Currency.formatMoney(item.price, theme.moneyFormat);
       item.price    = Currency.stripZeroCents(item.price);
       item.unavailable = !item.available;
+      item.has_multiple = (item.quantity > 1);
 
       if(item.unavailable) {
         cart.has_unavailable_items = true;
@@ -348,6 +361,7 @@ export default class AJAXCart {
 
     $window.trigger(this.events.DESTROY);
     this.$container.empty().append( this.template(cart) );
+    this.$verifyContainer.empty().append( this.verifyTemplate(cart) );
     $window.trigger(this.events.RENDER);
     $window.trigger(this.events.UPDATE);
 
@@ -369,6 +383,24 @@ export default class AJAXCart {
       this.$cartBadge.text('');
       this.$cartBadge.removeClass(classes.cartBadgeHasItems);
     }
+  }
+
+ /**
+  * Called when someone submits the ajax cart form to go to checkout
+  *
+  * @param {event} e - Submit Event
+  */
+  onFormSubmit(e) {
+    if(!this.cartIsVerified && this.$verifyContainer.find('.modal').length) {
+      this.$verifyContainer.find('.modal').modal('show');
+      return false;
+    }
+  }
+
+  onVerifyCheckoutLinkClick(e) {
+    this.cartIsVerified = true;
+    $(e.currentTarget).attr('disabled', true);
+    $(e.currentTarget).text('Redirecting to Checkout..');
   }
 
  /**

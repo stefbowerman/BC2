@@ -11,6 +11,7 @@ export default class BaseView {
     $(document).on('shopify:section:unload', this.onSectionUnload.bind(this));
 
     console.log('BaseView - contructing view');
+    $(window).scrollTop(0);
   }
 
   _createSectionInstance($container) {
@@ -56,9 +57,11 @@ export default class BaseView {
 
   destroy() {
     console.log('[BaseView] - calling DESTROY');
-    this.sections.forEach((section) => {
-      section.onUnload && section.onUnload();
-    })
+    if(this.sections.length) {
+      this.sections.forEach((section) => {
+        section.onUnload && section.onUnload();
+      });
+    }
   }
 
   transitionIn() {

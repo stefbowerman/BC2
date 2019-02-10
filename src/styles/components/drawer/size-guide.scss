@@ -24,6 +24,15 @@
         width: auto !important;
         height: auto !important;
       }
+
+      sup, sub {
+        font-size: $font-size-tiny;
+      }
+
+      // No header, remove top border from the table
+      tbody:only-child tr:first-child td {
+        border-top: none;
+      }
     }
   }
 

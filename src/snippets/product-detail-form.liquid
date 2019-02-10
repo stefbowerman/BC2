@@ -119,6 +119,13 @@
                   {% assign is_size = true %}
                 {% endif %}
 
+                {% assign can_show_sold_out_ui_for_option = false %}
+                {% if product.options.size == 1 %}
+                  {% assign can_show_sold_out_ui_for_option = true %}
+                {% elsif product.options.size == 2 and option.position == 2 and product.options_with_values[0].values.size == 1 %}
+                  {% assign can_show_sold_out_ui_for_option = true %}
+                {% endif %}
+
                 {% capture desktop_option_html %}
                   <div class="selector-wrapper form-group js">
 
@@ -145,8 +152,9 @@
                       {% for value in option.values %}
 
                         {% comment %} If the product only has one option (like size) then we can show values as sold out by checking the variant for that option {% endcomment %}
-                        {% assign is_disabled = false %}
-                        {% if product.options.size == 1 %}
+                        {% assign is_disabled = false %}                       
+
+                        {% if can_show_sold_out_ui_for_option %}
                           {% for v in product.variants %}
                             {% assign variant_option_prop = 'option' | append: option.position %}
                             {% if v[variant_option_prop] == value and v.available == false %}
@@ -177,7 +185,7 @@
 
                       {% comment %} If the product only has one option (like size) then we can show values as sold out by checking the variant for that option {% endcomment %}
                       {% assign is_disabled = false %}
-                      {% if product.options.size == 1 %}
+                      {% if can_show_sold_out_ui_for_option %}
                         {% for v in product.variants %}
                           {% assign variant_option_prop = 'option' | append: option.position %}
                           {% if v[variant_option_prop] == value and v.available == false %}
@@ -203,10 +211,10 @@
 
                   <div class="sticky-row__entry">
                     <div class="sticky-select-wrap">
-                      <select data-sticky-option-selector data-option-position="{{ option.position }}">
+                      <select data-sticky-option-selector data-option-position="{{ option.position }}"{% if option.values.size == 1 %} style="display: none !important" {% endif %}>
                         {{ sticky_row_options }}
                       </select>
-                      <div class="sticky-select-placeholder">
+                      <div class="sticky-select-placeholder {% if option.values.size == 1 and selected_value != blank %}sticky-select-placeholder--no-select{% endif %}">
                         <strong class="sticky-select-label" {% if selected_value == blank %}style="display: none"{% endif %}>{{ option.name }}:</strong>
                           <span class="sticky-select-placeholder-text">
                           {% if selected_value != blank %}

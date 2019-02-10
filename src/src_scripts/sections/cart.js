@@ -2,9 +2,7 @@ import BaseSection from "./base";
 
 const selectors = {
   form: '[data-cart-form]',
-  itemRemoveLink: '[data-item-remove-link]',
-  verifyModal: '[data-verify-modal]',
-  verifyForm: '[data-verify-form]'
+  itemRemoveLink: '[data-item-remove-link]'
 };
 
 const classes = {
@@ -26,46 +24,27 @@ export default class CartSection extends BaseSection {
   }
 
   setInstanceVars() {
-    this.cartIsVerified = false;
-    this.userFormSubmitEvent = null;    
     this.$form = $(selectors.form, this.$container);
     this.$formSubmit = this.$form.find('input[type="submit"]');
-    this.$verifyModal = $(selectors.verifyModal, this.$container);
-    this.$verifyForm  = $(selectors.verifyForm, this.$container);
   }
 
   bindEvents(e) {
     this.$form.on('submit', this.onFormSubmit.bind(this));
-    this.$verifyForm.on('submit', this.onVerifyFormSubmit.bind(this));
     this.$container.on('click', selectors.itemRemoveLink, this.onItemRemoveLinkClick.bind(this));
   }
 
   removeEvents(e) {
     this.$form.off('submit');
-    this.$verifyForm.off('submit');
     this.$container.off('click', selectors.itemRemoveLink, this.onItemRemoveLinkClick);
   }
 
   onFormSubmit(e) {
-    
-    if(!this.cartIsVerified) {
-      this.$verifyModal.modal('show');
-      return false;
-    }
-
-    console.log('cart is verified, submit as normal');
 
     this.$formSubmit.val('Redirecting to Checkout..');
     this.$formSubmit.prop('disabled', true);
     window.location.href = "/checkout";
 
     return false;
-  }
-
-  onVerifyFormSubmit(e) {
-    this.cartIsVerified = true;
-    this.$verifyModal.one('hidden.bs.modal', () => { this.onFormSubmit(); });
-    this.$verifyModal.modal('hide');
   }
 
   onItemRemoveLinkClick(e) {

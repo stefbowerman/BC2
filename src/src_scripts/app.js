@@ -60,10 +60,14 @@ import MobileMenuSection from './sections/mobileMenu';
 
   $(document.body).on('click', 'a', (e) => {
     if(e.isDefaultPrevented()) return;
+
+    const $link = $(e.currentTarget);
     
-    const url = e.currentTarget.getAttribute('href');
+    const url = $link.attr('href');
     
-    if(Utils.isExternal(url) || url == '#') return;
+    if(Utils.isExternal(url) || url == '#' || url.indexOf('/checkout') > -1) return;
+
+    if(appRouter.isTransitioning) return false;
 
     e.preventDefault();
     appRouter.navigate(url);

@@ -47,6 +47,7 @@ $font-size-large:           $font-size-base * 1.25;
 $font-size-medium:          $font-size-base * 1.125;
 $font-size-small:           $font-size-base * 0.875;
 $font-size-xsmall:          $font-size-base * 0.789;
+$font-size-tiny:            $font-size-base * 0.56;
 $font-size-h1:              $font-size-base * 2.5;
 $font-size-h2:              $font-size-base * 2;
 $font-size-h3:              $font-size-base * 1.75;
@@ -156,7 +157,7 @@ $btn-default-hover-bg:           darken($color-white, 9%) !default;
 $btn-default-hover-border:       $color-black !default;
 
 $btn-primary-color:              $color-black !default;
-$btn-primary-bg:                 $color-white !default;
+$btn-primary-bg:                 transparentize($color-white, 0.5) !default;
 $btn-primary-border:             $color-black !default;
 $btn-primary-hover-color:        $color-black !default;
 $btn-primary-hover-bg:           darken($color-white, 9%) !default;
@@ -311,14 +312,15 @@ $z-index-title: 20;
 $z-index-loader: 40;
 $z-index-nav: 50;
 $z-index-footer: 50;
+$z-index-sticky-form: 60;
 $z-index-drawer-backdrop: 80;
 $z-index-ajax-cart-backdrop: 80;
 $z-index-slideup: 140;
-$z-index-header: 150;
 $z-index-drawer: 201;
 $z-index-ajax-cart: 201;
 $z-index-overlay-backdrop: 299;
 $z-index-overlay: 300;
+$z-index-header: 400;
 $z-index-blowup: 1000;
 $z-index-modal-background:  1049 !default;
 $z-index-modal:  1050;
@@ -435,7 +437,7 @@ $modal-content-border-color:  $color-off-white !default;
 //** Modal backdrop background color
 $modal-backdrop-bg:           $color-white !default;
 //** Modal backdrop opacity
-$modal-backdrop-opacity:      .85 !default;
+$modal-backdrop-opacity:      .9 !default;
 
 $modal-lg:                    900px !default;
 $modal-md:                    600px !default;

@@ -1,0 +1,52 @@
+// -------------------------
+// Verify Modal Styling
+// -------------------------
+
+.verify-modal {
+
+}
+
+.verify-table {
+  margin-top: 30px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid $color-off-white;
+}
+
+.verify-row {
+  @include display-flex;
+  @include align-items(flex-start);
+
+  & + & {
+    margin-top: 25px;
+  }
+}
+
+.verify-row__image {
+  width: 50px;
+  
+  @media (min-width: $screen-sm-min) {
+    width: 80px;
+  }
+}
+
+.verify-row__content {
+  position: relative;
+  @include flex(1);
+  padding-left: $grid-gutter-width/2;
+  font-size: $font-size-small;
+
+  ul {
+    font-size: $font-size-xsmall;
+  }
+}
+
+.verify-row__price {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.verify-row__title {
+  margin-bottom: 5px;
+  padding-right: 60px;
+}
