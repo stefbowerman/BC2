@@ -99,8 +99,8 @@ export default class Drawer {
     var _this = this;
     var cb    = callback || $.noop;
 
-    if(this.$backdrop) {
-      this.$backdrop.one(this.transitionEndEvent, function(){
+    if(_this.$backdrop) {
+      _this.$backdrop.one(this.transitionEndEvent, function(){
         _this.$backdrop.off('mousemove mouseenter mouseleave');
         _this.$backdrop && _this.$backdrop.remove();
         _this.$backdrop = null;

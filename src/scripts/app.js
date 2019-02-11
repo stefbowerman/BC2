@@ -3457,6 +3457,10 @@ var AppRouter = function () {
       _this.doRoute('/', 'index');
     });
 
+    this.router.on('/challenge', function () {
+      _this.doRoute('/challenge');
+    });
+
     this.router.notFound(function (params) {
       // called when there is path specified but
       // there is no route matching
@@ -5375,6 +5379,12 @@ var _drawer = require("../uiComponents/drawer");
 
 var _drawer2 = _interopRequireDefault(_drawer);
 
+var _breakpoints = require("../breakpoints");
+
+var Breakpoints = _interopRequireWildcard(_breakpoints);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _defaults(obj, defaults) { var keys = Object.getOwnPropertyNames(defaults); for (var i = 0; i < keys.length; i++) { var key = keys[i]; var value = Object.getOwnPropertyDescriptor(defaults, key); if (value && value.configurable && obj[key] === undefined) { Object.defineProperty(obj, key, value); } } return obj; }
@@ -5391,8 +5401,12 @@ var selectors = {
 };
 
 var classes = {
-  toggleActive: 'is-active'
+  toggleActive: 'is-active',
+  bodyMenuOpen: 'mobile-menu-open'
 };
+
+var $window = $(window);
+var $body = $(document.body);
 
 var MobileMenuSection = function (_BaseSection) {
   _inherits(MobileMenuSection, _BaseSection);
@@ -5407,6 +5421,7 @@ var MobileMenuSection = function (_BaseSection) {
 
     _this.$el = $(selectors.menu, _this.$container);
     _this.$toggle = $(selectors.toggle); // Don't scope to this.$container
+    _this.hideMobileMenuMinWidth = Breakpoints.getBreakpointMinWidth('xs');
 
     _this.drawer = new _drawer2.default(_this.$el);
 
@@ -5418,12 +5433,14 @@ var MobileMenuSection = function (_BaseSection) {
     });
     _this.$el.on('show.drawer', function () {
       _this.$toggle.addClass(classes.toggleActive);
+      $body.addClass(classes.bodyMenuOpen);
     });
     _this.$el.on('hide.drawer', function () {
       _this.$toggle.removeClass(classes.toggleActive);
+      $body.removeClass(classes.bodyMenuOpen);
     });
 
-    $(window).on('resize', _this.onResize.bind(_this));
+    $window.on('resize', _this.onResize.bind(_this));
     return _this;
   }
 
@@ -5433,8 +5450,7 @@ var MobileMenuSection = function (_BaseSection) {
   };
 
   MobileMenuSection.prototype.onResize = function onResize(e) {
-    // @TODO - Turn breakpoints into es6 file
-    if (window.innerWidth >= 576) {
+    if (window.innerWidth >= this.hideMobileMenuMinWidth) {
       this.drawer.hide();
     }
   };
@@ -5461,7 +5477,7 @@ var MobileMenuSection = function (_BaseSection) {
 
 exports.default = MobileMenuSection;
 
-},{"../uiComponents/drawer":31,"./base":18}],25:[function(require,module,exports){
+},{"../breakpoints":9,"../uiComponents/drawer":31,"./base":18}],25:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5957,7 +5973,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var selectors = {
   form: 'form#contact_form',
   inputEmail: '[data-input-email]',
-  inputMessage: '[data-input-message]'
+  inputMessage: '[data-input-message]',
+  formGroup: '.form-group',
+  formControl: '.form-control'
+};
+
+var classes = {
+  formGroupError: 'has-error'
 };
 
 var ContactForm = function () {
@@ -5967,27 +5989,45 @@ var ContactForm = function () {
     this.$form = $(form);
 
     if (!this.$form.is(selectors.form)) {
-      console.warn('Valis form element required to initialize');
+      console.warn('Valid form element required to initialize');
       return;
     }
 
-    this.$inputEmail = this.$form.find(selectors.inputEmail);
-    this.$inputMessage = this.$form.find(selectors.inputMessage);
-
-    this.$form.on('submit', this.onSubmit.bind(this));
+    this.setInstanceVars();
+    this.bindEvents();
   }
 
+  ContactForm.prototype.setInstanceVars = function setInstanceVars() {
+    this.$inputEmail = this.$form.find(selectors.inputEmail);
+    this.$inputMessage = this.$form.find(selectors.inputMessage);
+  };
+
+  ContactForm.prototype.bindEvents = function bindEvents(e) {
+    this.$form.on('submit', this.onSubmit.bind(this));
+    this.$form.on('focus keydown', selectors.formControl, function (e) {
+      $(e.currentTarget).parents(selectors.formGroup).removeClass(classes.formGroupError);
+    });
+  };
+
   ContactForm.prototype.onSubmit = function onSubmit(e) {
+    var _this = this;
+
     e.preventDefault();
 
-    if (this.$inputMessage.val().length == 0) {
-      console.log('Please enter a message');
-      return false;
+    var valid = true;
+
+    if (this.$inputEmail.val().trim().length == 0) {
+      this.$inputEmail.parents(selectors.formGroup).addClass(classes.formGroupError);
+      valid = false;
     }
 
-    if (this.$inputEmail.val().length == 0) {
-      console.log('Please enter an email address');
-      return false;
+    if (this.$inputMessage.val().trim().length == 0) {
+      this.$inputMessage.parents(selectors.formGroup).addClass(classes.formGroupError);
+      valid = false;
+    }
+
+    if (valid == false) {
+      return;
     }
 
     var url = this.$form.attr('action');
@@ -6006,9 +6046,19 @@ var ContactForm = function () {
       var $responseBody = $responseHtml.find('body');
       var $form = $responseBody.find(selectors.form);
 
-      console.log($form);
+      _this.$form.fadeTo(300, 0, function () {
+        _this.$form.replaceWith($form);
+        _this.$form = $form;
+
+        _this.setInstanceVars();
+        _this.bindEvents();
+        // Fade it back in
+        _this.$form.fadeTo(300, 1);
+      });
     }).fail(function () {
-      console.log('something went wrong, try again later');
+      // Something went wrong, just submit the form as normal in that case
+      _this.$form.off('submit');
+      _this.$form.submit();
     });
   };
 
@@ -6136,8 +6186,8 @@ var Drawer = function () {
     var _this = this;
     var cb = callback || $.noop;
 
-    if (this.$backdrop) {
-      this.$backdrop.one(this.transitionEndEvent, function () {
+    if (_this.$backdrop) {
+      _this.$backdrop.one(this.transitionEndEvent, function () {
         _this.$backdrop.off('mousemove mouseenter mouseleave');
         _this.$backdrop && _this.$backdrop.remove();
         _this.$backdrop = null;

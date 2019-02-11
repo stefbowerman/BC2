@@ -4,11 +4,6 @@
     - Do not adjust the order of stylesheets in the `global` directory!
 ==============================================================================*/
 
-/*================ VENDOR ================*/
-// Import these up here to allow overrides down below
-@import url('vendor/slick.scss');
-@import url('vendor/chosen.scss');
-
 /*================ GLOBAL ================*/
 @import url('global/variables.scss.liquid');
 @import url('global/mixins.scss');
@@ -30,26 +25,14 @@
 @import url('components/page.scss');
 @import url('components/forms.scss');
 @import url('components/rte.scss');
-@import url('components/breadcrumbs.scss');
-@import url('components/pagination.scss');
-@import url('components/filters.scss');
 @import url('components/tables.scss');
 @import url('components/alerts.scss');
-@import url('components/chosen.scss');
 @import url('components/content.scss');
 @import url('components/cards.scss');
-@import url('components/docs.scss');
-@import url('components/banner.scss');
 @import url('components/minimal-input.scss');
 @import url('components/dots.scss');
-@import url('components/promo.scss');
-@import url('components/frames.scss');
-@import url('components/slideup.scss');
 @import url('components/toast.scss');
-@import url('components/arrows.scss');
 @import url('components/drawer.scss');
-@import url('components/panels.scss');
-@import url('components/expandable-list.scss');
 @import url('components/overlays.scss');
 @import url('components/blowup.scss');
 @import url('components/options.scss');
@@ -62,7 +45,6 @@
 @import url('modules/gift-card-template.scss');
 @import url('modules/ajax-cart.scss');
 @import url('modules/product-detail.scss');
-@import url('modules/slideshow.scss');
 @import url('modules/mobile-menu.scss');
 @import url('modules/nav.scss');
 @import url('modules/title.scss');
@@ -76,6 +58,7 @@
 @import url('templates/gift-card.scss');
 @import url('templates/page.scss');
 @import url('templates/stockists.scss');
+@import url('templates/challenge.scss');
 
 // Necessary bottom placement for specificity w/o `!important`
 @import url('global/utilities.scss');
@@ -90,7 +73,7 @@ body.is-loading {
 
   &.is-loaded {
     opacity: 1;
-    transition: opacity 300ms ease-out;
+    @include transition(opacity 300ms ease-out);
   }
 }
 

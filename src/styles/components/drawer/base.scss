@@ -65,14 +65,14 @@ body.drawer-open {
 .drawer__inner,
 .drawer__close {
   opacity: 0;
-  transform: translateY(-5px);
-  transition-property: opacity, transform;
-  transition-duration: 700ms;
-  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+  @include translateY(-5px);
+  @include transition-property(opacity, transform);
+  @include transition-duration(700ms);
+  @include transition-timing-function(cubic-bezier(0.2, 0, 0, 1));
 
   .drawer.is-visible & {
     opacity: 1;
-    transform: translateY(0px);
+    @include translateY(0px);
     transition-delay: 80ms, 80ms;
   }
 }
@@ -90,8 +90,12 @@ body.drawer-open {
 .drawer__close {
   position: absolute;
   z-index: 1;
-  top: 25px;
+  top: 22px;
   right: $grid-gutter-width/2;
+
+  @media (min-width: $screen-xs-min) {
+    top: 25px;
+  }
 }
 
 .drawer__body {
@@ -137,7 +141,7 @@ body.drawer-open {
   left: 0;
   height: 48px;
   width: 48px;
-  transition: transform 20ms ease;
+  @include transition-transform(20ms ease);
 
   &:before {
     content: '';
@@ -146,9 +150,9 @@ body.drawer-open {
       image: url({{ 'cursor-close.png' | asset_url }});
       size: cover;
     }
-    transform: translate(-24px, -24px);
-    opacity: 0;
-    transition: opacity 200ms ease-in;
+    opacity: 0;    
+    @include translate(-24px, -24px);
+    @include transition(opacity 200ms ease-in);
   }
 
   &.is-visible:before {

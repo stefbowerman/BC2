@@ -1,7 +1,13 @@
 const selectors = {
   form: 'form#contact_form',
   inputEmail: '[data-input-email]',
-  inputMessage: '[data-input-message]'
+  inputMessage: '[data-input-message]',
+  formGroup: '.form-group',
+  formControl: '.form-control'
+};
+
+const classes = {
+  formGroupError: 'has-error'
 };
 
 export default class ContactForm {
@@ -9,28 +15,43 @@ export default class ContactForm {
     this.$form = $(form);
 
     if(!this.$form.is(selectors.form)) {
-      console.warn('Valis form element required to initialize');
+      console.warn('Valid form element required to initialize');
       return;
     }
 
+    this.setInstanceVars();
+    this.bindEvents();
+  }
+
+  setInstanceVars() {
     this.$inputEmail   = this.$form.find(selectors.inputEmail);
     this.$inputMessage = this.$form.find(selectors.inputMessage);
-
-    this.$form.on('submit', this.onSubmit.bind(this));
-
   }
+
+  bindEvents(e) {
+    this.$form.on('submit', this.onSubmit.bind(this))
+    this.$form.on('focus keydown', selectors.formControl, (e) => {
+      $(e.currentTarget).parents(selectors.formGroup).removeClass(classes.formGroupError);
+    });
+  }  
 
   onSubmit(e) {
     e.preventDefault();
 
-    if(this.$inputMessage.val().length == 0) {
-      console.log('Please enter a message');
-      return false;
+    let valid = true;
+
+    if(this.$inputEmail.val().trim().length == 0) {
+      this.$inputEmail.parents(selectors.formGroup).addClass(classes.formGroupError);
+      valid = false;
     }
 
-    if(this.$inputEmail.val().length == 0) {
-      console.log('Please enter an email address');
-      return false; 
+    if(this.$inputMessage.val().trim().length == 0) {
+      this.$inputMessage.parents(selectors.formGroup).addClass(classes.formGroupError);
+      valid = false;
+    }
+
+    if(valid == false) {
+      return;
     }
 
     const url  = this.$form.attr('action');
@@ -50,10 +71,21 @@ export default class ContactForm {
       const $responseBody = $responseHtml.find('body');
       const $form = $responseBody.find(selectors.form);        
 
-      console.log($form);
+      this.$form.fadeTo(300, 0, () => {
+        this.$form.replaceWith($form);
+        this.$form = $form;
+
+        this.setInstanceVars();
+        this.bindEvents();
+        // Fade it back in
+        this.$form.fadeTo(300, 1);  
+      });
+      
     })
     .fail(() => {
-      console.log('something went wrong, try again later');
+      // Something went wrong, just submit the form as normal in that case
+      this.$form.off('submit');
+      this.$form.submit();
     });
   }
 }

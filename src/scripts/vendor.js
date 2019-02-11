@@ -26,21 +26,9 @@
 // =require vendor/jquery.ba-throttle-debounce.min.js
 
 /*!
-* slick.min.js
-*/
-// =require /../../node_modules/slick-carousel/slick/slick.min.js
-
-/*!
 * js-cookie
 */
 // =require /../../node_modules/js-cookie/src/js.cookie.js
-
-/*!
- * Chosen v1.8.2
- * (c) 2011-2017 by Harvest
- * MIT License, https://github.com/harvesthq/chosen/blob/master/LICENSE.md
- */
-// =require /../../node_modules/chosen-js/chosen.jquery.min.js
 
 /*!
  * Bootstrap v3.3.7 (http://getbootstrap.com)

@@ -65,6 +65,11 @@
     {% comment %} Secondary description - Shows on mobile and when vertical space is too tight {% endcomment %}
     <div class="secondary-description" data-secondary-description>
       <div class="pdf-description">{{ product.description }}</div>
+      {% if size_guide_drawer_html != blank %}
+        <div style="margin-top: 10px;">
+          <a href="#" class="secondary-link" style="border-bottom: 1px solid" data-size-guide-show>See Size Guide</a>
+        </div>
+      {% endif %}
     </div>
 
   </div>

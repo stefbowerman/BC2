@@ -1,5 +1,6 @@
 import BaseSection from "./base";
 import Drawer from "../uiComponents/drawer";
+import * as Breakpoints from '../breakpoints';
 
 const selectors = {
   toggle: '[data-mobile-menu-toggle]',
@@ -7,8 +8,12 @@ const selectors = {
 };
 
 const classes = {
-  toggleActive: 'is-active'
-}
+  toggleActive: 'is-active',
+  bodyMenuOpen: 'mobile-menu-open'
+};
+
+const $window = $(window);
+const $body   = $(document.body);
 
 export default class MobileMenuSection extends BaseSection {
 
@@ -20,6 +25,7 @@ export default class MobileMenuSection extends BaseSection {
 
     this.$el     = $(selectors.menu, this.$container);
     this.$toggle = $(selectors.toggle); // Don't scope to this.$container
+    this.hideMobileMenuMinWidth = Breakpoints.getBreakpointMinWidth('xs');
 
     this.drawer  = new Drawer(this.$el);
 
@@ -31,12 +37,14 @@ export default class MobileMenuSection extends BaseSection {
     });
     this.$el.on('show.drawer', () => {
       this.$toggle.addClass(classes.toggleActive);
+      $body.addClass(classes.bodyMenuOpen);
     });
     this.$el.on('hide.drawer', () => {
       this.$toggle.removeClass(classes.toggleActive);
+      $body.removeClass(classes.bodyMenuOpen);
     });
 
-    $(window).on('resize', this.onResize.bind(this));
+    $window.on('resize', this.onResize.bind(this));
   }
 
   onToggleClick(e) {
@@ -45,8 +53,7 @@ export default class MobileMenuSection extends BaseSection {
   }
 
   onResize(e) {
-    // @TODO - Turn breakpoints into es6 file
-    if(window.innerWidth >= 576) {
+    if(window.innerWidth >= this.hideMobileMenuMinWidth) {
       this.drawer.hide();
     }
   }

@@ -86,6 +86,10 @@ export default class AppRouter {
       this.doRoute('/', 'index');
     });
 
+    this.router.on('/challenge', () => {
+      this.doRoute('/challenge');
+    });    
+
     this.router.notFound((params) => {
       // called when there is path specified but
       // there is no route matching
