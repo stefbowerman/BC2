@@ -1,7 +1,7 @@
+// Used by the index view to initialize whatever sections are found on there
+
 import CollectionSection from './sections/collection';
-import TestSection from './sections/test';
 
 export default {
-  collection: CollectionSection,
-  test: TestSection
+  collection: CollectionSection
 };

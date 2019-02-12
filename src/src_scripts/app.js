@@ -9,6 +9,9 @@ import FooterSection     from './sections/footer';
 import AJAXCartSection   from './sections/ajaxCart';
 import MobileMenuSection from './sections/mobileMenu';
 
+const $document = $(document);
+const $body = $(document.body);
+
 (($) => {
 
   // Sections Stuff 
@@ -50,46 +53,50 @@ import MobileMenuSection from './sections/mobileMenu';
   }
   // END Misc Stuff
 
-  $(document.body).addClass('is-loaded').removeClass('is-loading');
+  $body.addClass('is-loaded').removeClass('is-loading');
 
   // Stop here...no AJAX navigation inside the theme editor
   if(Shopify && Shopify.designMode) {
     return;
   }  
 
-  $(document.body).on('click', 'a', (e) => {
-    if(e.isDefaultPrevented()) return;
+  if(window.history && window.history.pushState) {
+    $body.on('click', 'a', (e) => {
+      if(e.isDefaultPrevented()) return;
 
-    const $link = $(e.currentTarget);
-    
-    const url = $link.attr('href');
-    
-    if(Utils.isExternal(url) || url == '#' || url.indexOf('/checkout') > -1) return;
+      const $link = $(e.currentTarget);
+      
+      const url = $link.attr('href');
+      
+      if(Utils.isExternal(url) || url == '#' || url.indexOf('/checkout') > -1) return;
 
-    if(appRouter.isTransitioning) return false;
+      if(appRouter.isTransitioning) return false;
 
-    e.preventDefault();
-    appRouter.navigate(url);
-  });
+      e.preventDefault();
+      appRouter.navigate(url);
+    });
+  }
 
+  // Return early cause I'm not 100% that this helps...
   return;
 
   // Prefetching :)
   let linkInteractivityTimeout = false;
   let prefetchCache = {};
-  $(document.body).on('mouseenter', 'a', (e) => {
+  $body.on('mouseenter', 'a', (e) => {
     const url = e.currentTarget.getAttribute('href');
-    if(Utils.isExternal(url) || url == '#' || prefetchCache.hasOwnProperty(url)) return;
+    const urlHash = Math.abs(Utils.hashFromString(url));
+
+    if(Utils.isExternal(url) || url == '#' || prefetchCache.hasOwnProperty(urlHash)) return;
 
     let linkInteractivityTimeout = setTimeout(() => {
       $.get(url, () => {
-        prefetchCache[url] = true;
-        console.log(prefetchCache);
+        prefetchCache[urlHash] = true;
       });
     }, 500);
   });
 
-  $(document.body).on('mouseleave', 'a', (e) => {
+  $body.on('mouseleave', 'a', (e) => {
     let linkInteractivityTimeout = false;
   });
 

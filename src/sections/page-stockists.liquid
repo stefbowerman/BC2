@@ -1,9 +1,10 @@
 {% assign stockists_blog = blogs[section.settings.blog] %}
 
-{% assign stockists_north_america_html = '' %}
-{% assign stockists_australia_html     = '' %}
+{% assign stockists_us_html            = '' %}
+{% assign stockists_canada_html        = '' %}
 {% assign stockists_europe_html        = '' %}
 {% assign stockists_asia_html          = '' %}
+{% assign stockists_australia_html     = '' %}
 {% assign stockists_south_america_html = '' %}
 {% assign stockists_africa_html        = '' %}
 {% assign stockists_other_html         = '' %}
@@ -16,7 +17,7 @@
 
     {% capture tag_html %}
       <div class="stockist-block">
-        <h4>{{ tag }}</h4>
+        <h4 class="stockist-block__title">{{ tag }}</h4>
         <ul class="stockist-list" data-stockists-list>
           {% for article in stockists_blog.articles limit: 200 %}
             {% if article.tags contains tag %}
@@ -31,14 +32,16 @@
     {% endcapture %}
 
     {% case tag_handle %}
-      {% when 'north-america' %}
-        {% assign stockists_north_america_html = stockists_north_america_html | append: tag_html %}
-      {% when 'australia' %}
-        {% assign stockists_australia_html = stockists_australia_html | append: tag_html %}
+      {% when 'united-states' %}
+        {% assign stockists_us_html = stockists_us_html | append: tag_html %}
+      {% when 'canada' %}
+        {% assign stockists_canada_html = stockists_canada_html | append: tag_html %}        
       {% when 'europe' %}
         {% assign stockists_europe_html = stockists_europe_html | append: tag_html %}
       {% when 'asia' %}
         {% assign stockists_asia_html = stockists_asia_html | append: tag_html %}
+      {% when 'australia' %}
+        {% assign stockists_australia_html = stockists_australia_html | append: tag_html %}        
       {% when 'south_america' %}
         {% assign stockists_south_america_html = stockists_south_america_html | append: tag_html %}
       {% when 'africa' %}
@@ -51,13 +54,16 @@
 
   <div data-section-id="{{ section.id }}" data-section-type="stockists">
     <div class="layout-content-wrapper">
-      {{ stockists_north_america_html }}
-      {{ stockists_australia_html }}
-      {{ stockists_europe_html }}
-      {{ stockists_asia_html }}
-      {{ stockists_south_america_html }}
-      {{ stockists_africa_html }}
-      {{ stockists_other_html }}      
+      <div class="container">
+        {{ stockists_us_html }}
+        {{ stockists_canada_html }}
+        {{ stockists_europe_html }}
+        {{ stockists_asia_html }}
+        {{ stockists_australia_html }}
+        {{ stockists_south_america_html }}
+        {{ stockists_africa_html }}
+        {{ stockists_other_html }}
+      </div>     
     </div>
   </div>
 {% endif %}

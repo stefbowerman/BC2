@@ -93,7 +93,8 @@ export default class AppRouter {
     this.router.notFound((params) => {
       // called when there is path specified but
       // there is no route matching
-      console.log(params);
+      // console.log(params);
+      this.router.navigate('/'); // Just go back home
     });
 
     this.router.resolve();    

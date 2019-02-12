@@ -295,7 +295,6 @@ export default class AJAXCart {
   }
 
   onNeedsUpdate(e) {
-    console.log('updating!');
     ShopifyAPI.getCart().then(this.buildCart.bind(this));
   }
 

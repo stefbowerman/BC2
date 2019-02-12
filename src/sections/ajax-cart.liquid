@@ -89,7 +89,11 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <a href="#" class="close" data-dismiss="modal" aria-label="Close">{% endraw %}{% include 'icon-close' %}{% raw %}</a>
+          <a href="#" class="close" data-dismiss="modal" aria-label="Close">
+            {% endraw %}
+            <img src="{{ 'icon-close.png' | asset_url }})" />  
+            {% raw %}
+          </a>
           <div class="modal-title" id="verifyCartModalLabel">Verify Cart</div>
         </div>
         <div class="modal-body">

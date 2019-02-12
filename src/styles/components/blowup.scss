@@ -19,11 +19,22 @@ body.blowup-open {
   background-color: $body-bg;
   cursor: pointer;
   pointer-events: none;
-  transition: opacity 300ms ease;
+  transition: opacity 350ms ease-in-out;
 
   &.is-active {
     opacity: 1;
     pointer-events: auto;
+  }
+}
+
+.blowup__close,
+.blowup__helper-text {
+  opacity: 0;
+  transition: opacity 600ms ease-in-out 350ms;
+
+  .blowup.is-active & {
+    opacity: 1;
+    // transition: opacity 600ms ease-out 600ms;
   }
 }
 
@@ -32,23 +43,37 @@ body.blowup-open {
   z-index: $z-index-blowup + 1;
   top: 19px;
   right: 21px;
+
+  height: 20px;
+  width: 20px;
 }
 
 .blowup__scroll {
   @include stretch-within;
 
   opacity: 0;
-  transition: opacity 300ms ease-in-out;
+  transition: opacity 600ms ease-in-out 350ms;
 
   .is-active & {
     opacity: 1;
-    transition-delay: 150ms;
-    transition-duration: 500ms;
+    transition-delay: 350ms;
+    transition-duration: 350ms;
   }  
 }
 
 .blowup__image {
-  height: 100%;
-  width: 100%;
-  object-fit: contain;
+  height: 2000px;
+  width: auto;
+  max-width: none;
+}
+
+.blowup__helper-text {
+  position: absolute;
+  bottom: 12px;
+  left: 0;
+  right: 0;
+  padding: 0 $grid-gutter-width/2;
+  text-align: center;
+  font-size: $font-size-xsmall;
+  pointer-events: none;
 }

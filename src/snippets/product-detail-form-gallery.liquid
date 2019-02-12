@@ -86,8 +86,13 @@
 </div>
 
 <div class="blowup" data-blowup>
-  <div class="blowup__close">{% include 'icon-close' %}</div>
+  <div class="blowup__close">
+    <img src="{{ 'icon-close.png' | asset_url }}" />
+  </div>
   <div class="blowup__scroll" data-blowup-scroll>
     <img class="blowup__image" data-blowup-image />
+  </div>
+  <div class="blowup__helper-text">
+    Pinch to zoom &middot; Tap to close
   </div>
 </div>

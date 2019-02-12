@@ -101,49 +101,4 @@ export default class SectionManager {
       this._createInstance(container, constructor);
     });
   }
-
-  createInstancesForWrapper($wrapper) {
-    if(!$wrapper || $wrapper.length == 0) return;
-
-    console.log('creating instances for wrapper');
-    $wrapper.find('[data-section-type]').each((i, container) => {
-      console.group();
-      console.log(i);
-      console.log(container);
-      console.groupEnd();
-      this._createInstance(container);
-    });
-  }
-
-  destroyInstancesForWrapper($wrapper) {
-    
-    if(!$wrapper || $wrapper.length == 0) return;
-
-    let instances = this.instances;
-
-
-    console.group('pre-destroy');
-    this.instances.map((i) => { console.log(i.container);});
-    console.groupEnd()
-
-    $wrapper.find('[data-section-type]').each((i, container) => {
-      console.group('checking...');
-      console.log(i);
-      console.log(container);
-      console.groupEnd();      
-      let found = false;
-      for (var i = 0; i < instances.length; i++) {
-        if(container == this.instances[i].container) {
-          found == true;
-          // this.instances[i].onUnload ?
-          instances.splice(i, 1);
-          break;
-        }
-      }
-    });
-
-    this.instances = instances;
-
-    console.log('number of instances after removal = ' + this.instances.length);    
-  }
 }

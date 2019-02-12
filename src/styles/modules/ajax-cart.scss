@@ -115,8 +115,13 @@ body.ajax-cart-open {
 .ajax-cart__close {
   position: absolute;
   z-index: 1;
-  top: 25px;
-  right: $grid-gutter-width/2;
+  top: 22px;
+  right: 18px;
+
+  @media (min-width: $screen-xs-min) {
+    top: $grid-gutter-width/2;
+    right: $grid-gutter-width/2;
+  }  
 }
 
 .ajax-cart__empty-message {

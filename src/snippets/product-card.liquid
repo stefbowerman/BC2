@@ -21,13 +21,12 @@
 {% if product %}
   
   {% assign product_image_dimension = '1200x' %}
-  {% assign product_url = product.url %}
 
   <div id="product-card-{{ product.id }}" class="product-card" data-product-card>
     <div class="product-card__contents" data-product-card-contents>
       {% if product.featured_image %}
         <div class="product-card__gallery">
-          <a href="{{ product_url }}">
+          <a href="{{ product.url }}">
             {% if lazy_load %}
               <div class="product-card__gallery-image" style="height: 0; padding-bottom: {{ product.featured_image.height | times: 100 | divided_by: product.featured_image.width | append: '%' }}" data-product-card-gallery>
                 <img data-src="{{ product.featured_image.src | img_url: product_image_dimension }}" alt="{{ product.featured_image.alt | escape }}" data-product-card-main-lazy>
@@ -45,12 +44,14 @@
       <div class="product-card__info">
 
         <p class="product-card__info-title">
-          <a href="{{ product_url }}">{{ product.title }}</a>
+          <a href="{{ product.url }}" {% if product.available == false %}style="text-decoration: line-through"{% endif %}>{{ product.title }}</a>
         </p>
 
-        <p class="product-card__info-price" style="display: none;">
+        {% if product.available == false %}
+          <p class="u-fs-xsmall">{{ 'products.product.sold_out' | t }}</p>
+        {% else %}
 
-          {% if product.available %}
+          <p class="product-card__info-price" style="display: none;">
             {% if product.compare_at_price > product.price %}
               <span class="visually-hidden">{{ 'products.product.regular_price' | t }}</span>
               <s>{{ product.compare_at_price | money_without_trailing_zeros }}</s>
@@ -62,17 +63,15 @@
             {% else %}
               {{ product.price | money_without_trailing_zeros }}
             {% endif %}
-          {% else %}
-            {{ 'products.product.sold_out' | t }}
-          {% endif %}
-        </p>
+          </p>
 
-        {% for option in product.options_with_values %}
-          {% assign option_name_upcase = option.name | upcase | strip %}        
-          {% if option_name_upcase == "COLOR" and option.values.size > 1 %}
-            <p class="u-fs-xsmall">{{ option.values.size }} Colors Available</p>
-          {% endif %}
-        {% endfor %}
+          {% for option in product.options_with_values %}
+            {% assign option_name_upcase = option.name | upcase | strip %}        
+            {% if option_name_upcase == "COLOR" and option.values.size > 1 %}
+              <p class="u-fs-xsmall">{{ option.values.size }} Colors Available</p>
+            {% endif %}
+          {% endfor %}        
+        {% endif %}
       </div>
     </div>
 

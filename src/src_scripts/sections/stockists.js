@@ -1,3 +1,4 @@
+import Utils from '../utils';
 import BaseSection from "./base";
 
 const selectors = {
@@ -22,8 +23,8 @@ export default class StockistsSection extends BaseSection {
       const $lis = $list.children().detach();
 
       $lis.sort((a, b) => {
-        const aAlph = $(a).data('alpha');
-        const bAlph = $(b).data('alpha');
+        const aAlph = $(a).data('alpha').toString();
+        const bAlph = $(b).data('alpha').toString();
         if(aAlph > bAlph) {
           return 1;
         }
@@ -36,6 +37,12 @@ export default class StockistsSection extends BaseSection {
       });
 
       $list.append($lis);
+    });
+
+    this.$lists.find('a').each((i, el) => {
+      if(Utils.isExternal(el.getAttribute('href'))) {
+        el.setAttribute('target', '_blank');
+      }
     });
   }
   

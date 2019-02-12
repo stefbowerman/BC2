@@ -45,12 +45,12 @@ export default class BaseSection {
   }
 
   onUnload(e) {
-    console.log('[BaseSection] - removing event listeners - onSectionUnload');
+    // console.log('[BaseSection] - removing event listeners - onSectionUnload');
     $(document).off(shopifyEvents.join(' '), this.onShopifyEvent.bind(this));
   }
 
   onSelect(e) {
-    console.log('onselect in base section');  
+    // console.log('onselect in base section');  
   }
 
   onDeselect(e) {

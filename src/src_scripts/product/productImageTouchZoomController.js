@@ -1,4 +1,5 @@
 import IScroll from '../../../node_modules/iscroll/build/iscroll-zoom';
+import Utils from '../utils';
 
 const selectors = {
   galleryImage: '[data-gallery-image]',
@@ -34,6 +35,7 @@ export default class ProductImageTouchZoomController {
     this.enabled = false;
     this.isZoomed = false;
     this.iscrollInstance = undefined;
+    this.transitionEndEvent = Utils.whichTransitionEnd();
 
     this.$container = $el;
 
@@ -51,8 +53,6 @@ export default class ProductImageTouchZoomController {
     if(this.enabled) return;
 
     this.$container.on(this.events.CLICK, selectors.galleryImage, this.onGalleryImageClick.bind(this));
-    this.$container.on(this.events.CLICK, selectors.blowup, this.zoomOut.bind(this));
-
     this.enabled = true;
   }
 
@@ -60,61 +60,75 @@ export default class ProductImageTouchZoomController {
     if(!this.enabled) return;
 
     this.$container.off(this.events.CLICK);
-
     this.enabled = false;
   }
 
   zoomIn(src) {
     if(this.isZoomed) return;
+    
+    this.$blowupImage.one('load', function() {
 
-    // var $zoomImg  = $(new Image());
-    var startZoom = 1.2;
+      var startZoom;
+      var startZoomRatio = 1.2; // Start by making the image 120% in the shortest direction
+      var zoomMin = 0.4;
+      var imageHeight = this.$blowupImage.outerHeight();
+      var imageWidth = this.$blowupImage.outerHeight();
+      var winHeight = $window.height();
+      var winWidth = $window.width();
 
-    this.iscrollInstance = new IScroll(this.$blowupScroll.get(0), {
-      zoom: true,
-      hideScrollbar: true,
-      scrollX: true,
-      scrollY: true,
-      zoomMin: 1,
-      zoomMax: 2,
-      startZoom: startZoom,
-      directionLockThreshold: 20,
-      tap: true,
-      click: true
-    });      
+      // Landscape
+      if(window.innerWidth > window.innerHeight) {
+        startZoom = startZoomRatio * winHeight/imageHeight;
+      }
+      // Portrait
+      else {
+        startZoom = startZoomRatio * winWidth/imageWidth;
+      }
 
-    this.$blowupImage.on('load', function() {
-      var x = -1 * (((this.$blowupImage.outerWidth() * startZoom) - $window.width())/2);
-      var y = -1 * (((this.$blowupImage.outerHeight() * startZoom) - $window.height())/2);
-      this.iscrollInstance.scrollTo(x, y, 0);
+      if(startZoom < zoomMin) {
+        startZoom = zoomMin;
+      }
+
+      var startX = -1 * (((imageWidth * startZoom) - winWidth)/2);
+      var startY = -1 * (((imageHeight * startZoom) - winHeight)/2);
+
+      this.iscrollInstance = new IScroll(this.$blowupScroll.get(0), {
+        zoom: true,
+        hideScrollbar: true,
+        scrollX: true,
+        scrollY: true,
+        zoomMin: zoomMin,
+        zoomMax: 2,
+        startZoom: startZoom,
+        startX: startX,
+        startY: startY,
+        directionLockThreshold: 20,
+        tap: true,
+        click: true
+      }); 
+
+
     }.bind(this));
 
     // Set the smaller image immediately (it should already be loaded from the slideshow)
     this.$blowupImage.attr('src', src);   
 
-    // if(zoomSrc) {
-    //   $zoomImg.on('load', function() {
-    //     this.$blowupImage.attr('src', zoomSrc);
-    //   }.bind(this));
-    //   $zoomImg.attr('src', zoomSrc);
-    // }
-
     this.$blowup.addClass(classes.blowupActive);
     $body.addClass(classes.bodyBlowupOpen);
+    this.$blowup.one(this.events.CLICK, this.zoomOut.bind(this));
     this.isZoomed = true;
   }
 
   zoomOut() {
     if(!this.isZoomed) return;
 
-    if(this.iscrollInstance instanceof IScroll) {
-      this.iscrollInstance.destroy();
-    }
-
     $body.removeClass(classes.bodyBlowupOpen);
     this.$blowup.removeClass(classes.blowupActive);
-    this.$blowupImage.attr('src', '');
-    this.isZoomed = false;
+    this.$blowup.one(this.transitionEndEvent, () => {;
+      this.iscrollInstance && this.iscrollInstance.destroy();
+      this.$blowupImage.attr('style', '');
+      this.isZoomed = false;      
+    });
   }
 
   onGalleryImageClick(e) {
