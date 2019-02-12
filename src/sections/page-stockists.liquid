@@ -21,7 +21,7 @@
         <ul class="stockist-list" data-stockists-list>
           {% for article in stockists_blog.articles limit: 200 %}
             {% if article.tags contains tag %}
-              <li data-alpha="{{ article.title | split: ' ' | first | handle }}">
+              <li data-alpha="{{ article.title | handle }}">
                 <strong>{{ article.title }}</strong>
                 <div>{{ article.content }}</div>
               </li>
