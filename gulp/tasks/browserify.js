@@ -40,7 +40,8 @@ const browserifyThis = (bundleConfig) => {
       .on('error', handleErrors)
       .pipe(source(bundleConfig.outputName))
       .pipe(buffer()) // optional, remove if no need to buffer file contents
-      .pipe(gulpif(opts.minify, uglify()))
+      // .pipe(gulpif(opts.minify, uglify()))
+      .pipe(uglify())
       .pipe(gulp.dest(paths.dest))
       .pipe(size({showFiles: true, title: 'JS size of'}));
   };

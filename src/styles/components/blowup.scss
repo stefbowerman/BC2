@@ -19,7 +19,7 @@ body.blowup-open {
   background-color: $body-bg;
   cursor: pointer;
   pointer-events: none;
-  transition: opacity 350ms ease-in-out;
+  @include transition(opacity 350ms ease-in-out);
 
   &.is-active {
     opacity: 1;
@@ -30,11 +30,11 @@ body.blowup-open {
 .blowup__close,
 .blowup__helper-text {
   opacity: 0;
-  transition: opacity 600ms ease-in-out 350ms;
+  @include transition(opacity 300ms ease-in-out 0s);
 
   .blowup.is-active & {
     opacity: 1;
-    // transition: opacity 600ms ease-out 600ms;
+    @include transition-delay(350ms);
   }
 }
 
@@ -52,12 +52,12 @@ body.blowup-open {
   @include stretch-within;
 
   opacity: 0;
-  transition: opacity 600ms ease-in-out 350ms;
+  @include transition(opacity 600ms ease-in-out 0ms);
 
   .is-active & {
     opacity: 1;
-    transition-delay: 350ms;
-    transition-duration: 350ms;
+    @include transition-delay(350ms);
+    @include transition-duration(350ms);
   }  
 }
 

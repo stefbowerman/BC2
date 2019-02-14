@@ -26,7 +26,7 @@
   {% assign size_guide_source_is_metafield = false %}
   {% assign product_type_slug = product.type | handle | replace: '-', '' %}
 
-  {% if product_type_slug == 'tshirt' and settings.size_guide_tshirts != blank %}
+  {% if product_type_slug == 'tshirt' or product_type_slug == 'tshirts' and settings.size_guide_tshirts != blank %}
     {% assign size_guide_source = pages[settings.size_guide_tshirts].content %}
   {% elsif product_type_slug == 'top' and settings.size_guide_tops != blank %}
     {% assign size_guide_source = pages[settings.size_guide_tops].content %}
@@ -61,7 +61,7 @@
             <h5 style="text-align: center;">Size Guide</h5>
             <div style="font-size: 12px; width: 100%;">
               <div class="sg-source">
-                
+
                 {% comment %} If the size guide is at the product level, reiterate the product title for clarity {% endcomment %}
                 {% if size_guide_source_is_metafield %}
                   <h6>{{ product.title }}</h6>

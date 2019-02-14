@@ -98,7 +98,7 @@ export default class ProductImageTouchZoomController {
         scrollX: true,
         scrollY: true,
         zoomMin: zoomMin,
-        zoomMax: 2,
+        zoomMax: 1,
         startZoom: startZoom,
         startX: startX,
         startY: startY,
@@ -124,9 +124,9 @@ export default class ProductImageTouchZoomController {
 
     $body.removeClass(classes.bodyBlowupOpen);
     this.$blowup.removeClass(classes.blowupActive);
-    this.$blowup.one(this.transitionEndEvent, () => {;
+    this.$blowup.one(this.transitionEndEvent, () => {
       this.iscrollInstance && this.iscrollInstance.destroy();
-      this.$blowupImage.attr('style', '');
+      this.$blowupImage.attr('src', '');
       this.isZoomed = false;      
     });
   }

@@ -85,6 +85,11 @@
   {% endif %}
 </div>
 
+{% comment %} Preload ajax cart images {% endcomment %}
+{% for image in product.images %}
+  <img src="{{ image | img_url: '200x' }}" style="display: none;" />
+{% endfor %}
+
 <div class="blowup" data-blowup>
   <div class="blowup__close">
     <img src="{{ 'icon-close.png' | asset_url }}" />

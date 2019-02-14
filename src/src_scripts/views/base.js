@@ -11,7 +11,7 @@ export default class BaseView {
 
     $document.on('shopify:section:load',   this.onSectionLoad.bind(this));
     $document.on('shopify:section:unload', this.onSectionUnload.bind(this));
-    $document.scrollTop(0);
+    $(window).scrollTop(0);
     
     // console.log('BaseView - contructing view');    
   }
