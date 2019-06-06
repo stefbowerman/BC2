@@ -310,7 +310,7 @@ body.template-product {
   text-align: center;
 
   @media (min-width: $screen-sm-min) {
-    margin-bottom: 75px; // Above this screen size we need to make sure we have clearance for the subscribe form
+    margin-bottom: 130px; // Above this screen size we need to make sure we have clearance for the subscribe form
     text-align: left
   }
 
@@ -329,6 +329,18 @@ body.template-product {
       margin-left: 50px;
       margin-right: 50px;
     }
+  }
+}
+
+.secondary-description__links {
+  @include display-flex;
+  @include justify-content(space-between);
+  width: 100%;
+  margin: 60px 0 20px;
+  font-size: $font-size-xsmall;
+
+  @media (min-width: $screen-sm-min) {
+    display: none;
   }
 }
 
@@ -419,10 +431,14 @@ body.template-product {
     height: auto;
   }
 
-  // Since space is tight on tiny screens, make the first one auto height so it doesn't get pushed down for any vertical centering reasons
+  // Since space is tight on tiny screens pull the image to the top for the first one
   @media (max-width: $screen-xs-max) {
     &:first-child {
-      min-height: auto;
+      // min-height: 100vh;
+
+      .product-gallery__image {
+        @include align-self(flex-start);
+      }
     }
   }
 
