@@ -54,6 +54,25 @@
 {% assign desktop_options_html = '' %}
 {% assign sticky_options_html  = '' %}
 
+{% assign next_product = false %}
+{% if product.collections.size > 0 %}
+  {% assign related_collection = product.collections | first %}
+  {% assign related_collection_products = related_collection.products %}
+  {% assign product_position = false %}
+  {% if related_collection_products.size > 1 %}
+    {% for p in related_collection_products %}
+      {% if p.handle == product.handle %}
+        {% if forloop.index == related_collection_products.size %}
+          {% assign next_product = related_collection_products[0] %}
+        {% else %}
+          {% assign next_product = related_collection_products[forloop.index] %}
+        {% endif %}
+        {% break %}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+{% endif %}
+
 {% comment %}{% include 'pdp-logic-test' %}{% endcomment %}
 
 <div class="product-detail-form" data-product-detail-form>
@@ -71,10 +90,15 @@
           <div style="margin-top: 10px;">
             <a href="#" class="secondary-link" style="border-bottom: 1px solid" data-size-guide-show>See Size Guide</a>
           </div>
-        {% endif %}        
+        {% endif %}
       </div>
+      <div class="secondary-description__links">
+        <a href="/">&larr; Back to Shop</a>
+        {% if next_product %}
+          <a href="{{ next_product.url }}" title="Next Product: {{ next_product.title | escape }}">Next Product &rarr;</a>
+        {% endif %}
+      </div>      
     </div>
-
   </div>
 
   <div class="product-essential" data-product-essential>
@@ -315,8 +339,8 @@
               {% else %}
                 <div class="u-ta-center u-color-grey" style="flex: 1">{{ 'products.product.sold_out' | t }}</div>
               {% endif %}
-            </div>       
-          </div>            
+            </div>
+          </div>
 
         </form>
       </div>
@@ -331,5 +355,16 @@
       {% include 'product-json', product: product %}
     </script>
   {% endunless %}
+
+  <div class="intermediate-nav">
+    <a href="/">Back to Shop</a>
+    {% if next_product %}
+      &nbsp; | &nbsp;
+      <a href="{{ next_product.url }}" class="intermediate-nav__next-product-link" title="Next Product: {{ next_product.title | escape }}">
+        Next Product &rarr;
+        <img src="{{ next_product.featured_image | img_url: '100x' }}" class="intermediate-nav__next-product-image" alt="{{ next_product.featured_image.alt }}" />
+      </a>
+    {% endif %}
+  </div>
 
 </div>

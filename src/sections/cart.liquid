@@ -15,7 +15,7 @@
 
     <div class="cart-list__row{% if available == false %} cart-list__row--unavailable{% endif %}">
       <div class="cart-list__col-product">
-        <img src="{{ item | img_url: '200x' }}" class="cart-list__item-image" alt="{{ item.title | escape }}">
+        <img src="{{ item | img_url: '250x' }}" class="cart-list__item-image" alt="{{ item.title | escape }}">
         <div class="cart-list__item-details">
           <div class="cart-list__item-details-price">{{ item.line_price | money_without_trailing_zeros }}</div>
           <div class="cart-list__item-details-title">

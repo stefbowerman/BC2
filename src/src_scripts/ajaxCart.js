@@ -317,7 +317,7 @@ export default class AJAXCart {
     cart.has_unavailable_items = false;
 
     cart.items.map(function(item){
-      item.image    = Images.getSizedImageUrl(item.image, '200x');
+      item.image    = Images.getSizedImageUrl(item.image, '250x');
       item.price    = Currency.formatMoney(item.price, theme.moneyFormat);
       item.price    = Currency.stripZeroCents(item.price);
       item.unavailable = !item.available;
