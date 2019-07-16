@@ -2,6 +2,8 @@
 
   {% capture collection_product_grid_items %}
     {% assign outputted_collection_count = 0 %}
+    {% assign all_products_sold_out = true %}
+    
     {% for block in section.blocks %}
       {% if block.settings.collection and collections[block.settings.collection].products.size > 0 %}
 
@@ -9,6 +11,10 @@
           <div class="content-grid__item">
             {% include 'product-card', product: product, lazy_load: true %}
           </div>
+
+          {% if product.available %}
+            {% assign all_products_sold_out = false %}
+          {% endif %}
         {% endfor %} 
 
         {% assign outputted_collection_count = outputted_collection_count | plus: 1 %}
@@ -19,8 +25,12 @@
     {% endfor %}
   {% endcapture %}
 
-  {% if collection_product_grid_items != blank %}
-    <div class="content-grid">{{ collection_product_grid_items }}</div>
+  {% if all_products_sold_out and section.settings.enable_sold_out_message %}
+    <div class="index-collection-sold-out-message">
+      {{ section.settings.sold_out_message | default: 'New collection coming soon' }}
+    </div>
+  {% else if collection_product_grid_items != blank %}
+    <div class="content-grid">{{ collection_product_grid_items }}</div>  
   {% endif %}
   
 </div>
@@ -43,7 +53,22 @@
         "unit": "col",
         "label": "Max Collections to Display",
         "default": 10
-      }  
+      },
+      {
+        "type": "header",
+        "content": "Sold Out State",
+        "info": "Enable to show a message when all products that would be displayed on the page are sold out."
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_sold_out_message",
+        "label": "Enable Sold Out Message"
+      },
+      {
+        "type": "textarea",
+        "id": "sold_out_message",
+        "label": "Sold Out Message"
+      }
     ],
     "blocks": [
       {
