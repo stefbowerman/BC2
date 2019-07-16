@@ -132,3 +132,19 @@ body.is-loading {
     }
   }
 }
+
+.index-collection-sold-out-message {
+  @include display-flex;
+  @include align-items(center);
+  @include justify-content(center);
+  max-width: 580px;
+  margin: -#{$layout-margin-top-mobile} auto 0;
+  min-height: 60vh;
+  text-align: center;
+  @extend .h4;
+
+  @media (min-width: $screen-md-min) {
+    margin-top: -#{$layout-margin-top};
+    font-size: $font-size-h3;
+  }
+}
