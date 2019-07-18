@@ -19,7 +19,7 @@
     "gulp-insert": "^0.5.0",
     "gulp-size": "^2.0.0",
     "gulp-uglify": "^3.0.0",
-    "jshint": "^2.9.5",
+    "jshint": "^2.10.2",
     "jshint-stylish": "^2.2.1",
     "merge-stream": "^1.0.0",
     "minimist": "^1.2.0",
@@ -45,7 +45,7 @@
   "scripts": {
     "start": "npm i -g @shopify/slate && npm i",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "jshint": "jshint src/scripts/ --exclude src/scripts/vendor/ --reporter=node_modules/jshint-stylish",
+    "jshint": "jshint src/src_scripts/ --reporter=node_modules/jshint-stylish",
     "hooks": "cp gitHooks.sh ./.git/hooks/post-checkout && chmod +x ./.git/hooks/post-checkout"
   },
   "repository": {

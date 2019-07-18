@@ -32,7 +32,7 @@ export default class AppRouter {
       'cart': CartView,
       'contact': ContactView,
       'stockists': StockistsView
-    }
+    };
 
     this.router = new Navigo(window.location.origin, false, '#!');
     this.isTransitioning = false;
@@ -42,6 +42,11 @@ export default class AppRouter {
     // Add Routes
     this.router.on('/products/:slug', (params) => {
       this.doRoute(`/products/${params.slug}`, 'product');
+    });
+
+    // Product preview - This is an important route otherwise the admin product preview functionality won't work!
+    this.router.on('/products_preview', (params, query) => {
+      this.doRoute(`/products_preview?${query}`, 'product');
     });
 
     // Product within collection
@@ -88,7 +93,7 @@ export default class AppRouter {
 
     this.router.on('/challenge', () => {
       this.doRoute('/challenge');
-    });    
+    });
 
     this.router.notFound((params) => {
       // called when there is path specified but
@@ -97,7 +102,7 @@ export default class AppRouter {
       this.router.navigate('/'); // Just go back home
     });
 
-    this.router.resolve();    
+    this.router.resolve();
   }
 
   doRoute(url, type) {
