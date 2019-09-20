@@ -84,6 +84,11 @@
     {% comment %} Secondary description - Shows on mobile and when vertical space is too tight {% endcomment %}
     <div class="secondary-description" data-secondary-description>
       <div class="pdf-description">
+        {% comment %} Put this metafield inside the .pdf-description because that element has sizing styles {% endcomment %}
+        {% if product.metafields.subtitle.text %}
+          <h3 class="pdf-subtitle">{{ product.metafields.subtitle.text }}</h3>
+        {% endif %}
+
         {{ product.description }}
 
         {% if size_guide_drawer_html != blank %}
@@ -110,12 +115,12 @@
     </div>
     <div class="pdf-spaced-el hidden-xs">
       <h1 class="pdf-title">{{ product.title }}</h1>
-      {% if product.metafields.subtitle.text %}
-        <h3 class="pdf-subtitle">{{ product.metafields.subtitle.text }}</h3>
-      {% endif %}
     </div>
     <div class="pdf-spaced-el">
       <div class="fixed-description" data-fixed-description>
+        {% if product.metafields.subtitle.text %}
+          <h3 class="pdf-subtitle">{{ product.metafields.subtitle.text }}</h3>
+        {% endif %}
         <div class="pdf-description">{{ product.description }}</div>
         {% if size_guide_drawer_html != blank %}
           <div class="hidden-xs hidden-sm" style="margin-top: 10px;">
@@ -151,6 +156,11 @@
                   {% assign is_size = true %}
                 {% endif %}
 
+                {% assign is_single_color = false %}
+                {% if is_color and option.values.size == 1 %}
+                  {% assign is_single_color = true %}
+                {% endif %}
+
                 {% assign can_show_sold_out_ui_for_option = false %}
                 {% if product.options.size == 1 %}
                   {% assign can_show_sold_out_ui_for_option = true %}
@@ -159,7 +169,8 @@
                 {% endif %}
 
                 {% capture desktop_option_html %}
-                  <div class="selector-wrapper form-group js">
+                  {% comment %} Don't show the selector if there's only one color  {% endcomment %}
+                  <div class="selector-wrapper form-group js" {% if is_single_color %}style="display: none"{% endif %}>
 
                     <label for="SingleOptionSelector-{{ forloop.index0 }}">
                       {{ option.name }}
@@ -241,23 +252,25 @@
                     {% endfor %}  
                   {% endcapture %}
 
-                  <div class="sticky-row__entry">
-                    <div class="sticky-select-wrap">
-                      <select data-sticky-option-selector data-option-position="{{ option.position }}"{% if option.values.size == 1 %} style="display: none !important" {% endif %}>
-                        {{ sticky_row_options }}
-                      </select>
-                      <div class="sticky-select-placeholder {% if option.values.size == 1 and selected_value != blank %}sticky-select-placeholder--no-select{% endif %}">
-                        <strong class="sticky-select-label" {% if selected_value == blank %}style="display: none"{% endif %}>{{ option.name }}:</strong>
+                  {% unless is_single_color %}
+                    <div class="sticky-row__entry">
+                      <div class="sticky-select-wrap">
+                        <select data-sticky-option-selector data-option-position="{{ option.position }}"{% if option.values.size == 1 %} style="display: none !important" {% endif %}>
+                          {{ sticky_row_options }}
+                        </select>
+                        <div class="sticky-select-placeholder {% if option.values.size == 1 and selected_value != blank %}sticky-select-placeholder--no-select{% endif %}" {% if is_single_color %}style="display: none"{% endif %}>
+                          <strong class="sticky-select-label" {% if selected_value == blank %}style="display: none"{% endif %}>{{ option.name }}:</strong>
                           <span class="sticky-select-placeholder-text">
-                          {% if selected_value != blank %}
-                            {{ selected_value }}
-                          {% else %}
-                            Select {{ option.name }}
-                          {% endif %}
-                        </span>
+                            {% if selected_value != blank %}
+                              {{ selected_value }}
+                            {% else %}
+                              Select {{ option.name }}
+                            {% endif %}
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  {% endunless %}
                 {% endcapture %}
 
                 {% assign desktop_options_html    = desktop_options_html | append: desktop_option_html %}

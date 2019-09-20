@@ -166,7 +166,7 @@ body.template-product {
 .pdf-subtitle {
   @include h6;
   font-size: $font-size-small;
-  margin: $spacer/2 0 $spacer*1.25;
+  margin: $spacer * 0.75 0;
 }
 
 .pdf-price {
