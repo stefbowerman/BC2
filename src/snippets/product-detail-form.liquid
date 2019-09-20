@@ -156,9 +156,10 @@
                   {% assign is_size = true %}
                 {% endif %}
 
-                {% assign is_single_color = false %}
-                {% if is_color and option.values.size == 1 %}
-                  {% assign is_single_color = true %}
+                {% comment %} Kind of dumb to create a var for this but it has a more semantic name {% endcomment %}
+                {% assign option_has_single_value = false %}
+                {% if option.values.size == 1 %}
+                  {% assign option_has_single_value = true %}
                 {% endif %}
 
                 {% assign can_show_sold_out_ui_for_option = false %}
@@ -169,8 +170,8 @@
                 {% endif %}
 
                 {% capture desktop_option_html %}
-                  {% comment %} Don't show the selector if there's only one color  {% endcomment %}
-                  <div class="selector-wrapper form-group js" {% if is_single_color %}style="display: none"{% endif %}>
+                  {% comment %} Don't show the selector if there's only one value {% endcomment %}
+                  <div class="selector-wrapper form-group js" {% if option_has_single_value %}style="display: none"{% endif %}>
 
                     <label for="SingleOptionSelector-{{ forloop.index0 }}">
                       {{ option.name }}
@@ -252,13 +253,13 @@
                     {% endfor %}  
                   {% endcapture %}
 
-                  {% unless is_single_color %}
+                  {% unless option_has_single_value %}
                     <div class="sticky-row__entry">
                       <div class="sticky-select-wrap">
                         <select data-sticky-option-selector data-option-position="{{ option.position }}"{% if option.values.size == 1 %} style="display: none !important" {% endif %}>
                           {{ sticky_row_options }}
                         </select>
-                        <div class="sticky-select-placeholder {% if option.values.size == 1 and selected_value != blank %}sticky-select-placeholder--no-select{% endif %}" {% if is_single_color %}style="display: none"{% endif %}>
+                        <div class="sticky-select-placeholder {% if option.values.size == 1 and selected_value != blank %}sticky-select-placeholder--no-select{% endif %}">
                           <strong class="sticky-select-label" {% if selected_value == blank %}style="display: none"{% endif %}>{{ option.name }}:</strong>
                           <span class="sticky-select-placeholder-text">
                             {% if selected_value != blank %}
