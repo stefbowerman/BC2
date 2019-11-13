@@ -8,13 +8,16 @@ const shopifyEvents = [
 ];
 
 export default class BaseSection {
-  
-  constructor(container) {
+  constructor(container, name) {
     this.$container = container instanceof $ ? container : $(container);
     this.id = this.$container.data('section-id');
     this.type = this.$container.data('section-type');
+    this.name = name;
+    this.namespace = `.${this.name}`;
 
-    $(document).on(shopifyEvents.join(' '), this.onShopifyEvent.bind(this));
+    this.onShopifyEvent = this.onShopifyEvent.bind(this)
+
+    $(document).on(shopifyEvents.join(' '), this.onShopifyEvent);
   }
 
   onShopifyEvent(e) {
@@ -45,12 +48,11 @@ export default class BaseSection {
   }
 
   onUnload(e) {
-    // console.log('[BaseSection] - removing event listeners - onSectionUnload');
-    $(document).off(shopifyEvents.join(' '), this.onShopifyEvent.bind(this));
+    $(document).off(shopifyEvents.join(' '), this.onShopifyEvent);
   }
 
   onSelect(e) {
-    // console.log('onselect in base section');  
+
   }
 
   onDeselect(e) {

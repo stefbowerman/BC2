@@ -1,4 +1,4 @@
-import BaseView from "./base";
+import BaseView from './base';
 import BaseSection from '../sections/base';
 
 export default class IndexView extends BaseView {

@@ -66,7 +66,25 @@
         "label": "Tops"
       }
     ]
-  },  
+  },
+  {
+    "name": "Gift With Purchase",
+    "settings": [
+      {
+        "type": "product",
+        "id": "gwp_product",
+        "label": "Product",
+        "info": "Product will automatically be added to cart once the minimum amount is reached.  This product needs to be free and only contain a single variant."
+      },
+      {
+        "type": "text",
+        "id": "gwp_amount",
+        "label": "Amount",
+        "info": "Minimum cart amount to qualify for this gift",
+        "default": "100.00"
+      }
+    ]
+  },
   {
     "name": "Favicon",
     "settings": [

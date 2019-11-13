@@ -2,6 +2,7 @@ import ShopifyAPI from './shopifyAPI';
 import Utils from './utils';
 import Currency from './currency';
 import Images from './images';
+import GiftWithPurchase from './giftWithPurchase';
 import Toast from './uiComponents/toast';
 
 const $window = $(window);
@@ -47,17 +48,17 @@ export default class AJAXCart {
     this.name = 'ajaxCart';
     this.namespace = `.${this.name}`;
     this.events = {
-      RENDER:  'render'  + this.namespace,
-      DESTROY: 'destroy' + this.namespace,
-      SCROLL:  'scroll'  + this.namespace,
-      UPDATE:  'update'  + this.namespace, //  Use this as a global event to hook into whenever the cart changes
-      NEEDS_UPDATE: 'needsUpdate' + this.namespace
-    };   
+      RENDER:  `render${this.namespace}`,
+      DESTROY: `destroy${this.namespace}`,
+      SCROLL:  `scroll${this.namespace}`,
+      UPDATE:  `update${this.namespace}`, //  Use this as a global event to hook into whenever the cart changes
+      NEEDS_UPDATE: `needsUpdate${this.namespace}`
+    };
 
-    var initialized = false;
-    var settings = {
-      disableAjaxCart: false,
-      backdrop: true
+    let initialized = false;
+    const settings = {
+      gwpVariantId: null,
+      gwpAmount: 99999
     };
 
     this.$el                = $(selectors.container);
@@ -83,33 +84,31 @@ export default class AJAXCart {
         return;
       }
 
-      this.$container      = $(selectors.container);
-      this.$cartBadge      = $(selectors.cartBadge);
-      this.$cartBadgeCount = $(selectors.cartBadgeCount);
+      this.$cartBadge       = $(selectors.cartBadge);
+      this.$cartBadgeCount  = $(selectors.cartBadgeCount);
       this.$verifyContainer = $(selectors.verifyContainer);  
-      this.$toast = new Toast($(selectors.toast));     
+      this.toast            = new Toast($(selectors.toast));
+      this.giftWithPurchase = new GiftWithPurchase(this.settings.gwpVariantId, this.settings.gwpAmount)
 
       // Compile this once during initialization
       this.template = Handlebars.compile($(selectors.template).html());
       this.verifyTemplate = Handlebars.compile($(selectors.verifyTemplate).html());
 
       // Add the AJAX part
-      if(!this.settings.disableAjaxCart) {
-        this._formOverride();
-      }
+      this._formOverride();
 
       // Add event handlers here
       $body.on('click', selectors.trigger, this.onTriggerClick.bind(this));
       $body.on('click', selectors.close, this.onCloseClick.bind(this));
       $body.on('click', selectors.itemRemove, this.onItemRemoveClick.bind(this));
-      this.$container.on('submit', 'form', this.onFormSubmit.bind(this));
+      this.$el.on('submit', 'form', this.onFormSubmit.bind(this));
       this.$verifyContainer.on('click', selectors.verifyCheckoutLink, this.onVerifyCheckoutLinkClick.bind(this));
       $window.on(this.events.RENDER, this.onCartRender.bind(this));
       $window.on(this.events.DESTROY, this.onCartDestroy.bind(this));
       $window.on(this.events.NEEDS_UPDATE, this.onNeedsUpdate.bind(this));
 
       // Get the cart data when we initialize the instance
-      ShopifyAPI.getCart().then(this.buildCart.bind(this));
+      ShopifyAPI.getCart().then(cart => this.buildCart(cart));
 
       initialized = true;
 
@@ -123,38 +122,46 @@ export default class AJAXCart {
   * Call this function to AJAX-ify any add to cart forms on the page
   */
   _formOverride() {
-    var _this = this;
-
-    $body.on('submit', selectors.addForm, function(e) {
+    $body.on('submit', selectors.addForm, (e) => {
       e.preventDefault();
 
       if(this.requestInProgress) return;
 
-      var $submitButton = $(e.target).find(selectors.addToCart);
-      var $submitButtonText = $submitButton.find(selectors.addToCartText);
+      const $submitButton = $(e.target).find(selectors.addToCart);
+      const $submitButtonText = $submitButton.find(selectors.addToCartText);
 
       // Update the submit button text and disable the button so the user knows the form is being submitted
       $submitButton.prop('disabled', true);
       $submitButtonText.html(theme.strings.adding);
 
+      const resetButtons = () => {
+        $submitButton.prop('disabled', false);
+        $submitButtonText.html(theme.strings.addToCart);
+      }
+
+      const onDone = (cart) => {
+        resetButtons()
+        this.onItemAddSuccess(cart)
+      }
+
       this._onRequestStart();
 
-      ShopifyAPI.addItemFromForm( $(e.target) )
-        .then(function(data) {
-          _this._onRequestFinish();
-          // Reset button state
-          $submitButton.prop('disabled', false);
-          $submitButtonText.html(theme.strings.addToCart);
-          _this.onItemAddSuccess.call(_this, data);
+      ShopifyAPI.addItemFromForm($(e.target))
+        .done((cart) => {
+          // If the cart needs the gift, make one more request and *then* go through the onDone function
+          if(this.giftWithPurchase.cartNeedsGift(cart)) {
+            ShopifyAPI.addVariant(this.giftWithPurchase.variantId, 1).then(cart => onDone(cart));
+          }
+          else {
+            onDone(cart)
+          }
         })
-        .fail(function(data) {
-          _this._onRequestFinish();
-          // Reset button state
-          $submitButton.prop('disabled', false);
-          $submitButtonText.html(theme.strings.addToCart);
-          _this.onItemAddFail.call(_this, data);
+        .fail((cart) => {
+          resetButtons()
+          this._onRequestFinish(cart);
+          this.onItemAddFail(cart);
         });
-    }.bind(this));
+    });
   }
 
  /**
@@ -174,13 +181,12 @@ export default class AJAXCart {
   * @return {obj}
   */
   _getItemRowAttributes(el) {
-    var $el = $(el);
-    var $row = $el.is(selectors.item) ? $el : $el.parents(selectors.item);
+    const $el = $(el);
+    const $row = $el.is(selectors.item) ? $el : $el.parents(selectors.item);
 
     return {
-      $row: $row,
-      id:  $row.data('id'),
-      line: ($row.index() + 1),
+      $row,
+      key: $row.data('key'),
       qty: this._validateQty($row.data('qty'))
     };
   }
@@ -190,15 +196,13 @@ export default class AJAXCart {
     this.$el.addClass(classes.cartRequestInProgress);
   }
 
-  _onRequestFinish() {
+  _onRequestFinish(cart) {
     this.requestInProgress = false;
     this.$el.removeClass(classes.cartRequestInProgress);
-  }      
+  }
 
   addBackdrop(callback) {
-
-    var _this = this;
-    var cb    = callback || $.noop;
+    const cb = callback || (() => {});
 
     if(this.stateIsOpen) {
       this.$backdrop = $(document.createElement('div'));
@@ -215,16 +219,16 @@ export default class AJAXCart {
       this.$backdrop.on('mouseenter', () => { this.$backdropCursor.addClass(classes.backdropCursorVisible); });
       this.$backdrop.on('mouseleave', () => { this.$backdropCursor.removeClass(classes.backdropCursorVisible); });
       this.$backdrop.on('mousemove', (e) => {
-        window.requestAnimationFrame(function() {        
+        window.requestAnimationFrame(() => {
           this.$backdropCursor.css({
-            'transform': 'translate(' + e.clientX + 'px, ' + e.clientY + 'px)'
+            'transform': `translate(${e.clientX}px, ${e.clientY}px)`
           });
-        }.bind(this));
+        });
       });
 
       // debug this...
-      setTimeout(function() {
-        _this.$backdrop.addClass(classes.backdropVisible);
+      setTimeout(() => {
+        this.$backdrop.addClass(classes.backdropVisible);
       }, 20);
     }
     else {
@@ -233,21 +237,19 @@ export default class AJAXCart {
   }
 
   removeBackdrop(callback) {
-
-    var _this = this;
-    var cb    = callback || $.noop;
+    const cb = callback || (() => {});
 
     if(!this.stateIsOpen && this.$backdrop) {
-      this.$backdrop.one(this.transitionEndEvent, function(){
-        _this.$backdrop.off('mousemove mouseenter mouseleave');
-        _this.$backdrop && _this.$backdrop.remove();
-        _this.$backdrop = null;
-        _this.$backdropCursor = null;
+      this.$backdrop.one(this.transitionEndEvent, () => {
+        this.$backdrop.off('mousemove mouseenter mouseleave');
+        this.$backdrop && this.$backdrop.remove();
+        this.$backdrop = null;
+        this.$backdropCursor = null;
         cb();
       });
 
-      setTimeout(function() {
-        _this.$backdrop.removeClass(classes.backdropVisible);
+      setTimeout(() => {
+        this.$backdrop.removeClass(classes.backdropVisible);
       }, 10);
     }
     else {
@@ -269,11 +271,10 @@ export default class AJAXCart {
   * Callback when adding an item fails
   *
   * @param {Object} data
-  * @param {string} data.message - error message
   */
   onItemAddFail(data){
-    this.$toast.setContent('Requested item is unavailable');
-    this.$toast.show();
+    this.toast.setContent('Requested item is unavailable');
+    this.toast.show();
   }
 
   /**
@@ -295,7 +296,7 @@ export default class AJAXCart {
   }
 
   onNeedsUpdate(e) {
-    ShopifyAPI.getCart().then(this.buildCart.bind(this));
+    ShopifyAPI.getCart().then(cart => this.buildCart(cart));
   }
 
  /**
@@ -306,7 +307,6 @@ export default class AJAXCart {
   * @return ??
   */
   buildCart(cart) {
-
     // All AJAX Cart requests finish with rebuilding the cart
     // So this is a good place to add this code
     this._onRequestFinish();
@@ -316,28 +316,26 @@ export default class AJAXCart {
     cart.total_price = Currency.stripZeroCents(cart.total_price);
     cart.has_unavailable_items = false;
 
-    cart.items.map(function(item){
-      item.image    = Images.getSizedImageUrl(item.image, '250x');
-      item.price    = Currency.formatMoney(item.price, theme.moneyFormat);
-      item.price    = Currency.stripZeroCents(item.price);
-      item.unavailable = !item.available;
+    cart.items.map(function(item) {
+      item.image        = Images.getSizedImageUrl(item.image, '250x');
+      item.price        = Currency.formatMoney(item.price, theme.moneyFormat);
+      item.price        = Currency.stripZeroCents(item.price);
+      item.unavailable  = !item.available;
       item.has_multiple = (item.quantity > 1);
 
       if(item.unavailable) {
         cart.has_unavailable_items = true;
       }
 
-      // Adjust the item's variant options to add "name" and "value" properties
-      if(item.hasOwnProperty('product')) {
-        var product = item.product;
-        for (var i = item.variant_options.length - 1; i >= 0; i--) {
-          var name  = product.options[i];
-          var value = item.variant_options[i];
+      const product = item.product
 
-          item.variant_options[i] = {
-            name: name,
-            value: value
-          };
+      // Adjust the item's variant options to add "name" and "value" properties
+      if(product) {
+        for (var i = item.variant_options.length - 1; i >= 0; i--) {
+          let name  = product.options[i];
+          let value = item.variant_options[i];
+
+          item.variant_options[i] = { name, value };
 
           // Don't show this info if it's the default variant that Shopify creates
           if(value == "Default Title") {
@@ -354,18 +352,11 @@ export default class AJAXCart {
       return item;
     });
 
-    /**
-     *  You can also use this as an intermediate step to constructing the AJAX cart DOM
-     *  by returning an HTML string and using another function to do the DOM updating
-     *
-     *  return this.template(cart)
-     *
-     *  The code below isn't the most elegant way to update the cart but it works...
-     */        
-
     $window.trigger(this.events.DESTROY);
-    this.$container.empty().append( this.template(cart) );
-    this.$verifyContainer.empty().append( this.verifyTemplate(cart) );
+
+    this.$el.empty().append(this.template(cart));
+    this.$verifyContainer.empty().append(this.verifyTemplate(cart));
+
     $window.trigger(this.events.RENDER);
     $window.trigger(this.events.UPDATE);
 
@@ -378,9 +369,8 @@ export default class AJAXCart {
   * @param {Object} cart - JSON representation of the cart.
   */
   updateCartCount(cart) {
-
     if(cart.item_count) {
-      this.$cartBadge.text(cart.item_count + ' ' + (cart.item_count == 1 ? 'Item' : 'Items'));
+      this.$cartBadge.text(`${cart.item_count} ${cart.item_count == 1 ? 'Item' : 'Items'}`);
       this.$cartBadge.addClass(classes.cartBadgeHasItems);
     }
     else {
@@ -408,7 +398,7 @@ export default class AJAXCart {
   }
 
  /**
-  * Remove the item from the cart.  Extract this into a separate method if there becomes more ways to delete an item
+  * Remove the item from the cart.
   *
   * @param {event} e - Click event
   */
@@ -417,10 +407,20 @@ export default class AJAXCart {
 
     if(this.requestInProgress) return;
 
-    var attrs = this._getItemRowAttributes(e.target);
+    const attrs = this._getItemRowAttributes(e.target);
+    const data = {id: attrs.key, quantity: 0};
+    const gwpData = {id: this.giftWithPurchase.variantId, quantity: 0}
 
     this._onRequestStart();
-    ShopifyAPI.changeLineItemQuantity(attrs.line, 0).then(ShopifyAPI.getCart).then(this.buildCart.bind(this));
+
+    ShopifyAPI.changeLineItem(data).then((cart) => {
+      if(this.giftWithPurchase.cartContainsGiftButDoesntQualify(cart)) {
+        ShopifyAPI.changeLineItem(gwpData).then(cart => this.buildCart(cart))
+      }
+      else {
+        this.buildCart(cart)
+      }
+    });
   }
 
  /**
@@ -472,22 +472,21 @@ export default class AJAXCart {
   }
 
  /**
-  * STUB METHOD - Code for opening the cart
+  * Code for opening the cart
   */
   open() {
     if(this.stateIsOpen) return;
+
     this.stateIsOpen = true;
 
-    if(this.settings.backdrop) {
-      $body.addClass(classes.bodyCartOpen);
-      this.addBackdrop();
-    }
-
+    $body.addClass(classes.bodyCartOpen);
+    this.addBackdrop();
+    
     this.$el.addClass(classes.cartOpen);
   }
 
  /**
-  * STUB METHOD - Code for closing the cart
+  * Code for closing the cart
   */
   close() {
     if(!this.stateIsOpen) return;
@@ -499,11 +498,8 @@ export default class AJAXCart {
       this.$el.scrollTop(0);
     });
 
-    if(this.settings.backdrop) {
-      this.removeBackdrop(function() {
-        $body.removeClass(classes.bodyCartOpen);
-      });          
-    }
-
-  }  
+    this.removeBackdrop(function() {
+      $body.removeClass(classes.bodyCartOpen);
+    });
+  }
 }

@@ -1,5 +1,5 @@
-import BaseSection from "./base";
-import AJAXMailchimpForm from "../ajaxMailchimpForm";
+import BaseSection from './base';
+import AJAXMailchimpForm from '../ajaxMailchimpForm';
 import Utils from '../utils';
 
 const selectors = {
@@ -16,17 +16,14 @@ const classes = {
 export default class FooterSection extends BaseSection {
 
   constructor(container) {
-    super(container);
-
-    this.name = 'footer';
-    this.namespace = `.${this.name}`;
+    super(container, 'footer');
     
     this.transitionEndEvent = Utils.whichTransitionEnd();
 
     this.$subscribeForm = this.$container.find('form');
-    this.$formContents = $(selectors.formContents, this.$container);
-    this.$formInputs   = $(selectors.formInputs, this.$container);
-    this.$formMessage  = $(selectors.formMessage, this.$container);
+    this.$formContents  = $(selectors.formContents, this.$container);
+    this.$formInputs    = $(selectors.formInputs, this.$container);
+    this.$formMessage   = $(selectors.formMessage, this.$container);
 
     this.AJAXMailchimpForm = new AJAXMailchimpForm(this.$subscribeForm, {
       onSubscribeFail: (msg) => {

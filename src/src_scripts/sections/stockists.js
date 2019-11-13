@@ -1,30 +1,26 @@
 import Utils from '../utils';
-import BaseSection from "./base";
+import BaseSection from './base';
 
 const selectors = {
   list: '[data-stockists-list]'
 };
 
-var classes = {
-};
-
 export default class StockistsSection extends BaseSection {
 
   constructor(container) {
-    super(container);
-    this.name = 'stockists';
-    this.namespace = `.${this.name}`;
+    super(container, 'stockists');
 
     this.$lists = $(selectors.list, this.$container);
 
     // This stuff doesn't come back sorted from Shopify so sort it by the 'data-alpha' attribute that we put on there...
     this.$lists.each((i, el) => {
       const $list = $(el);
-      const $lis = $list.children().detach();
+      const $lis  = $list.children().detach();
 
       $lis.sort((a, b) => {
         const aAlph = $(a).data('alpha').toString();
         const bAlph = $(b).data('alpha').toString();
+
         if(aAlph > bAlph) {
           return 1;
         }

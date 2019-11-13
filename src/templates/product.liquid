@@ -1,1 +1,14 @@
+{% if settings.gwp_product == product.handle %}
+  {% comment %} If the user is trying to view the "gift with purchase" product {% endcomment %}
+
+  {% if content_for_header contains 'designMode' or content_for_header contains 'preview_host' or content_for_header contains 'designModeScript' %}
+    {% comment %} Don't redirect {% endcomment %}
+  {% else %}
+    {% layout none %}
+    <script type="text/javascript">window.location = '/';</script>
+    {% break %}
+  {% endif %}
+
+{% endif %}
+
 {% section 'product' %}

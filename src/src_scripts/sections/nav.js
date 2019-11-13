@@ -1,11 +1,11 @@
-import BaseSection from "./base";
+import BaseSection from './base';
 
 const selectors = {
   mainMenu: '.main-menu',
   menuLink: '[data-menu-link]',
   submenu: '[data-submenu]',
   submenuTrigger: 'a[data-submenu-trigger]'
-}
+};
 
 const classes  = {
   menuLinkActive: 'is-active',
@@ -14,9 +14,9 @@ const classes  = {
 };
 
 export default class NavSection extends BaseSection {
-
   constructor(container) {
-    super(container);
+    super(container, 'nav');
+    
     this.$menu = $(selectors.mainMenu, this.$container);
     this.$menuLinks = $(selectors.menuLink, this.$container);
     this.$submenuTriggers = $(selectors.submenuTrigger, this.$container);
@@ -74,5 +74,4 @@ export default class NavSection extends BaseSection {
     this.$menuLinks.not($link).addClass(classes.menuLinkNotHovered);
     // store the active submenu in a variable so we can check if the trigger is for that menu
   }
-  
 }

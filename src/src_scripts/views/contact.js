@@ -1,4 +1,4 @@
-import BaseView from "./base";
+import BaseView from './base';
 import ContactSection from '../sections/contact';
 
 export default class ContactView extends BaseView {

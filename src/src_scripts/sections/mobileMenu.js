@@ -1,5 +1,5 @@
-import BaseSection from "./base";
-import Drawer from "../uiComponents/drawer";
+import BaseSection from './base';
+import Drawer from '../uiComponents/drawer';
 import * as Breakpoints from '../breakpoints';
 
 const selectors = {
@@ -16,12 +16,8 @@ const $window = $(window);
 const $body   = $(document.body);
 
 export default class MobileMenuSection extends BaseSection {
-
   constructor(container) {
-    super(container);
-
-    this.name = 'mobileMenu';
-    this.namespace = `.${this.name}`;
+    super(container, 'mobileMenu');
 
     this.$el     = $(selectors.menu, this.$container);
     this.$toggle = $(selectors.toggle); // Don't scope to this.$container
@@ -72,5 +68,4 @@ export default class MobileMenuSection extends BaseSection {
   onUnload() {
     this.drawer.$backdrop && this.drawer.$backdrop.remove();
   }
-  
 }

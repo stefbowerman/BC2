@@ -1,20 +1,18 @@
-import BaseSection from "./base";
+import BaseSection from './base';
 
 const selectors = {
   gallery: '[data-product-card-gallery]',
   mainLazyImg: '[data-product-card-main-lazy]'
 };
 
-var classes = {
+const classes = {
   galleryLoaded: 'is-loaded'
 };
 
 export default class CollectionSection extends BaseSection {
 
   constructor(container) {
-    super(container);
-    this.name = 'collection';
-    this.namespace = `.${this.name}`;
+    super(container, 'collection');
 
     this.$container.find(selectors.mainLazyImg).unveil(200, function() {
       const $img = $(this);

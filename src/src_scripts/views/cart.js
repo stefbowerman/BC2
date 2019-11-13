@@ -1,4 +1,4 @@
-import BaseView from "./base";
+import BaseView from './base';
 import CartSection from '../sections/cart';
 
 export default class CartView extends BaseView {

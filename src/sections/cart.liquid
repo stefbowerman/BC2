@@ -47,7 +47,7 @@
               {% endfor %}
             {% endunless %}
             <li>Qty: {{ item.quantity }}</li>
-            <li style="text-decoration: none;">
+            <li>
               <a href="/cart/change?line={{ forloop.index }}&amp;quantity=0" class="secondary-link cart-list__item-details-remove" data-item-remove-link>
                 → Remove <span class="hidden-xs hidden-sm">Item</span>
               </a>

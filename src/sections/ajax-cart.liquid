@@ -1,4 +1,30 @@
-<div data-section-id="{{ section.id }}" data-section-type="ajax-cart">
+{% assign gwp_variant = false %}
+{% assign gwp_amount = false %}
+
+{% if settings.gwp_amount != blank %}
+  {% assign gwp_amount_check = settings.gwp_amount | plus: 0 %}
+  {% if gwp_amount_check > 0 %}
+    {% assign gwp_amount = gwp_amount_check %}
+  {% endif %}
+{% endif %}
+
+{% if settings.gwp_product != blank %}
+  {% assign gwp_product = all_products[settings.gwp_product] %}
+
+  {% comment %} GWP product needs to: 1) have a single variant that is free and 2) not belong to any collection {% endcomment %}
+  {% if gwp_product.has_only_default_variant and
+        gwp_product.first_available_variant.price == 0 and
+        gwp_product.collections.size == 0
+  %}
+    {% assign gwp_variant = gwp_product.first_available_variant.id %}
+  {% endif %}
+{% endif %}
+
+<div data-section-id="{{ section.id }}"
+     data-section-type="ajax-cart"
+     {% if gwp_variant %}data-gwp-variant="{{ gwp_variant }}"{% endif %}
+     {% if gwp_amount %}data-gwp-amount="{{ gwp_amount }}"{% endif %}
+>
   <div class="ajax-cart-container" data-ajax-cart-container></div>
   <div data-cart-verify-modal-container></div>
   <div class="toast" data-ajax-cart-toast>
@@ -24,7 +50,7 @@
             {{/if}}
             <ul class="ajax-cart__list">
               {{#each items}}
-              <li class="ajax-cart__item{{#if unavailable}} ajax-cart__item--unavailable{{/if}}" data-id="{{ variant_id }}" data-qty="{{ quantity }}" data-ajax-item>
+              <li class="ajax-cart__item{{#if unavailable}} ajax-cart__item--unavailable{{/if}}" data-id="{{ variant_id }}" data-key="{{ key }}" data-qty="{{ quantity }}" data-ajax-item>
                 <img src="{{ image }}" class="ajax-cart__item-image">
                 <div class="ajax-cart__item-info">
                   <div class="ajax-cart__item-header">
@@ -97,7 +123,7 @@
           <div class="modal-title" id="verifyCartModalLabel">Verify Cart</div>
         </div>
         <div class="modal-body">
-          <p class="u-ta-center u-fs-small">Please verify cart contents before proceeding to checkout</p>                  
+          <p class="u-ta-center u-fs-xsmall">Please verify cart contents before proceeding to checkout</p>                  
           {{#if items}}
             <div class="verify-table">
               {{#each items}}

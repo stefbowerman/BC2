@@ -1,23 +1,15 @@
-import BaseSection from "./base";
+import BaseSection from './base';
 
 const selectors = {
   form: '[data-cart-form]',
   itemRemoveLink: '[data-item-remove-link]'
 };
 
-const classes = {
-
-};
-
 const $window = $(window);
 
 export default class CartSection extends BaseSection {
-
   constructor(container) {
-    super(container);
-
-    this.name = 'cart';
-    this.namespace = `.${this.name}`;
+    super(container, 'cart');
 
     this.setInstanceVars();
     this.bindEvents();
@@ -39,10 +31,9 @@ export default class CartSection extends BaseSection {
   }
 
   onFormSubmit(e) {
-
     this.$formSubmit.val('Redirecting to Checkout..');
     this.$formSubmit.prop('disabled', true);
-    window.location.href = "/checkout";
+    window.location.href = '/checkout';
 
     return false;
   }
@@ -60,17 +51,16 @@ export default class CartSection extends BaseSection {
       }
     })
     .done((response) => {
-      
       // Trigger this ASAP since it runs an AJAX Call
       $window.trigger('needsUpdate.ajaxCart');
 
-      const $responseHtml = $(document.createElement("html"));
+      const $responseHtml = $(document.createElement('html'));
       $responseHtml.get(0).innerHTML = response;
 
       const $responseBody = $responseHtml.find('body');
       const $newContainer = $responseBody.find('[data-section-type="cart"]');
 
-      this.removeEvents();      
+      this.removeEvents();
       this.$container.replaceWith($newContainer);
       this.$container = $newContainer;
       this.setInstanceVars();

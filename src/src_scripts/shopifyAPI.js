@@ -7,18 +7,36 @@ export default {
   * @return {Promise} - Resolve returns JSON cart | Reject returns an error message
   */
   addItemFromForm($form) {
-    var promise = $.Deferred();
-    var self = this;
+    return this.add($form.serialize())
+  },
+
+ /**
+  * AJAX add by variant ID
+  *
+  * @param {integer} id - Variant ID
+  * @param {integer} qty - quantity
+  * @return {Promise} - Resolve returns JSON cart | Reject returns an error message
+  */
+  addVariant(id, quantity = 1) {
+    return this.add({ quantity, id })
+  },
+
+ /**
+  * AJAX add to cart
+  *
+  * @param {Object} data - Data object
+  * @return {Promise} - Resolve returns JSON cart | Reject returns an error message
+  */
+  add(data) {
+    const promise = $.Deferred();
 
     $.ajax({
       type: 'post',
       dataType: 'json',
       url: '/cart/add.js',
-      data: $form.serialize(),
-      success: function () {
-        self.getCart().then(function (data) {
-          promise.resolve(data);
-        });
+      data,
+      success: () => {
+        this.getCart().then(data => promise.resolve(data))
       },
       error: function () {
         promise.reject({
@@ -28,7 +46,34 @@ export default {
     });
 
     return promise;
-  },
+  },  
+
+ /**
+  * AJAX change line item
+  *
+  * @param {Object} data - Data object
+  * @return {Promise} - Resolve returns JSON cart | Reject returns an error message
+  */
+  changeLineItem(data) {
+    const promise = $.Deferred();
+
+    $.ajax({
+      type: 'post',
+      dataType: 'json',
+      url: '/cart/change.js',
+      data,
+      success: () => {
+        this.getCart().then(data => promise.resolve(data))
+      },
+      error: function () {
+        promise.reject({
+          message: 'The quantity you entered is not available.'
+        });
+      }
+    });
+
+    return promise;
+  },   
 
  /**
   * Retrieve a JSON respresentation of the users cart
@@ -36,20 +81,13 @@ export default {
   * @return {Promise} - JSON cart
   */
   getCart() {
-    let promise = $.Deferred();
-    let url = '/cart?view=json';
-
-    if(Shopify && Shopify.designMode) {
-      url = '/cart.js';
-    }
+    const promise = $.Deferred();
+    const url = `/cart${Shopify && Shopify.designMode ? '.js' : '?view=json'}`
     
     $.ajax({
       type: 'get',
       url: url,
-      success: function (data) {
-        const cart = JSON.parse(data);
-        promise.resolve(cart);
-      },
+      success: (data) => promise.resolve(JSON.parse(data)),
       error: function () {
         promise.reject({
           message: 'Could not retrieve cart items'

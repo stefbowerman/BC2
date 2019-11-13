@@ -1,4 +1,4 @@
-import BaseSection from "./base";
+import BaseSection from './base';
 import AJAXCart from '../ajaxCart';
 
 /**
@@ -10,23 +10,20 @@ import AJAXCart from '../ajaxCart';
  * @namespace - ajaxCart
  */
 
-var $body = $(document.body);
-
 export default class AJAXCartSection extends BaseSection {
 
   constructor(container) {
-    super(container);
-
-    this.name = 'ajaxCart';
-    this.namespace = `.${this.name}`;
+    super(container, 'ajaxCart');
 
     this.ajaxCart = new AJAXCart();
 
-    this.ajaxCart.init();
+    this.ajaxCart.init({
+      gwpVariantId: this.$container.data('gwp-variant'),
+      gwpAmount: Number.parseFloat(this.$container.data('gwp-amount'))
+    });
   }
 
   onSelect(e) {
-    console.log('on select inside AJAXCart');
     this.ajaxCart.open();
   }
 

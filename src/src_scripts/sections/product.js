@@ -1,4 +1,4 @@
-import BaseSection from "./base";
+import BaseSection from './base';
 import ProductDetailForm from '../product/productDetailForm';
 import Drawer from '../uiComponents/drawer';
 import * as Breakpoints from '../breakpoints';
@@ -24,10 +24,7 @@ const $window = $(window);
 export default class ProductSection extends BaseSection {
 
   constructor(container) {
-    super(container);
-
-    this.name = 'product';
-    this.namespace = `.${this.name}`;
+    super(container, 'product');
 
     this.bpTabletMin       = Breakpoints.getBreakpointMinWidth('sm');
     this.bpDesktopMin      = Breakpoints.getBreakpointMinWidth('lg');
@@ -87,7 +84,6 @@ export default class ProductSection extends BaseSection {
   }
 
   onResize() {
-    
     this.secondaryDescriptionCheck()
 
     if(this.fixedFormFullHeight == null && window.innerWidth >= this.bpDesktopMin) {
@@ -117,18 +113,18 @@ export default class ProductSection extends BaseSection {
   }
 
   onSecondaryDescriptionLinkClick(e) {
-      e.preventDefault();
+    e.preventDefault();
 
-      if(this.secondaryDescriptionInView) return;
+    if(this.secondaryDescriptionInView) return;
 
-      const scrollToOffset = this.$secondaryDescription.offset()['top'] - 80;
-      this.smoothScroll.animateScroll(scrollToOffset, 0, {
-        speed: 1000,
-        durationMax: 1000,
-        updateURL: false,
-        popstate: false,
-        easing: 'easeOutQuart'
-      });
+    const scrollToOffset = this.$secondaryDescription.offset()['top'] - 80;
+    
+    this.smoothScroll.animateScroll(scrollToOffset, 0, {
+      speed: 1000,
+      durationMax: 1000,
+      updateURL: false,
+      popstate: false,
+      easing: 'easeOutQuart'
+    });
   }
-  
 }
