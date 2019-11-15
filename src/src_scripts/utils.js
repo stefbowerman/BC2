@@ -197,20 +197,23 @@ export default {
    * @return {string}
    */
   whichTransitionEnd() {
-    var t;
-    var el = document.createElement('fakeelement');
-    var transitions = {
-      'transition':'transitionend',
-      'OTransition':'oTransitionEnd',
-      'MozTransition':'transitionend',
-      'WebkitTransition':'webkitTransitionEnd'
+    const el = document.createElement('fakeelement');
+    const transitions = {
+      'transition': 'transitionend',
+      'OTransition': 'oTransitionEnd',
+      'MozTransition': 'transitionend',
+      'WebkitTransition': 'webkitTransitionEnd'
     };
 
-    for(t in transitions){
-      if ( el.style[t] !== undefined ){
-        return transitions[t];
+    let which = transitions['transition'];
+
+    Object.keys(transitions).forEach((key) => {
+      if (el.style[key] !== undefined ){
+        which = transitions[key];
       }
-    }
+    });
+
+    return which
   },
 
   /**
@@ -283,16 +286,6 @@ export default {
     return hash;
   },
 
-  chosenSelects($container) {
-    var $selects = $container ? $('select.form-control', $container) : $('select.form-control');
-    $selects.not('[data-no-chosen]').chosen();
-
-    // Allows browser autofill to function properly
-    $selects.on('change', function() {
-      $(this).trigger('chosen:updated');
-    });
-  },
-
   /**
    * Browser cookies are required to use the cart. This function checks if
    * cookies are enabled in the browser.
@@ -317,7 +310,7 @@ export default {
    * @return {String}
    */
   pluralize(number, singular, plural)  {
-    var output = '';
+    let output = '';
 
     number = parseInt(number);
 
@@ -340,9 +333,9 @@ export default {
    * @return {Bool}
    */
   isExternal(url) {
-    var match = url.match(/^([^:\/?#]+:)?(?:\/\/([^\/?#]*))?([^?#]+)?(\?[^#]*)?(#.*)?/);
+    const match = url.match(/^([^:\/?#]+:)?(?:\/\/([^\/?#]*))?([^?#]+)?(\?[^#]*)?(#.*)?/);
     if (typeof match[1] === "string" && match[1].length > 0 && match[1].toLowerCase() !== location.protocol) return true;
-    if (typeof match[2] === "string" && match[2].length > 0 && match[2].replace(new RegExp(":("+{"http:":80,"https:":443}[location.protocol]+")?$"), "") !== location.host) return true;
+    if (typeof match[2] === "string" && match[2].length > 0 && match[2].replace(new RegExp(":("+{ "http:":80, "https:":443 }[location.protocol]+")?$"), "") !== location.host) return true;
     return false;
   }
 }

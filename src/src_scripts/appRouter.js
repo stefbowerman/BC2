@@ -151,8 +151,7 @@ export default class AppRouter {
   }
 
   doViewChange(AJAXResponse, ViewConstructor) {
-    // Kill the current view
-    this.currentView.destroy();
+    this.currentView.destroy(); // Kill the current view
 
     const $responseHtml = $(document.createElement('html'));
     

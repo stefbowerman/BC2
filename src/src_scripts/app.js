@@ -67,7 +67,7 @@ const $body = $(document.body);
       
       if (Utils.isExternal(url) || url === '#' || url.indexOf('/checkout') > -1) return;
 
-      if (appRouter.isTransitioning) return false;
+      if (appRouter.isTransitioning) return false; // eslint-disable-line
 
       e.preventDefault();
       appRouter.navigate(url);

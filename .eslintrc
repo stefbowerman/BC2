@@ -75,6 +75,7 @@
     "no-new": "off",
     "no-alert": "off",
     "indent": ["warn"],
-    "semi": ["warn"]
+    "semi": ["warn"],
+    "space-in-parens": ["warn"]
   }
 }

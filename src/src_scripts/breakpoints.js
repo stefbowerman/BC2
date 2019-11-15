@@ -21,11 +21,13 @@ const events = {
 * @return {int} - pixel width
 */
 function getBreakpointMinWidth(key) {
-  if (!key) return;
+  let w;
 
   if (_breakpointMinWidths.hasOwnProperty(key)) {
-    return _breakpointMinWidths[key];
+    w = _breakpointMinWidths[key];
   }
+
+  return w;
 }
 
 /**
@@ -36,11 +38,11 @@ function getBreakpointMinWidth(key) {
 * @return {undefined|string} foundKey
 */
 function getBreakpointMinWidthKeyForWidth(w) {
-  w = w != undefined ? w : $window.width();
+  w = w !== undefined ? w : $window.width();
   
-  var foundKey;
+  let foundKey;
 
-  $.each(_breakpointMinWidths, function(k, bpMinWidth) {
+  $.each(_breakpointMinWidths, (k, bpMinWidth) => {
     if (w >= bpMinWidth) {
       foundKey = k;
     }
@@ -54,28 +56,29 @@ function getBreakpointMinWidthKeyForWidth(w) {
 *
 */
 function onResize() {
-  var newWindowWidth = $window.width();
+  const newWindowWidth = $window.width();
 
-  $.each(_breakpointMinWidths, function(k, bpMinWidth) {
-    if ( (newWindowWidth >= bpMinWidth && cachedWindowWidth < bpMinWidth) || (cachedWindowWidth >= bpMinWidth && newWindowWidth < bpMinWidth) ) {
+  $.each(_breakpointMinWidths, (k, bpMinWidth) => {
+    if ((newWindowWidth >= bpMinWidth && cachedWindowWidth < bpMinWidth) || (cachedWindowWidth >= bpMinWidth && newWindowWidth < bpMinWidth)) {
+      const bpMinWidthKey = getBreakpointMinWidthKeyForWidth(newWindowWidth);
+      const e = $.Event(events.BREAKPOINT_CHANGE, { bpMinWidthKey });
       
-      var bpMinWidthKey = getBreakpointMinWidthKeyForWidth(newWindowWidth);
-      var e = $.Event(events.BREAKPOINT_CHANGE, { bpMinWidthKey: bpMinWidthKey });
       $window.trigger(e);
-      return false;
 
+      return false;
     }
   });
 
   cachedWindowWidth = $window.width();
-}
 
+  return true
+}
 
 $(() => {
   $window.on('resize', $.throttle(20, onResize) );
 });  
 
 export {
-  getBreakpointMinWidth as getBreakpointMinWidth,
-  getBreakpointMinWidthKeyForWidth as getBreakpointMinWidthKeyForWidth
-}
+  getBreakpointMinWidth,
+  getBreakpointMinWidthKeyForWidth
+};

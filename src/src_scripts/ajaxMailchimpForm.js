@@ -43,7 +43,6 @@ const responses = {
 
 
 export default class AJAXMailchimpForm {
-
  /**
   * AJAX MailChimp Form Contructor
   *

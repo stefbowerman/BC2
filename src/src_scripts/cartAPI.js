@@ -1,6 +1,6 @@
 import ShopifyAPI from './shopifyAPI';
 import Currency from './currency';
-import Images from './images';
+import { getSizedImageUrl } from './images';
 import GiftWithPurchase from './giftWithPurchase';
 
 // Proxy to the shopify AJAX API calls 
@@ -95,7 +95,7 @@ class CartAPI {
     let gwpIndex = -1;
 
     cart.items.map((item, index) => {
-      item.image        = Images.getSizedImageUrl(item.image, '250x');
+      item.image        = getSizedImageUrl(item.image, '250x');
       item.line_price   = Currency.formatMoney(item.line_price, theme.moneyFormat);
       item.line_price   = Currency.stripZeroCents(item.line_price);
       item.unavailable  = !item.available;
