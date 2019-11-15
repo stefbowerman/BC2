@@ -95,7 +95,7 @@ class CartAPI {
     let gwpIndex = -1;
 
     cart.items.map((item, index) => {
-      item.image        = getSizedImageUrl(item.image, '250x');
+      item.image        = getSizedImageUrl(item.image, '250x'); // If you update this, update the value corresponding value in product-detail-form-gallery.liquid
       item.line_price   = Currency.formatMoney(item.line_price, theme.moneyFormat);
       item.line_price   = Currency.stripZeroCents(item.line_price);
       item.unavailable  = !item.available;

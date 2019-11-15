@@ -4,7 +4,9 @@
       <div class="form-contents" data-form-contents>
         <div class="form-inputs" data-form-inputs>
           <div class="minimal-input-box">
-            <input type="email"name="EMAIL" class="minimal-input-box__input" value="" placeholder="Your Email" required="required"/>
+            {% assign input_id = 'email-input-' | append: section.id %}
+            <label for="{{ input_id }}" class="label-hidden">Enter Email</label>
+            <input type="email" name="EMAIL" class="minimal-input-box__input" value="" placeholder="Your Email" required="required" id="{{ input_id }}" />
             <button type="submit" class="minimal-input-box__submit">
               {% include 'icon-arrow-right' %}
               <span class="icon-fallback-text">Submit</span>

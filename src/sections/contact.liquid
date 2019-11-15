@@ -2,9 +2,7 @@
   <div class="layout-content-wrapper">
     <div class="container">
 
-      {% comment %}{% include 'page-header', title: section.settings.title %}{% endcomment %}
-
-      <div class="u-margin-auto" style="max-width: 580px;">
+      <div class="u-margin-auto" style="max-width: 550px;">
 
         {% form 'contact' %}
 
@@ -23,7 +21,7 @@
               {{ section.settings.form_message | default: 'Please include as much information as possible to help us in assisting you.' }}
             </div>
 
-            <br />          
+            <br />
 
             {% if form.errors %}
               <div class="alert alert-danger">
@@ -70,7 +68,7 @@
             </div>
 
             <div class="u-ta-right">
-              <input type="submit" class="btn btn-primary" value="{{ 'contact.form.send' | t }}">
+              <input type="submit" class="btn btn-primary btn-block" value="{{ 'contact.form.send' | t }}">
             </div>          
           {% endif %}
 

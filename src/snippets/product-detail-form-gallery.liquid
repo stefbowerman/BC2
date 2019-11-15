@@ -85,17 +85,38 @@
   {% endif %}
 </div>
 
-{% comment %} Preload ajax cart images {% endcomment %}
+{% comment %}
+  Preload ajax cart images
+  
+  Loop through the variants, pull the variant image if it exists otherwise fall back to the featured image
+  This is the default cart behavior
+{% endcomment %}
+{% assign load_image_sources = '' %}
+{% for variant in product.variants %}
+  {% assign cart_img_src = product.featured_image.src %}
+  {% if variant.image %}
+    {% assign cart_img_src = variant.image.src %}
+  {% endif %}
+
+  {% assign load_image_sources = load_image_sources | append: cart_img_src | append: '$$' %}
+{% endfor %}
+
+{% comment %} This tells us which images we should load {% endcomment %}
+{% assign load_images = load_image_sources | split: '$$' | uniq | join: ' ' %}
+
 {% for image in product.images %}
-  <img src="{{ image | img_url: '200x' }}" style="display: none;" />
+  {% if load_images contains image.src %}
+    {% comment %} If you update the image size, update the value corresponding value in cartAPI.js {% endcomment %}
+    <img src="{{ image | img_url: '250x' }}" style="display: none;" alt="{{ image.alt }}" />
+  {% endif %}
 {% endfor %}
 
 <div class="blowup" data-blowup>
   <div class="blowup__close">
-    <img src="{{ 'icon-close.png' | asset_url }}" />
+    <img src="{{ 'icon-close.png' | asset_url }}" alt="Close icon" />
   </div>
   <div class="blowup__scroll" data-blowup-scroll>
-    <img class="blowup__image" data-blowup-image />
+    <img class="blowup__image" data-blowup-image alt="Product image zoom" />
   </div>
   <div class="blowup__helper-text">
     Pinch to zoom &middot; Tap to close

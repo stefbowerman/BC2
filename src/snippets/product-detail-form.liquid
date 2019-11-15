@@ -280,12 +280,13 @@
               {% endfor %}
             {% endunless %}
 
-            {% comment %} Desktop Form Elements {% endcomment %}              
+            {% comment %} Desktop Form Elements {% endcomment %}
 
             <div class="desktop-form">
               {{ desktop_options_html }}
 
-              <select name="id" class="no-js" data-product-select>
+              <label class="visually-hidden" for="no-js-variant-select">Select Variant</label>
+              <select name="id" class="no-js" id="no-js-variant-select" data-product-select>
                 {% for variant in product.variants %}
                   <option
                     {% if variant == current_variant %}selected="selected"{% endif %}
@@ -376,7 +377,7 @@
       &nbsp; | &nbsp;
       <a href="{{ next_product.url }}" class="intermediate-nav__next-product-link" title="Next Product: {{ next_product.title | escape }}">
         Next Product &rarr;
-        <img src="{{ next_product.featured_image | img_url: '100x' }}" class="intermediate-nav__next-product-image" alt="{{ next_product.featured_image.alt }}" />
+        <img src="{{ next_product.featured_image | img_url: '100x' }}" class="intermediate-nav__next-product-image" alt="{{ next_product.featured_image.alt | escape }}" />
       </a>
     {% endif %}
   </div>

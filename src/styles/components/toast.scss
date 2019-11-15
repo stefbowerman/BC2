@@ -10,6 +10,7 @@
   top: 16px;
   left: 50%;
   width: 500px;
+  min-height: 36px; // Height of one line of text
   max-width: 90%;  
   max-width: calc(100% - #{$grid-gutter-width/2});
   pointer-events: none;
@@ -40,6 +41,7 @@
   position: absolute;
   top: 0;
   right: 8px;
+  font-size: 0; // Allows us to put accessibility text in there
 
   &:before {
     content: "\00d7"; // &times;

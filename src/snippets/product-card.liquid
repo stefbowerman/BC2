@@ -18,34 +18,28 @@
 {% endif %}
 {% comment %} End Defaults {% endcomment %}
 
-{% if product %}
-  
-  {% assign product_image_dimension = '1200x' %}
+{% assign product_image_dimension = '1200x' %}
 
-  <div id="product-card-{{ product.id }}" class="product-card" data-product-card>
-    <div class="product-card__contents" data-product-card-contents>
+{% if product %}
+  <div id="product-card-{{ product.id }}" class="product-card{% if product.available == false %} product-card--sold-out{% endif %}" data-product-card>
+    <a href="{{ product.url }}" class="product-card__contents" data-product-card-contents>
       {% if product.featured_image %}
         <div class="product-card__gallery">
-          <a href="{{ product.url }}">
-            {% if lazy_load %}
-              <div class="product-card__gallery-image" style="height: 0; padding-bottom: {{ product.featured_image.height | times: 100 | divided_by: product.featured_image.width | append: '%' }}" data-product-card-gallery>
-                <img data-src="{{ product.featured_image.src | img_url: product_image_dimension }}" alt="{{ product.featured_image.alt | escape }}" data-product-card-main-lazy>
-                <div class="product-card__gallery-placeholder"></div>
-              </div>
-            {% else %}
-              <div class="product-card__gallery-image" data-product-card-gallery>
-                <img src="{{ product.featured_image.src | img_url: product_image_dimension }}" alt="{{ product.featured_image.alt | escape }}">
-              </div>
-            {% endif %}
-          </a>
+          {% if lazy_load %}
+            <div class="product-card__gallery-image" style="height: 0; padding-bottom: {{ product.featured_image.height | times: 100 | divided_by: product.featured_image.width | append: '%' }}" data-product-card-gallery>
+              <img data-src="{{ product.featured_image.src | img_url: product_image_dimension }}" alt="{{ product.featured_image.alt | escape }}" data-product-card-main-lazy>
+              <div class="product-card__gallery-placeholder"></div>
+            </div>
+          {% else %}
+            <div class="product-card__gallery-image" data-product-card-gallery>
+              <img src="{{ product.featured_image.src | img_url: product_image_dimension }}" alt="{{ product.featured_image.alt | escape }}">
+            </div>
+          {% endif %}
         </div>
       {% endif %}
 
       <div class="product-card__info">
-
-        <p class="product-card__info-title">
-          <a href="{{ product.url }}" {% if product.available == false %}style="text-decoration: line-through"{% endif %}>{{ product.title }}</a>
-        </p>
+        <p class="product-card__info-title">{{ product.title }}</p>
 
         {% if product.available == false %}
           <p class="u-fs-xsmall">{{ 'products.product.sold_out' | t }}</p>
@@ -73,8 +67,6 @@
           {% endfor %}        
         {% endif %}
       </div>
-    </div>
-
+    </a>
   </div>
-
 {% endif %}

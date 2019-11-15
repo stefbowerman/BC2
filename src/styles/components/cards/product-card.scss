@@ -6,6 +6,12 @@
   height: 100%;
   max-width: 500px;
   margin: 0 auto;
+
+  &.product-card--sold-out {}
+}
+
+.product-card__contents {
+  display: block;
 }
 
 .product-card__gallery {
@@ -78,6 +84,10 @@ html:not(.touchevents) {
 
 .product-card__info-title {
   font-weight: bold;
+
+  .product-card--sold-out & {
+    text-decoration: line-through;
+  }
 }
 
 .product-card__info-price {

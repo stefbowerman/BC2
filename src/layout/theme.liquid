@@ -111,7 +111,7 @@
 
     <script type="text/javascript">document.body.className += ' is-loading';</script>
 
-    <a class="in-page-link visually-hidden skip-link" href="#MainContent">{{ 'general.accessibility.skip_to_content' | t }}</a>
+    <a class="in-page-link visually-hidden skip-link" href="#view-container">{{ 'general.accessibility.skip_to_content' | t }}</a>
 
     <div id="loader" class="loader">
       <div class="loader__icon"></div>
@@ -135,8 +135,7 @@
   </div>
 
   {% comment %} Preload CSS cursors {% endcomment %}
-  <img src="{{ 'cursor-close.png' | asset_url }})" style="display: none !important" />  
-  <img src="{{ 'icon-close.png' | asset_url }})" style="display: none !important" />  
-
+  <img src="{{ 'cursor-close.png' | asset_url }})" style="display: none !important" alt="" />
+  <img src="{{ 'icon-close.png' | asset_url }})" style="display: none !important" alt="" />
 </body>
 </html>
