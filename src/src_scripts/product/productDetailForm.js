@@ -74,7 +74,7 @@ export default class ProductDetailForm {
     };
 
     this.initialize = function() {
-      if(ready) {
+      if (ready) {
         return;
       }
 
@@ -207,7 +207,7 @@ export default class ProductDetailForm {
     var $comparePrice = $(selectors.comparePrice, this.$container);
     var $compareEls   = $comparePrice.add( $(selectors.comparePriceText, this.$container) );
 
-    if(variant) {
+    if (variant) {
       $productPrice.html(Currency.stripZeroCents(Currency.formatMoney(variant.price, theme.moneyFormat)));
 
       if (variant.compare_at_price > variant.price) {
@@ -227,12 +227,12 @@ export default class ProductDetailForm {
    * @param {Object} variant - Shopify variant object
    */
   updateVariantOptionValues(variant) {
-    if(variant) {
+    if (variant) {
       // Loop through all the options and update the option value
       for (let i = 1; i <= 3; i++) {
         const variantOptionValue = variant['option' + i];
 
-        if(!variantOptionValue) break; // Break if the product doesn't have an option at this index
+        if (!variantOptionValue) break; // Break if the product doesn't have an option at this index
 
         // Since we are finding the variantOptionValueUI based on the *actual* value, we need to scope to the correct list
         // As some products can have the same values for different variant options (waist + inseam both use "32", "34", etc..)
@@ -261,7 +261,7 @@ export default class ProductDetailForm {
    * @param {Object} variant - Shopify variant object
    */
   // updateOptionValuesForVariant(variant) {
-  //   if(variant) {
+  //   if (variant) {
 
   //     const selectedOption1 = variant.option1;
   //     const selectedOption2 = variant.option2;
@@ -271,7 +271,7 @@ export default class ProductDetailForm {
   //     for (var i = 1; i <= 3; i++) {
   //       var variantOptionValue = variant['option' + i];
 
-  //       if(!variantOptionValue) break; // Break if the product doesn't have an option at this index
+  //       if (!variantOptionValue) break; // Break if the product doesn't have an option at this index
 
   //       // Since we are finding the variantOptionValueUI based on the *actual* value, we need to scope to the correct list
   //       // As some products can have the same values for different variant options (waist + inseam both use "32", "34", etc..)
@@ -288,7 +288,7 @@ export default class ProductDetailForm {
   //     const p = this.productSingleObject;
 
   //     // Product has a second option
-  //     if(p.options[1]) {
+  //     if (p.options[1]) {
 
   //       console.log('selected option - ' + variant.option1);
 
@@ -304,10 +304,10 @@ export default class ProductDetailForm {
   //           // console.log('checking variant with option 1 - ' + _v.option1);
   //           // console.log('checking variant with option 2 - ' + _v.option2);
 
-  //           if(_v.option1 == variant.option1 && _v.option2 == secondOptionValue) {
+  //           if (_v.option1 == variant.option1 && _v.option2 == secondOptionValue) {
   //             // console.log('found a matching variant');
   //             // console.log(_v);
-  //             if(_v.available) {
+  //             if (_v.available) {
   //               valueHasAvailableVariants = true;
   //             }
   //             else {
@@ -316,7 +316,7 @@ export default class ProductDetailForm {
   //           }
   //         }
 
-  //         if(valueHasAvailableVariants == false) {
+  //         if (valueHasAvailableVariants == false) {
   //           console.log('disable UI for - ' + secondOptionValue);
   //           $('[data-variant-option-value="'+ secondOptionValue +'"]').addClass('is-disabled');
   //         }
@@ -325,7 +325,7 @@ export default class ProductDetailForm {
   //         }
 
   //         // product has a third option
-  //         if(p.options[2]) {
+  //         if (p.options[2]) {
 
   //           console.log('selected secondary option - ' + variant.option2);
   //           // Loop through each value for the third option
@@ -339,10 +339,10 @@ export default class ProductDetailForm {
   //               // console.log('checking variant with option 2 - ' + __v.option2);
   //               // console.log('checking variant with option 3 - ' + __v.option3);
 
-  //               if(__v.option1 == variant.option1 && __v.option2 == variant.option2 && __v.option3 == thirdOptionValue) {
+  //               if (__v.option1 == variant.option1 && __v.option2 == variant.option2 && __v.option3 == thirdOptionValue) {
   //                 console.log('found a matching variant');
   //                 console.log(_v);
-  //                 if(__v.available) {
+  //                 if (__v.available) {
   //                   _valueHasAvailableVariants = true;
   //                 }
   //                 else {
@@ -351,7 +351,7 @@ export default class ProductDetailForm {
   //               }
   //             }
 
-  //             if(_valueHasAvailableVariants == false) {
+  //             if (_valueHasAvailableVariants == false) {
   //               console.log('disable UI for - ' + thirdOptionValue);
   //               $('[data-variant-option-value="'+ thirdOptionValue +'"]').addClass('is-disabled');
   //             }
@@ -373,7 +373,7 @@ export default class ProductDetailForm {
    * @param {Object} variant - Shopify variant object
    */
   updateGalleries(variant) {
-    if(!variant || this.$galleries.length == 1) return;
+    if (!variant || this.$galleries.length == 1) return;
 
     const self = this;
     const $activeGalleries = this.$galleries.filter(`.${classes.galleryActive}`);
@@ -396,7 +396,7 @@ export default class ProductDetailForm {
           
           // Only scroll to the top if we're on a larger screen with fixed elements
           // Otherwise it's annoying on mobile
-          if(window.innerWidth > this.desktopMinWidth) {
+          if (window.innerWidth > this.desktopMinWidth) {
             $window.scrollTop(0);  
           }
           
@@ -464,7 +464,7 @@ export default class ProductDetailForm {
     const $option = $(e.currentTarget);
     const $list = $option.parents(selectors.variantOptionValueList);
 
-    if($option.hasClass(classes.variantOptionValueDisabled) || $option.attr('disabled') != undefined) return;
+    if ($option.hasClass(classes.variantOptionValueDisabled) || $option.attr('disabled') != undefined) return;
 
     $list.find(selectors.variantOptionValue).not($option).addClass(classes.variantOptionValueNotHovered);
   }
@@ -476,17 +476,17 @@ export default class ProductDetailForm {
   }
 
   onResize(e) {
-    if(window.innerWidth >= this.zoomMinWidth) {
+    if (window.innerWidth >= this.zoomMinWidth) {
       this.productImageTouchZoomController.disable();
       this.productImageDesktopZoomController.enable();
     }
     else {
-      if(Modernizr && Modernizr.touchevents) {
+      if (Modernizr && Modernizr.touchevents) {
         this.productImageTouchZoomController.enable();
       }
     }
 
-    if(window.innerWidth < this.stickyMaxWidth) {
+    if (window.innerWidth < this.stickyMaxWidth) {
       this.$productDetailForm.css('margin-bottom', $('.sticky-form').outerHeight());
     }
     else {

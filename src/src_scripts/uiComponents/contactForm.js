@@ -14,7 +14,7 @@ export default class ContactForm {
   constructor(form) {
     this.$form = $(form);
 
-    if(!this.$form.is(selectors.form)) {
+    if (!this.$form.is(selectors.form)) {
       console.warn('Valid form element required to initialize');
       return;
     }
@@ -40,17 +40,17 @@ export default class ContactForm {
 
     let valid = true;
 
-    if(this.$inputEmail.val().trim().length == 0) {
+    if (this.$inputEmail.val().trim().length == 0) {
       this.$inputEmail.parents(selectors.formGroup).addClass(classes.formGroupError);
       valid = false;
     }
 
-    if(this.$inputMessage.val().trim().length == 0) {
+    if (this.$inputMessage.val().trim().length == 0) {
       this.$inputMessage.parents(selectors.formGroup).addClass(classes.formGroupError);
       valid = false;
     }
 
-    if(valid == false) {
+    if (valid == false) {
       return;
     }
 

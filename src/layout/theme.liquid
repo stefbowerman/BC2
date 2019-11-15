@@ -27,7 +27,7 @@
       &ndash; {{ shop.name }}
     {% endunless %}
   {% endcapture %}
-  <title>{{ seo_title }}</title>
+  <title>{{- seo_title -}}</title>
 
   {% if page_description %}
     <meta name="description" content="{{ page_description | escape }}">
@@ -50,6 +50,38 @@
       moneyFormat: {{ shop.money_format | json }}
     };
   </script>
+
+  {% comment %} Do a check for Gift with purchase {% endcomment %}
+  {% assign gwp_variant = false %}
+  {% assign gwp_amount = false %}
+
+  {% if settings.gwp_amount != blank %}
+    {% assign gwp_amount_num = settings.gwp_amount | plus: 0 %}
+    {% if gwp_amount_num > 0 %}
+      {% assign gwp_amount = gwp_amount_num %}
+    {% endif %}
+  {% endif %}
+
+  {% if settings.gwp_product != blank %}
+    {% assign gwp_product = all_products[settings.gwp_product] %}
+
+    {% comment %} GWP product needs to: 1) have a single variant that is free and 2) not belong to any collection {% endcomment %}
+    {% if gwp_product.has_only_default_variant and
+          gwp_product.first_available_variant.price == 0 and
+          gwp_product.collections.size == 0
+    %}
+      {% assign gwp_variant = gwp_product.first_available_variant.id %}
+    {% endif %}
+  {% endif %}
+
+  {% if gwp_variant and gwp_amount %}
+    <script type="text/javascript">
+      window.GWP = {
+        id: {{ gwp_variant }},
+        amount: {{ gwp_amount }}
+      }
+    </script>
+  {% endif %}
 
   {% if template.directory == 'customers' %}
     <!--[if (gt IE 9)|!(IE)]><!--><script src="{{ 'shopify_common.js' | shopify_asset_url }}" defer="defer"></script><!--<![endif]-->

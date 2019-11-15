@@ -22,7 +22,7 @@ export default class NavSection extends BaseSection {
     this.$submenuTriggers = $(selectors.submenuTrigger, this.$container);
     this.$submenus = $(selectors.submenu, this.$container);
 
-    if(Modernizr && Modernizr.touchevents) {
+    if (Modernizr && Modernizr.touchevents) {
       this.$menu.on('click', selectors.submenuTrigger, this.onSubmenuTriggerClick.bind(this));
     }
     else {
@@ -35,8 +35,8 @@ export default class NavSection extends BaseSection {
     this.$menu.find('a').each((i, el) => {
       const $el = $(el);
       const href = $el.attr('href');
-      // if(href == url || url.indexOf(href) > -1) {
-      if(href == url) {
+      // if (href == url || url.indexOf(href) > -1) {
+      if (href == url) {
         $el.addClass(classes.menuLinkActive);
       }
       else {
@@ -67,7 +67,7 @@ export default class NavSection extends BaseSection {
   onMenuLinkMouseenter(e) {
     const $link = $(e.currentTarget);
     this.$submenus.removeClass(classes.submenuActive);
-    if($link.is(selectors.submenuTrigger)) {
+    if ($link.is(selectors.submenuTrigger)) {
       this.activateSubmenu($link.data('submenu-trigger'));
     }
     this.$menuLinks.removeClass(classes.menuLinkNotHovered);

@@ -56,7 +56,7 @@ export default class AppRouter {
 
     this.router.on('/collections/:slug', (params, query) => {
       var url = `/collections/${params.slug}`;
-      if(query) {
+      if (query) {
         url += `?${query}`;
       }
       this.doRoute(url, 'collection');
@@ -76,10 +76,10 @@ export default class AppRouter {
 
     this.router.on('/pages/:slug', (params) => {
       // @TODO - What to do about this hmmm
-      if(params.slug.indexOf('contact') > -1) {
+      if (params.slug.indexOf('contact') > -1) {
         this.doRoute(`/pages/${params.slug}`, 'contact');
       }
-      else if(params.slug.indexOf('stockists') > -1) {
+      else if (params.slug.indexOf('stockists') > -1) {
         this.doRoute(`/pages/${params.slug}`, 'stockists');
       }      
       else {
@@ -109,7 +109,7 @@ export default class AppRouter {
     const self = this;
     const viewConstructor = this.viewConstructors[type] || BaseView;
 
-    if(firstRoute) {
+    if (firstRoute) {
       this.currentView = new viewConstructor($viewContainer);   
       firstRoute = false;
       return;

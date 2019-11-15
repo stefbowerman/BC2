@@ -31,7 +31,7 @@ export default class ProductImageDesktopZoomController {
 
     this.$container = $el;
 
-    if(!$el) {
+    if (!$el) {
       console.warn('['+this.name+'] - $el required to initialize');
       return;
     }
@@ -43,7 +43,7 @@ export default class ProductImageDesktopZoomController {
   }
 
   enable() {
-    if(this.enabled) return;
+    if (this.enabled) return;
 
     this.$gallery.on(this.events.CLICK, this.onGalleryClick.bind(this));
     this.setCursors('in');
@@ -52,7 +52,7 @@ export default class ProductImageDesktopZoomController {
   }
 
   disable() {
-    if(!this.enabled) return;
+    if (!this.enabled) return;
 
     this.$gallery.off(this.events.CLICK, this.onGalleryClick.bind(this));
     this.setCursors();
@@ -61,7 +61,7 @@ export default class ProductImageDesktopZoomController {
   }
 
   zoomIn(src) {
-    if(this.isZoomed) return;
+    if (this.isZoomed) return;
 
     this.$gallery.addClass(classes.isZoomed);
     this.setCursors('out');
@@ -69,7 +69,7 @@ export default class ProductImageDesktopZoomController {
   }
 
   zoomOut() {
-    if(!this.isZoomed) return;
+    if (!this.isZoomed) return;
 
     this.$gallery.removeClass(classes.isZoomed);
 
@@ -79,10 +79,10 @@ export default class ProductImageDesktopZoomController {
 
   setCursors(type) {
     const $images = this.$gallery.find('img');
-    if(type == 'in') {
+    if (type == 'in') {
       $images.css('cursor', 'zoom-in');
     }
-    else if(type == 'out') {
+    else if (type == 'out') {
       $images.css('cursor', 'zoom-out');
     }
     else {

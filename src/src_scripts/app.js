@@ -56,21 +56,21 @@ const $body = $(document.body);
   $body.addClass('is-loaded').removeClass('is-loading');
 
   // Stop here...no AJAX navigation inside the theme editor
-  if(Shopify && Shopify.designMode) {
+  if (Shopify && Shopify.designMode) {
     return;
   }  
 
-  if(window.history && window.history.pushState) {
+  if (window.history && window.history.pushState) {
     $body.on('click', 'a', (e) => {
-      if(e.isDefaultPrevented()) return;
+      if (e.isDefaultPrevented()) return;
 
       const $link = $(e.currentTarget);
       
       const url = $link.attr('href');
       
-      if(Utils.isExternal(url) || url == '#' || url.indexOf('/checkout') > -1) return;
+      if (Utils.isExternal(url) || url == '#' || url.indexOf('/checkout') > -1) return;
 
-      if(appRouter.isTransitioning) return false;
+      if (appRouter.isTransitioning) return false;
 
       e.preventDefault();
       appRouter.navigate(url);
@@ -87,7 +87,7 @@ const $body = $(document.body);
     const url = e.currentTarget.getAttribute('href');
     const urlHash = Math.abs(Utils.hashFromString(url));
 
-    if(Utils.isExternal(url) || url == '#' || prefetchCache.hasOwnProperty(urlHash)) return;
+    if (Utils.isExternal(url) || url == '#' || prefetchCache.hasOwnProperty(urlHash)) return;
 
     let linkInteractivityTimeout = setTimeout(() => {
       $.get(url, () => {

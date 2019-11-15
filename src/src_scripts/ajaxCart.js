@@ -1,8 +1,7 @@
-import ShopifyAPI from './shopifyAPI';
+import CartAPI from './cartAPI';
 import Utils from './utils';
 import Currency from './currency';
 import Images from './images';
-import GiftWithPurchase from './giftWithPurchase';
 import Toast from './uiComponents/toast';
 
 const $window = $(window);
@@ -56,10 +55,6 @@ export default class AJAXCart {
     };
 
     let initialized = false;
-    const settings = {
-      gwpVariantId: null,
-      gwpAmount: 99999
-    };
 
     this.$el                = $(selectors.container);
     this.$backdrop          = null;
@@ -72,14 +67,11 @@ export default class AJAXCart {
    /**
     * Initialize the cart
     *
-    * @param {object} options - see `settings` variable above
     */
     this.init = function(options) {
-      if(initialized) return;
+      if (initialized) return;
 
-      this.settings = $.extend(settings, options);
-
-      if(!$(selectors.template).length){
+      if (!$(selectors.template).length){
         console.warn('['+this.name+'] - Handlebars template required to initialize');
         return;
       }
@@ -88,7 +80,6 @@ export default class AJAXCart {
       this.$cartBadgeCount  = $(selectors.cartBadgeCount);
       this.$verifyContainer = $(selectors.verifyContainer);  
       this.toast            = new Toast($(selectors.toast));
-      this.giftWithPurchase = new GiftWithPurchase(this.settings.gwpVariantId, this.settings.gwpAmount)
 
       // Compile this once during initialization
       this.template = Handlebars.compile($(selectors.template).html());
@@ -108,7 +99,7 @@ export default class AJAXCart {
       $window.on(this.events.NEEDS_UPDATE, this.onNeedsUpdate.bind(this));
 
       // Get the cart data when we initialize the instance
-      ShopifyAPI.getCart().then(cart => this.buildCart(cart));
+      CartAPI.getCart().then(cart => this.renderCart(cart));
 
       initialized = true;
 
@@ -125,7 +116,7 @@ export default class AJAXCart {
     $body.on('submit', selectors.addForm, (e) => {
       e.preventDefault();
 
-      if(this.requestInProgress) return;
+      if (this.requestInProgress) return;
 
       const $submitButton = $(e.target).find(selectors.addToCart);
       const $submitButtonText = $submitButton.find(selectors.addToCartText);
@@ -134,33 +125,20 @@ export default class AJAXCart {
       $submitButton.prop('disabled', true);
       $submitButtonText.html(theme.strings.adding);
 
-      const resetButtons = () => {
-        $submitButton.prop('disabled', false);
-        $submitButtonText.html(theme.strings.addToCart);
-      }
-
-      const onDone = (cart) => {
-        resetButtons()
-        this.onItemAddSuccess(cart)
-      }
-
       this._onRequestStart();
 
-      ShopifyAPI.addItemFromForm($(e.target))
-        .done((cart) => {
-          // If the cart needs the gift, make one more request and *then* go through the onDone function
-          if(this.giftWithPurchase.cartNeedsGift(cart)) {
-            ShopifyAPI.addVariant(this.giftWithPurchase.variantId, 1).then(cart => onDone(cart));
-          }
-          else {
-            onDone(cart)
-          }
+      CartAPI.addItemFromForm($(e.target))
+        .done(cart => {
+          this.onItemAddSuccess(cart)
         })
-        .fail((cart) => {
-          resetButtons()
-          this._onRequestFinish(cart);
+        .fail(cart => {
           this.onItemAddFail(cart);
-        });
+        })
+        .always(() => {
+          this._onRequestFinish();
+          $submitButton.prop('disabled', false);
+          $submitButtonText.html(theme.strings.addToCart);
+        })
     });
   }
 
@@ -196,7 +174,7 @@ export default class AJAXCart {
     this.$el.addClass(classes.cartRequestInProgress);
   }
 
-  _onRequestFinish(cart) {
+  _onRequestFinish() {
     this.requestInProgress = false;
     this.$el.removeClass(classes.cartRequestInProgress);
   }
@@ -204,7 +182,7 @@ export default class AJAXCart {
   addBackdrop(callback) {
     const cb = callback || (() => {});
 
-    if(this.stateIsOpen) {
+    if (this.stateIsOpen) {
       this.$backdrop = $(document.createElement('div'));
       this.$backdropCursor = $(document.createElement('div'));
 
@@ -239,7 +217,7 @@ export default class AJAXCart {
   removeBackdrop(callback) {
     const cb = callback || (() => {});
 
-    if(!this.stateIsOpen && this.$backdrop) {
+    if (!this.stateIsOpen && this.$backdrop) {
       this.$backdrop.one(this.transitionEndEvent, () => {
         this.$backdrop.off('mousemove mouseenter mouseleave');
         this.$backdrop && this.$backdrop.remove();
@@ -263,7 +241,7 @@ export default class AJAXCart {
   * @param {Object} cart - JSON representation of the cart.
   */
   onItemAddSuccess(cart){
-    this.buildCart(cart);
+    this.renderCart(cart);
     this.open();
   }
 
@@ -295,63 +273,23 @@ export default class AJAXCart {
     // console.log('['+this.name+'] - onCartDestroy');
   }
 
+ /**
+  * Callback for window event signifying that the ajax cart needs to update
+  * If the event has a property called "cart" we'll use that to render
+  * Otherwise we'll hit the API and get a fresh copy
+  */
   onNeedsUpdate(e) {
-    ShopifyAPI.getCart().then(cart => this.buildCart(cart));
+    if (e.cart) {
+      this.renderCart(e.cart)
+    }
+    else {
+      CartAPI.getCart().then(cart => {
+        this.renderCart(cart)
+      });
+    }
   }
 
- /**
-  * Builds the HTML for the ajax cart.
-  * Modifies the JSON cart for consumption by our handlebars template
-  *
-  * @param {object} cart - JSON representation of the cart.  See https://help.shopify.com/themes/development/getting-started/using-ajax-api#get-cart
-  * @return ??
-  */
-  buildCart(cart) {
-    // All AJAX Cart requests finish with rebuilding the cart
-    // So this is a good place to add this code
-    this._onRequestFinish();
-
-    // Make adjustments to the cart object contents before we pass it off to the handlebars template
-    cart.total_price = Currency.formatMoney(cart.total_price, theme.moneyFormat);
-    cart.total_price = Currency.stripZeroCents(cart.total_price);
-    cart.has_unavailable_items = false;
-
-    cart.items.map(function(item) {
-      item.image        = Images.getSizedImageUrl(item.image, '250x');
-      item.price        = Currency.formatMoney(item.price, theme.moneyFormat);
-      item.price        = Currency.stripZeroCents(item.price);
-      item.unavailable  = !item.available;
-      item.has_multiple = (item.quantity > 1);
-
-      if(item.unavailable) {
-        cart.has_unavailable_items = true;
-      }
-
-      const product = item.product
-
-      // Adjust the item's variant options to add "name" and "value" properties
-      if(product) {
-        for (var i = item.variant_options.length - 1; i >= 0; i--) {
-          let name  = product.options[i];
-          let value = item.variant_options[i];
-
-          item.variant_options[i] = { name, value };
-
-          // Don't show this info if it's the default variant that Shopify creates
-          if(value == "Default Title") {
-            delete item.variant_options[i];
-          }
-        }
-        
-        item.url = `/products/${product.handle}`;
-      }
-      else {
-        delete item.variant_options; // skip it and use the variant title instead
-      }
-
-      return item;
-    });
-
+  renderCart(cart) {
     $window.trigger(this.events.DESTROY);
 
     this.$el.empty().append(this.template(cart));
@@ -369,7 +307,7 @@ export default class AJAXCart {
   * @param {Object} cart - JSON representation of the cart.
   */
   updateCartCount(cart) {
-    if(cart.item_count) {
+    if (cart.item_count) {
       this.$cartBadge.text(`${cart.item_count} ${cart.item_count == 1 ? 'Item' : 'Items'}`);
       this.$cartBadge.addClass(classes.cartBadgeHasItems);
     }
@@ -385,7 +323,7 @@ export default class AJAXCart {
   * @param {event} e - Submit Event
   */
   onFormSubmit(e) {
-    if(!this.cartIsVerified && this.$verifyContainer.find('.modal').length) {
+    if (!this.cartIsVerified && this.$verifyContainer.find('.modal').length) {
       this.$verifyContainer.find('.modal').modal('show');
       return false;
     }
@@ -405,22 +343,20 @@ export default class AJAXCart {
   onItemRemoveClick(e) {
     e.preventDefault();
 
-    if(this.requestInProgress) return;
-
-    const attrs = this._getItemRowAttributes(e.target);
-    const data = {id: attrs.key, quantity: 0};
-    const gwpData = {id: this.giftWithPurchase.variantId, quantity: 0}
+    if (this.requestInProgress) return;
 
     this._onRequestStart();
 
-    ShopifyAPI.changeLineItem(data).then((cart) => {
-      if(this.giftWithPurchase.cartContainsGiftButDoesntQualify(cart)) {
-        ShopifyAPI.changeLineItem(gwpData).then(cart => this.buildCart(cart))
-      }
-      else {
-        this.buildCart(cart)
-      }
-    });
+    CartAPI.changeLineItem({
+      id: this._getItemRowAttributes(e.target).key,
+      quantity: 0
+    })
+      .then(cart => {
+        this.renderCart(cart)
+      })
+      .always(() => {
+        this._onRequestFinish()
+      })
   }
 
  /**
@@ -475,7 +411,7 @@ export default class AJAXCart {
   * Code for opening the cart
   */
   open() {
-    if(this.stateIsOpen) return;
+    if (this.stateIsOpen) return;
 
     this.stateIsOpen = true;
 
@@ -489,7 +425,7 @@ export default class AJAXCart {
   * Code for closing the cart
   */
   close() {
-    if(!this.stateIsOpen) return;
+    if (!this.stateIsOpen) return;
 
     this.stateIsOpen = false;
 

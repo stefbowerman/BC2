@@ -21,7 +21,7 @@ export default class BaseSection {
   }
 
   onShopifyEvent(e) {
-    if(e.detail.sectionId != this.id.toString()) {
+    if (e.detail.sectionId != this.id.toString()) {
       return;
     }
 

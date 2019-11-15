@@ -1,6 +1,12 @@
 {% assign cart_has_unavailable_items = false %}
+{% assign cart_item_count = 0 %}
+
 {% capture cart_body %}
   {% for item in cart.items %}
+
+    {% if item.product.handle == settings.gwp_product %}
+      {% continue %}
+    {% endif %}
 
     {% assign available = true %}
     {% if item.variant.available == false %}
@@ -23,7 +29,6 @@
           </div>
 
           <ul class="list-unstyled">
-
             {% for option in item.product.options %}
               {% assign option_key = 'option' | append: forloop.index %}
               {% assign option_val = item.variant[option_key] %}
@@ -48,7 +53,7 @@
             {% endunless %}
             <li>Qty: {{ item.quantity }}</li>
             <li>
-              <a href="/cart/change?line={{ forloop.index }}&amp;quantity=0" class="secondary-link cart-list__item-details-remove" data-item-remove-link>
+              <a href="/cart/change?line={{ forloop.index }}&amp;quantity=0" class="secondary-link cart-list__item-details-remove" data-item-remove-link="{{ item.key }}">
                 → Remove <span class="hidden-xs hidden-sm">Item</span>
               </a>
             </li>
@@ -57,10 +62,10 @@
       </div>            
       <div class="cart-list__col-subtotal">{{ item.line_price | money_without_trailing_zeros }}</div>
     </div>
+
+    {% assign cart_item_count = cart_item_count | plus: item.quantity %}
   {% endfor %}
 {% endcapture %}
-
-
 
 
 <div data-section-id="{{ section.id }}" data-section-type="cart">
@@ -68,14 +73,13 @@
     <div class="container">
       <div style="max-width: 560px; margin: 0 auto;">
 
-        {% if cart.item_count > 0 %}
+        {% if cart_item_count > 0 %}
 
           {% if cart_has_unavailable_items %}
             <div class="alert u-ta-center">{{ 'cart.general.unavailable_message' | t }}</div>
           {% endif %}
 
           <form action="/cart" method="post" novalidate data-cart-form>
-
             <div class="cart-list">
               <div class="cart-list__header">
                 <div class="cart-list__col-product">{{ 'cart.label.product' | t }}</div>
@@ -85,7 +89,6 @@
                 {{ cart_body }}
               </div>
               <div class="cart-list__footer">
-
                 <div class="cart-list__footer-row">
                   <p class="clearfix u-fw-bold">
                     <span style="float: left;">{{ 'cart.general.subtotal' | t }}</span>

@@ -21,9 +21,9 @@ const events = {
 * @return {int} - pixel width
 */
 function getBreakpointMinWidth(key) {
-  if(!key) return;
+  if (!key) return;
 
-  if(_breakpointMinWidths.hasOwnProperty(key)) {
+  if (_breakpointMinWidths.hasOwnProperty(key)) {
     return _breakpointMinWidths[key];
   }
 }
@@ -41,7 +41,7 @@ function getBreakpointMinWidthKeyForWidth(w) {
   var foundKey;
 
   $.each(_breakpointMinWidths, function(k, bpMinWidth) {
-    if(w >= bpMinWidth) {
+    if (w >= bpMinWidth) {
       foundKey = k;
     }
   });
@@ -57,7 +57,7 @@ function onResize() {
   var newWindowWidth = $window.width();
 
   $.each(_breakpointMinWidths, function(k, bpMinWidth) {
-    if( (newWindowWidth >= bpMinWidth && cachedWindowWidth < bpMinWidth) || (cachedWindowWidth >= bpMinWidth && newWindowWidth < bpMinWidth) ) {
+    if ( (newWindowWidth >= bpMinWidth && cachedWindowWidth < bpMinWidth) || (cachedWindowWidth >= bpMinWidth && newWindowWidth < bpMinWidth) ) {
       
       var bpMinWidthKey = getBreakpointMinWidthKeyForWidth(newWindowWidth);
       var e = $.Event(events.BREAKPOINT_CHANGE, { bpMinWidthKey: bpMinWidthKey });

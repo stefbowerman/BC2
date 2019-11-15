@@ -1,30 +1,4 @@
-{% assign gwp_variant = false %}
-{% assign gwp_amount = false %}
-
-{% if settings.gwp_amount != blank %}
-  {% assign gwp_amount_check = settings.gwp_amount | plus: 0 %}
-  {% if gwp_amount_check > 0 %}
-    {% assign gwp_amount = gwp_amount_check %}
-  {% endif %}
-{% endif %}
-
-{% if settings.gwp_product != blank %}
-  {% assign gwp_product = all_products[settings.gwp_product] %}
-
-  {% comment %} GWP product needs to: 1) have a single variant that is free and 2) not belong to any collection {% endcomment %}
-  {% if gwp_product.has_only_default_variant and
-        gwp_product.first_available_variant.price == 0 and
-        gwp_product.collections.size == 0
-  %}
-    {% assign gwp_variant = gwp_product.first_available_variant.id %}
-  {% endif %}
-{% endif %}
-
-<div data-section-id="{{ section.id }}"
-     data-section-type="ajax-cart"
-     {% if gwp_variant %}data-gwp-variant="{{ gwp_variant }}"{% endif %}
-     {% if gwp_amount %}data-gwp-amount="{{ gwp_amount }}"{% endif %}
->
+<div data-section-id="{{ section.id }}" data-section-type="ajax-cart">
   <div class="ajax-cart-container" data-ajax-cart-container></div>
   <div data-cart-verify-modal-container></div>
   <div class="toast" data-ajax-cart-toast>
@@ -54,7 +28,7 @@
                 <img src="{{ image }}" class="ajax-cart__item-image">
                 <div class="ajax-cart__item-info">
                   <div class="ajax-cart__item-header">
-                    <span class="ajax-cart__item-price">{{ price }}</span>
+                    <span class="ajax-cart__item-price">{{ line_price }}</span>
                     <a href="{{ url }}" class="ajax-cart__item-title">{{ product_title }}</a>
                   </div>
                   <ul class="ajax-cart__item-options">
@@ -72,7 +46,7 @@
                       {{/if}}
                     {{/unless}}
                     <li><span class="ajax-cart__item-qty">Qty: {{ quantity }}</span></li>
-                    <li style="text-decoration: none;">
+                    <li>
                       <a href="#" class="ajax-cart__item-remove" data-ajax-cart-item-remove>→ Remove Item</a>
                     </li>
                   </ul>
@@ -130,7 +104,7 @@
                 <div class="verify-row">
                   <img src="{{ image }}" class="verify-row__image">
                   <div class="verify-row__content">
-                    <div class="verify-row__price">{{ price }}</div>                    
+                    <div class="verify-row__price">{{ line_price }}</div>
                     <div class="verify-row__title">{{ product_title }}{{#if has_multiple}} &times; <strong>{{ quantity }}</strong>{{/if}}</div>
                     {{#unless has_only_default_variant}}
                       <ul class="list-unstyled">

@@ -83,7 +83,7 @@ export default class AJAXMailchimpForm {
     this.$submit  = this.$form.find('[type="submit"]');
     this.settings = $.extend({}, defaults, options);
 
-    if(this.$input.attr('name') != "EMAIL") {
+    if (this.$input.attr('name') != "EMAIL") {
       console.warn('['+this.name+'] - Email input *must* have attribute [name="EMAIL"]');
     }
 
@@ -140,7 +140,7 @@ export default class AJAXMailchimpForm {
   }
 
   onBeforeSend() {
-    if(this.settings.onBeforeSend() == false) {
+    if (this.settings.onBeforeSend() == false) {
       return false;
     }
 

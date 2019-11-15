@@ -39,7 +39,7 @@ export default class ProductImageTouchZoomController {
 
     this.$container = $el;
 
-    if(!$el) {
+    if (!$el) {
       console.warn('['+this.name+'] - $el required to initialize');
       return;
     }
@@ -50,21 +50,21 @@ export default class ProductImageTouchZoomController {
   }
 
   enable() {
-    if(this.enabled) return;
+    if (this.enabled) return;
 
     this.$container.on(this.events.CLICK, selectors.galleryImage, this.onGalleryImageClick.bind(this));
     this.enabled = true;
   }
 
   disable() {
-    if(!this.enabled) return;
+    if (!this.enabled) return;
 
     this.$container.off(this.events.CLICK);
     this.enabled = false;
   }
 
   zoomIn(src) {
-    if(this.isZoomed) return;
+    if (this.isZoomed) return;
     
     this.$blowupImage.one('load', function() {
 
@@ -77,7 +77,7 @@ export default class ProductImageTouchZoomController {
       var winWidth = $window.width();
 
       // Landscape
-      if(window.innerWidth > window.innerHeight) {
+      if (window.innerWidth > window.innerHeight) {
         startZoom = startZoomRatio * winHeight/imageHeight;
       }
       // Portrait
@@ -85,7 +85,7 @@ export default class ProductImageTouchZoomController {
         startZoom = startZoomRatio * winWidth/imageWidth;
       }
 
-      if(startZoom < zoomMin) {
+      if (startZoom < zoomMin) {
         startZoom = zoomMin;
       }
 
@@ -120,7 +120,7 @@ export default class ProductImageTouchZoomController {
   }
 
   zoomOut() {
-    if(!this.isZoomed) return;
+    if (!this.isZoomed) return;
 
     $body.removeClass(classes.bodyBlowupOpen);
     this.$blowup.removeClass(classes.blowupActive);

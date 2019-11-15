@@ -27,7 +27,7 @@ export default class MobileMenuSection extends BaseSection {
 
     this.$toggle.on('click', this.onToggleClick.bind(this));
     this.$el.on('click', 'a', (e) => {
-      if(!e.isDefaultPrevented()) {
+      if (!e.isDefaultPrevented()) {
         this.drawer.hide();
       }
     });
@@ -49,7 +49,7 @@ export default class MobileMenuSection extends BaseSection {
   }
 
   onResize(e) {
-    if(window.innerWidth >= this.hideMobileMenuMinWidth) {
+    if (window.innerWidth >= this.hideMobileMenuMinWidth) {
       this.drawer.hide();
     }
   }

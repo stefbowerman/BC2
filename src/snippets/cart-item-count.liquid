@@ -1,0 +1,9 @@
+{% assign count = cart.item_count %}
+
+{% for line_item in cart.items %}
+  {% if line_item.product.handle == settings.gwp_product %}
+    {% assign count = count | minus: line_item.quantity %}
+  {% endif %}
+{% endfor %}
+
+{{ count }}

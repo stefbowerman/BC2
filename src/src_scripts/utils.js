@@ -107,7 +107,7 @@ export default {
     var queryString = location.search && location.search.substr(1) || '';
 
     // Add the '?' prefix if there is an actual query
-    if(queryString.length){
+    if (queryString.length){
       queryString = '?' + queryString;
     }
 
@@ -207,7 +207,7 @@ export default {
     };
 
     for(t in transitions){
-      if( el.style[t] !== undefined ){
+      if ( el.style[t] !== undefined ){
         return transitions[t];
       }
     }
@@ -321,7 +321,7 @@ export default {
 
     number = parseInt(number);
 
-    if(number == 1) {
+    if (number == 1) {
       output = singular;
     }
     else {

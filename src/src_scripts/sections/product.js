@@ -43,7 +43,7 @@ export default class ProductSection extends BaseSection {
     this.$secondaryDescriptionLink = $(selectors.secondaryDescriptionLink, this.$container);
     this.$sizeGuideDrawerEl        = $(selectors.sizeGuideDrawer, this.$container);
 
-    if(this.$sizeGuideDrawerEl.length) {
+    if (this.$sizeGuideDrawerEl.length) {
       this.drawer = new Drawer(this.$sizeGuideDrawerEl);
 
       this.$container.on('click', selectors.sizeGuideShow, (e) => {
@@ -69,7 +69,7 @@ export default class ProductSection extends BaseSection {
     const triggerOffset = $window.scrollTop() + window.innerHeight - 100; // Make sure at least 100px of the description are in view
     this.secondaryDescriptionInView = (this.$secondaryDescription.offset()['top'] < triggerOffset);
 
-    if(this.secondaryDescriptionInView) {
+    if (this.secondaryDescriptionInView) {
       this.$secondaryDescriptionLink.addClass(classes.secondaryLinkHidden);
       // console.log('fixed description in view');
     }
@@ -86,18 +86,18 @@ export default class ProductSection extends BaseSection {
   onResize() {
     this.secondaryDescriptionCheck()
 
-    if(this.fixedFormFullHeight == null && window.innerWidth >= this.bpDesktopMin) {
+    if (this.fixedFormFullHeight == null && window.innerWidth >= this.bpDesktopMin) {
       this.fixedFormFullHeight = this.$productEssential.outerHeight();
     }
 
-    if(this.fixedFormFullHeight) {
-      if(window.innerHeight < this.fixedFormFullHeight && this.fixedDescriptionHidden == false) {
+    if (this.fixedFormFullHeight) {
+      if (window.innerHeight < this.fixedFormFullHeight && this.fixedDescriptionHidden == false) {
         this.$fixedDescription.addClass(classes.hide);
         this.$secondaryDescriptionLink.css('display', 'block');
         this.$secondaryDescription.css('display', 'block');
         this.fixedDescriptionHidden = true;
       }
-      else if(window.innerHeight >= this.fixedFormFullHeight && this.fixedDescriptionHidden == true) {
+      else if (window.innerHeight >= this.fixedFormFullHeight && this.fixedDescriptionHidden == true) {
         this.$fixedDescription.removeClass(classes.hide);
         this.$secondaryDescriptionLink.css('display', 'none');
         this.$secondaryDescription.css('display', '');
@@ -105,7 +105,7 @@ export default class ProductSection extends BaseSection {
       }
     }
 
-    if(window.innerWidth < this.bpDesktopMin && window.innerWidth >= this.bpTabletMin) {
+    if (window.innerWidth < this.bpDesktopMin && window.innerWidth >= this.bpTabletMin) {
       // If we don't have the fixed form full height that means we aren't above the 1200px breakpoint
       // but the secondary description is still visible so show the link to view it
       this.$secondaryDescriptionLink.css('display', 'block');
@@ -115,7 +115,7 @@ export default class ProductSection extends BaseSection {
   onSecondaryDescriptionLinkClick(e) {
     e.preventDefault();
 
-    if(this.secondaryDescriptionInView) return;
+    if (this.secondaryDescriptionInView) return;
 
     const scrollToOffset = this.$secondaryDescription.offset()['top'] - 80;
     

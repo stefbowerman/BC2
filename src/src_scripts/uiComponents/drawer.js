@@ -36,7 +36,7 @@ export default class Drawer {
     this.transitionEndEvent     = Utils.whichTransitionEnd();
     this.supportsCssTransitions = Modernizr.hasOwnProperty('csstransitions') && Modernizr.csstransitions;
 
-    if(this.$el == undefined || !this.$el.hasClass(classes.drawer)) {
+    if (this.$el == undefined || !this.$el.hasClass(classes.drawer)) {
       console.warn('['+this.name+'] - Element with class `'+classes.drawer+'` required to initialize.');
       return;
     }     
@@ -62,7 +62,7 @@ export default class Drawer {
     var _this = this;
     var cb    = callback || $.noop;
 
-    if(this.stateIsOpen) {
+    if (this.stateIsOpen) {
       this.$backdrop = $(document.createElement('div'));
       this.$backdropCursor = $(document.createElement('div'));
 
@@ -99,7 +99,7 @@ export default class Drawer {
     var _this = this;
     var cb    = callback || $.noop;
 
-    if(_this.$backdrop) {
+    if (_this.$backdrop) {
       _this.$backdrop.one(this.transitionEndEvent, function(){
         _this.$backdrop.off('mousemove mouseenter mouseleave');
         _this.$backdrop && _this.$backdrop.remove();
@@ -139,15 +139,15 @@ export default class Drawer {
     const e = $.Event(this.events.HIDE);
     this.$el.trigger(e);
 
-    if(!this.stateIsOpen) return;
+    if (!this.stateIsOpen) return;
 
     this.$el.removeClass(classes.visible);
 
-    if(this.settings.backdrop) {
+    if (this.settings.backdrop) {
       this.removeBackdrop();
     }    
 
-    if(this.supportsCssTransitions) {
+    if (this.supportsCssTransitions) {
       this.$el.one(this.transitionEndEvent, this.onHidden.bind(this));
     }
     else {
@@ -159,17 +159,17 @@ export default class Drawer {
     const e = $.Event(this.events.SHOW);
     this.$el.trigger(e);
 
-    if(this.stateIsOpen) return;
+    if (this.stateIsOpen) return;
 
     this.stateIsOpen = true;
 
     this.$el.addClass(classes.visible);
 
-    if(this.settings.backdrop) {
+    if (this.settings.backdrop) {
       this.addBackdrop();
     }    
 
-    if(this.supportsCssTransitions) {
+    if (this.supportsCssTransitions) {
       this.$el.one(this.transitionEndEvent, this.onShown.bind(this));
     }
     else {

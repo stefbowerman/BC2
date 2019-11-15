@@ -6,7 +6,6 @@ const selectors = {
 };
 
 export default class StockistsSection extends BaseSection {
-
   constructor(container) {
     super(container, 'stockists');
 
@@ -21,10 +20,10 @@ export default class StockistsSection extends BaseSection {
         const aAlph = $(a).data('alpha').toString();
         const bAlph = $(b).data('alpha').toString();
 
-        if(aAlph > bAlph) {
+        if (aAlph > bAlph) {
           return 1;
         }
-        else if(aAlph < bAlph) {
+        else if (aAlph < bAlph) {
           return -1;
         }
         else {
@@ -36,10 +35,9 @@ export default class StockistsSection extends BaseSection {
     });
 
     this.$lists.find('a').each((i, el) => {
-      if(Utils.isExternal(el.getAttribute('href'))) {
+      if (Utils.isExternal(el.getAttribute('href'))) {
         el.setAttribute('target', '_blank');
       }
     });
   }
-  
 }

@@ -2,7 +2,6 @@ import BaseView from './base';
 import StockistsSection from '../sections/stockists';
 
 export default class StockistsView extends BaseView {
-  
   constructor($el) {
     super($el);
 

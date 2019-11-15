@@ -33,7 +33,7 @@ export default class Toast {
     this.interactionTimeout     = false;
     this.timeoutDuration        = 2000;
 
-    if(this.$el == undefined || !this.$el.hasClass(classes.toast)) {
+    if (this.$el == undefined || !this.$el.hasClass(classes.toast)) {
       console.warn('['+this.name+'] - Element with class `'+classes.toast+'` required to initialize.');
       return;
     }     
@@ -87,11 +87,11 @@ export default class Toast {
     const e = $.Event(this.events.HIDE);
     this.$el.trigger(e);
 
-    if(!this.stateIsOpen) return;
+    if (!this.stateIsOpen) return;
 
     this.$el.removeClass(classes.visible);   
 
-    if(this.supportsCssTransitions) {
+    if (this.supportsCssTransitions) {
       this.$el.one(this.transitionEndEvent, this.onHidden.bind(this));
     }
     else {
@@ -103,13 +103,13 @@ export default class Toast {
     const e = $.Event(this.events.SHOW);
     this.$el.trigger(e);
 
-    if(this.stateIsOpen) return;
+    if (this.stateIsOpen) return;
 
     this.stateIsOpen = true;
 
     this.$el.addClass(classes.visible);  
 
-    if(this.supportsCssTransitions) {
+    if (this.supportsCssTransitions) {
       this.$el.one(this.transitionEndEvent, this.onShown.bind(this));
     }
     else {

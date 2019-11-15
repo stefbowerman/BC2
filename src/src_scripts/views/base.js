@@ -44,7 +44,7 @@ export default class BaseView {
 
     var remainingSections = [];
     this.sections.forEach((section) => {
-      if(section.id == e.detail.sectionId) {
+      if (section.id == e.detail.sectionId) {
         // console.log('removing section for type - ' + section.type);
         section.onUnload();
       }
@@ -59,7 +59,7 @@ export default class BaseView {
 
   destroy() {
     // console.log('[BaseView] - calling DESTROY');
-    if(this.sections.length) {
+    if (this.sections.length) {
       this.sections.forEach((section) => {
         section.onUnload && section.onUnload();
       });

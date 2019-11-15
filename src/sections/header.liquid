@@ -1,5 +1,4 @@
 <div data-section-id="{{ section.id }}" data-section-type="header">
-
   <header class="header" role="banner" data-header>
     
     {% include 'header-logo' %}
@@ -12,13 +11,18 @@
       </a>
     {% endif %}
 
+    {%- capture cart_item_count -%}
+      {% include 'cart-item-count' %}
+    {%- endcapture -%}
+
+    {% assign cart_item_count = cart_item_count | plus: 0 %}
+
     <a href="/cart" class="header-cart" data-ajax-cart-trigger>
-      <div class="header-cart__badge{% if cart.item_count > 0 %} has-items{% endif %}" data-cart-badge>
-        {{ cart.item_count }} {{ cart.item_count | pluralize: 'Item', 'Items' }}
+      <div class="header-cart__badge{% if cart_item_count > 0 %} has-items{% endif %}" data-cart-badge>
+        {{ cart_item_count }} {{ cart_item_count | pluralize: 'Item', 'Items' }}
       </div>
     </a>
   </header>
-
 </div>
 
 {% schema %}

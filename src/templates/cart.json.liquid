@@ -1,6 +1,72 @@
 {% comment %} Improved cart JSON response which includes full product info for cart items through product-json.liquid {% endcomment %}
 
 {% layout none %}
+
+{% capture items %}
+  {% for item in cart.items %}
+    {% assign product = item.product %}
+
+    {% assign available = true %}
+    {% if item.variant.available == false %}
+      {% assign available = false %}
+    {% elsif variant.inventory_management == "shopify" and
+             variant.inventory_policy != "continue" and
+             variant.inventory_quantity < item.quantity 
+    %}
+      {% assign available = false %}
+    {% endif %}
+
+    {
+      "id": {{ item.variant_id }},
+      "key": {{ item.key | json }},
+      "title": {{ item.title | json }},
+      "price": {{ item.price }},
+      "line_price": {{ item.line_price }},
+      "original_line_price": {{ item.original_line_price }},
+      "original_price": {{ item.original_price }},
+      "discounted_price": {{ item.original_price | minus: item.total_discount }},
+      "quantity": {{ item.quantity }},
+      "sku": {{ item.sku | json }},
+      "vendor": {{ item.vendor | json }},
+      "properties": {
+        {% for property in item.properties %}
+          {{ property.first | json }}: {{ property.last | json }}
+          {% unless forloop.last %},{% endunless %}
+        {% endfor %}
+      },
+      "discounts": [
+        {% for d in item.discounts %}
+          {{ discount | json }}{% unless forloop.last %},{% endunless %}
+        {% endfor %}
+      ],
+      "variant_id": {{ item.variant_id | json }},
+      "gift_card": {{ item.gift_card }},
+      "url": {{ item.url | json }},
+      "image": {{ item.image | json }},
+      "handle": {{ product.handle | json }},
+      "requires_shipping": {{ item.requires_shipping }},
+      "available": {{ available | json }},
+      "product": {% include 'product-json', product: product %},
+      "product_id": {{ product.id }},
+      "product_title": {{ product.title | json }},
+      "product_description": {{ product.description | json }},
+      "product_type": {{ product.type | json }},
+      "variant_title": {{ item.variant.title | json }},
+      "variant_options": [
+        {% if item.variant.option1 != blank %}  {{ item.variant.option1 | json }}{% endif %}
+        {% if item.variant.option2 != blank %}, {{ item.variant.option2 | json }}{% endif %}
+        {% if item.variant.option3 != blank %}, {{ item.variant.option3 | json }}{% endif %}
+      ]
+    }
+    {% unless forloop.last %},{% endunless %}
+  {% endfor %}
+{% endcapture %}
+
+{% comment %} Send the whole cart section too because /cart is ajax enabled and uses this endpoint {% endcomment %}
+{% capture cart_section_html %}
+  {% section 'cart' %}
+{% endcapture %}
+
 {
   "total_price": {{ cart.total_price }},
   "original_total_price": {{ cart.original_total_price }},
@@ -8,59 +74,6 @@
   "total_weight": {{ cart.total_weight }},
   "note": {{ cart.note | json }},
   "item_count": {{ cart.item_count }},
-  "items" : [
-    {% for item in cart.items %}
-      {% assign product = item.product %}
-
-      {% assign available = true %}
-      {% if item.variant.available == false %}
-        {% assign available = false %}
-      {% elsif variant.inventory_management == "shopify" and variant.inventory_policy != "continue" and variant.inventory_quantity < item.quantity %}
-        {% assign available = false %}
-      {% endif %}
-
-      {
-        "id": {{ item.variant_id }},
-        "key": {{ item.key | json }},
-        "title": {{ item.title | json }},
-        "price": {{ item.price }},
-        "line_price": {{ item.line_price }},
-        "original_line_price": {{ item.original_line_price }},
-        "original_price": {{ item.original_price }},
-        "discounted_price": {{ item.original_price | minus: item.total_discount }},        
-        "quantity": {{ item.quantity }},
-        "sku": {{ item.sku | json }},
-        "vendor": {{ item.vendor | json }},
-        "properties": {
-          {% for property in item.properties %}
-            {{ property.first | json }}: {{ property.last | json }}
-            {% unless forloop.last %},{% endunless %}
-          {% endfor %}
-        },
-        "discounts": [
-          {% for d in item.discounts %}
-            {{ discount | json }}{% unless forloop.last %},{% endunless %}
-          {% endfor %}
-        ],
-        "variant_id": {{ item.variant_id | json }},
-        "gift_card": {{ item.gift_card }},
-        "url": {{ item.url | json }},
-        "image": {{ item.image | json }},
-        "handle": {{ product.handle | json }},
-        "requires_shipping": {{ item.requires_shipping }},
-        "available": {{ available | json }},
-        "product": {% include 'product-json', product: product %},
-        "product_id": {{ product.id }},
-        "product_title": {{ product.title | json }},
-        "product_description": {{ product.description | json }},
-        "product_type": {{ product.type | json }},
-        "variant_title": {{ item.variant.title | json }},
-        "variant_options": [
-          {% if item.variant.option1 != blank %}{{ item.variant.option1 | json }}{% endif %}
-          {% if item.variant.option2 != blank %}, {{ item.variant.option2 | json }}{% endif %}
-          {% if item.variant.option3 != blank %}, {{ item.variant.option3 | json }}{% endif %}
-        ]
-      }{% unless forloop.last %},{% endunless %}
-    {% endfor %}
-  ]
+  "items": [{{ items }}],
+  "section_html": {{ cart_section_html | json }}
 }

@@ -1,5 +1,4 @@
 export default {
-
  /**
   * AJAX submit an 'add to cart' form
   *
@@ -96,30 +95,5 @@ export default {
     });
 
     return promise;
-  },
-
- /**
-  * Retrieve a JSON respresentation of the users cart
-  *
-  * @return {Promise} - JSON cart
-  */
-  getProduct(handle) {
-    return $.getJSON('/products/' + handle + '.js');
-  }, 
-
- /**
-  * Change the quantity of an item in the users cart
-  *
-  * @param {int} line - Cart line
-  * @param {int} qty - New quantity of the variant
-  * @return {Promise} - JSON cart
-  */
-  changeLineItemQuantity(line, qty) {
-    return $.ajax({
-      type: 'post',
-      dataType: 'json',
-      url: '/cart/change.js',
-      data: 'quantity=' + qty + '&line=' + line
-    });
   }
 }

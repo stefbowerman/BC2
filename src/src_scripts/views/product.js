@@ -2,7 +2,6 @@ import BaseView from './base';
 import ProductSection from '../sections/product';
 
 export default class ProductView extends BaseView {
-  
   constructor($el) {
     super($el);
 
@@ -16,12 +15,12 @@ export default class ProductView extends BaseView {
   }
 
   transitionOut(callback) {
-    if(this.productSection.drawer && this.productSection.drawer.stateIsOpen) {
+    if (this.productSection.drawer && this.productSection.drawer.stateIsOpen) {
       this.productSection.drawer.$el.one('hidden.drawer', callback);
       this.productSection.drawer.hide();
     }
     else {
-      callback();  
+      callback();
     }
   }
 }

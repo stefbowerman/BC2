@@ -1,4 +1,5 @@
 import BaseSection from './base';
+import CartAPI from '../cartAPI';
 
 const selectors = {
   form: '[data-cart-form]',
@@ -42,33 +43,32 @@ export default class CartSection extends BaseSection {
     e.preventDefault();
     const $link = $(e.currentTarget);
 
-    $.ajax({
-      url: $link.attr('href'),
-      beforeSend: () => {
-        this.$form.attr('disabled', true);
-        this.$formSubmit.attr('disabled', true);
-        this.$form.fadeTo(300, 0.5);
-      }
+    this.$form.attr('disabled', true);
+    this.$formSubmit.attr('disabled', true);
+    this.$form.fadeTo(300, 0.5);
+
+    CartAPI.changeLineItem({
+      quantity: 0,
+      id: $link.data('item-remove-link')
     })
-    .done((response) => {
-      // Trigger this ASAP since it runs an AJAX Call
-      $window.trigger('needsUpdate.ajaxCart');
+      .then(cart => {
+        const event = $.Event('needsUpdate.ajaxCart');
+              event.cart = cart;
 
-      const $responseHtml = $(document.createElement('html'));
-      $responseHtml.get(0).innerHTML = response;
+        $window.trigger(event); // Trigger a window event so that the ajax cart knows to update
 
-      const $responseBody = $responseHtml.find('body');
-      const $newContainer = $responseBody.find('[data-section-type="cart"]');
+        const wrapper = document.createElement('div')
+        wrapper.innerHTML = cart.section_html
 
-      this.removeEvents();
-      this.$container.replaceWith($newContainer);
-      this.$container = $newContainer;
-      this.setInstanceVars();
-      this.bindEvents();
-      $window.scrollTop(0);
-      this.$form.css('opacity', 0.5);
-      this.$form.fadeTo(300, 1);
-    });
+        const $newContainer = $(wrapper.children[0]);
+        this.removeEvents();
+        this.$container.replaceWith($newContainer);
+        this.$container = $newContainer;
+        this.setInstanceVars();
+        this.bindEvents();
+        $window.scrollTop(0);
+        this.$form.css('opacity', 0.5);
+        this.$form.fadeTo(300, 1);
+      });
   }
-  
 }

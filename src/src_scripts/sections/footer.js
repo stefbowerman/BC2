@@ -27,7 +27,7 @@ export default class FooterSection extends BaseSection {
 
     this.AJAXMailchimpForm = new AJAXMailchimpForm(this.$subscribeForm, {
       onSubscribeFail: (msg) => {
-        if(msg.match(/already subscribed/)) {
+        if (msg.match(/already subscribed/)) {
           this.$formMessage.text('This email address is already subscribed');  
         }
         else {

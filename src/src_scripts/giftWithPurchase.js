@@ -1,38 +1,55 @@
 export default class GiftWithPurchase {
-  constructor(variantId, amount) {
-    this.variantId = variantId;
+  constructor({id, amount}) {
+    this.id = id;
     this.amount = amount;
   }
 
   isValid() {
-    return !!(this.variantId && (!Number.isNaN(this.amount) && this.amount > 0))
+    return !!(this.id && (!Number.isNaN(this.amount) && this.amount > 0));
   }
 
   qualifies(amount) {
-    return amount >= this.amount
+    return amount >= this.amount;
   }
 
   cartNeedsGift(cart) {
-    let needs = false
+    let needs = false;
 
-    if(this.isValid() && this.qualifies(cart.total_price/100) && !this.cartContainsGift(cart)) {
-      needs = true
+    if (this.isValid() && this.qualifies(cart.total_price/100) && !this.cartContainsGift(cart)) {
+      needs = true;
     }
 
-    return needs
+    return needs;
+  }
+
+  // Retrieves the quantity of gifts in the cart
+  cartGetGiftQuantity(cart) {
+    let quantity = 0;
+    
+    if (cart && cart.items && cart.items.length) {
+      for (var i = cart.items.length - 1; i >= 0; i--) {
+        if (cart.items[i].id === this.id) {
+          quantity += cart.items[i].quantity
+        }
+      }
+    }
+
+    return quantity;
+  }
+
+  cartHasMultipleGifts(cart) {
+    return this.cartGetGiftQuantity(cart) > 1;
   }
 
   cartContainsGift(cart) {
-    let contains = false
-    
-    if(cart && cart.items && cart.items.length) {
-      contains = (cart.items.findIndex(item => item.variant_id == this.variantId) > -1)
-    }
+    return this.cartGetGiftQuantity(cart) > 0;
+  }
 
-    return contains
+  cartQualifiesButHasMultipleGifts(cart) {
+    return this.qualifies(cart.total_price/100) && this.cartHasMultipleGifts(cart);
   }
 
   cartContainsGiftButDoesntQualify(cart) {
-    return this.cartContainsGift(cart) && !this.qualifies(cart.total_price/100)
+    return this.cartContainsGift(cart) && !this.qualifies(cart.total_price/100);
   }
 }
