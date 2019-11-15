@@ -36,11 +36,11 @@ export default class NavSection extends BaseSection {
       const $el = $(el);
       const href = $el.attr('href');
       // if (href == url || url.indexOf(href) > -1) {
-      if (href == url) {
+      if (href === url) {
         $el.addClass(classes.menuLinkActive);
       }
       else {
-       $el.removeClass(classes.menuLinkActive); 
+        $el.removeClass(classes.menuLinkActive);
       }
     });
   }

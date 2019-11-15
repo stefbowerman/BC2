@@ -9,21 +9,19 @@ import FooterSection     from './sections/footer';
 import AJAXCartSection   from './sections/ajaxCart';
 import MobileMenuSection from './sections/mobileMenu';
 
-const $document = $(document);
 const $body = $(document.body);
 
 (($) => {
-
   // Sections Stuff 
   // window.sectionManager = new SectionManager();
 
   const sections = {};
 
-  sections.header     = new HeaderSection(     $('[data-section-type="header"]')     );
-  sections.nav        = new NavSection(        $('[data-section-type="nav"]')     );
-  sections.footer     = new FooterSection(     $('[data-section-type="footer"]')     );
-  sections.ajaxCart   = new AJAXCartSection(   $('[data-section-type="ajax-cart"]')  );
-  sections.mobileMenu = new MobileMenuSection( $('[data-section-type="mobile-menu"]'));
+  sections.header     = new HeaderSection($('[data-section-type="header"]'));
+  sections.nav        = new NavSection($('[data-section-type="nav"]'));
+  sections.footer     = new FooterSection($('[data-section-type="footer"]'));
+  sections.ajaxCart   = new AJAXCartSection($('[data-section-type="ajax-cart"]'));
+  sections.mobileMenu = new MobileMenuSection($('[data-section-type="mobile-menu"]'));
   
   const appRouter = new AppRouter({
     onRouteStart: (url) => {
@@ -33,7 +31,7 @@ const $body = $(document.body);
     onViewTransitionOutDone: (url) => {
       // Update the menu immediately or wait?
       sections.nav.deactivateMenuLinks();
-      sections.nav.activateMenuLinkForUrl(url); 
+      sections.nav.activateMenuLinkForUrl(url);
     },
     onViewChangeDOMUpdatesComplete: ($responseHead, $responseBody) => {
       window.scrollTop = 0;
@@ -45,7 +43,7 @@ const $body = $(document.body);
   // Misc Stuff
 
   // Apply UA classes to the document
-  Utils.userAgentBodyClass();    
+  Utils.userAgentBodyClass();
 
   // Apply a specific class to the html element for browser support of cookies.
   if (Utils.cookiesEnabled()) {
@@ -56,7 +54,7 @@ const $body = $(document.body);
   $body.addClass('is-loaded').removeClass('is-loading');
 
   // Stop here...no AJAX navigation inside the theme editor
-  if (Shopify && Shopify.designMode) {
+  if (window.Shopify && window.Shopify.designMode) {
     return;
   }  
 
@@ -65,10 +63,9 @@ const $body = $(document.body);
       if (e.isDefaultPrevented()) return;
 
       const $link = $(e.currentTarget);
-      
       const url = $link.attr('href');
       
-      if (Utils.isExternal(url) || url == '#' || url.indexOf('/checkout') > -1) return;
+      if (Utils.isExternal(url) || url === '#' || url.indexOf('/checkout') > -1) return;
 
       if (appRouter.isTransitioning) return false;
 
@@ -87,7 +84,7 @@ const $body = $(document.body);
     const url = e.currentTarget.getAttribute('href');
     const urlHash = Math.abs(Utils.hashFromString(url));
 
-    if (Utils.isExternal(url) || url == '#' || prefetchCache.hasOwnProperty(urlHash)) return;
+    if (Utils.isExternal(url) || url === '#' || prefetchCache.hasOwnProperty(urlHash)) return;
 
     let linkInteractivityTimeout = setTimeout(() => {
       $.get(url, () => {
@@ -97,7 +94,6 @@ const $body = $(document.body);
   });
 
   $body.on('mouseleave', 'a', (e) => {
-    let linkInteractivityTimeout = false;
+    linkInteractivityTimeout = false;
   });
-
 })(jQuery);

@@ -1,7 +1,5 @@
 import CartAPI from './cartAPI';
 import Utils from './utils';
-import Currency from './currency';
-import Images from './images';
 import Toast from './uiComponents/toast';
 
 const $window = $(window);
@@ -71,14 +69,14 @@ export default class AJAXCart {
     this.init = function(options) {
       if (initialized) return;
 
-      if (!$(selectors.template).length){
+      if (!$(selectors.template).length) {
         console.warn('['+this.name+'] - Handlebars template required to initialize');
         return;
       }
 
       this.$cartBadge       = $(selectors.cartBadge);
       this.$cartBadgeCount  = $(selectors.cartBadgeCount);
-      this.$verifyContainer = $(selectors.verifyContainer);  
+      this.$verifyContainer = $(selectors.verifyContainer);
       this.toast            = new Toast($(selectors.toast));
 
       // Compile this once during initialization
@@ -102,8 +100,6 @@ export default class AJAXCart {
       CartAPI.getCart().then(cart => this.renderCart(cart));
 
       initialized = true;
-
-      return initialized;
     };
 
     return this;
@@ -149,7 +145,7 @@ export default class AJAXCart {
   * @return {int} - Integer quantity.  Defaults to 1
   */
   _validateQty(qty) {
-    return (parseFloat(qty) == parseInt(qty)) && !isNaN(qty) ? qty : 1;
+    return (parseFloat(qty) === parseInt(qty)) && !Number.isNaN(qty) ? qty : 1;
   }
 
  /**
@@ -163,7 +159,7 @@ export default class AJAXCart {
     const $row = $el.is(selectors.item) ? $el : $el.parents(selectors.item);
 
     return {
-      $row,
+      $row: $row,
       key: $row.data('key'),
       qty: this._validateQty($row.data('qty'))
     };
@@ -194,12 +190,12 @@ export default class AJAXCart {
 
       this.$backdrop.one(this.transitionEndEvent, cb);
       this.$backdrop.one('click', this.close.bind(this));
-      this.$backdrop.on('mouseenter', () => { this.$backdropCursor.addClass(classes.backdropCursorVisible); });
-      this.$backdrop.on('mouseleave', () => { this.$backdropCursor.removeClass(classes.backdropCursorVisible); });
+      this.$backdrop.on('mouseenter', () => { this.$backdropCursor.addClass(classes.backdropCursorVisible); }); // eslint-disable-line
+      this.$backdrop.on('mouseleave', () => { this.$backdropCursor.removeClass(classes.backdropCursorVisible); }); // eslint-disable-line
       this.$backdrop.on('mousemove', (e) => {
         window.requestAnimationFrame(() => {
           this.$backdropCursor.css({
-            'transform': `translate(${e.clientX}px, ${e.clientY}px)`
+            transform: `translate(${e.clientX}px, ${e.clientY}px)`
           });
         });
       });
@@ -240,7 +236,7 @@ export default class AJAXCart {
   *
   * @param {Object} cart - JSON representation of the cart.
   */
-  onItemAddSuccess(cart){
+  onItemAddSuccess(cart) {
     this.renderCart(cart);
     this.open();
   }
@@ -250,7 +246,7 @@ export default class AJAXCart {
   *
   * @param {Object} data
   */
-  onItemAddFail(data){
+  onItemAddFail(data) {
     this.toast.setContent('Requested item is unavailable');
     this.toast.show();
   }
@@ -308,7 +304,7 @@ export default class AJAXCart {
   */
   updateCartCount(cart) {
     if (cart.item_count) {
-      this.$cartBadge.text(`${cart.item_count} ${cart.item_count == 1 ? 'Item' : 'Items'}`);
+      this.$cartBadge.text(`${cart.item_count} ${cart.item_count === 1 ? 'Item' : 'Items'}`);
       this.$cartBadge.addClass(classes.cartBadgeHasItems);
     }
     else {
@@ -327,6 +323,8 @@ export default class AJAXCart {
       this.$verifyContainer.find('.modal').modal('show');
       return false;
     }
+
+    return true;
   }
 
   onVerifyCheckoutLinkClick(e) {
@@ -434,7 +432,7 @@ export default class AJAXCart {
       this.$el.scrollTop(0);
     });
 
-    this.removeBackdrop(function() {
+    this.removeBackdrop(() => {
       $body.removeClass(classes.bodyCartOpen);
     });
   }

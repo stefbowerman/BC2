@@ -15,17 +15,17 @@ export default class BaseSection {
     this.name = name;
     this.namespace = `.${this.name}`;
 
-    this.onShopifyEvent = this.onShopifyEvent.bind(this)
+    this.onShopifyEvent = this.onShopifyEvent.bind(this);
 
     $(document).on(shopifyEvents.join(' '), this.onShopifyEvent);
   }
 
   onShopifyEvent(e) {
-    if (e.detail.sectionId != this.id.toString()) {
+    if (e.detail.sectionId !== this.id.toString()) {
       return;
     }
 
-    switch(e.type) {
+    switch (e.type) {
       case 'shopify:section:unload':
         this.onUnload(e);
         break;
@@ -70,5 +70,4 @@ export default class BaseSection {
   onBlockDeselect(e) {
 
   }
-
 }

@@ -1,10 +1,9 @@
 import BaseSection from '../sections/base';
-import SectionConstructorDictionary from '../sectionConstructorDictionary'
+import SectionConstructorDictionary from '../sectionConstructorDictionary';
 
 const $document = $(document);
 
 export default class BaseView {
-  
   constructor($el) {
     this.$el = $el;
     this.sections = [];
@@ -12,12 +11,10 @@ export default class BaseView {
     $document.on('shopify:section:load',   this.onSectionLoad.bind(this));
     $document.on('shopify:section:unload', this.onSectionUnload.bind(this));
     $(window).scrollTop(0);
-    
-    // console.log('BaseView - contructing view');    
   }
 
   _createSectionInstance($container) {
-    const id = $container.attr('data-section-id');
+    // const id = $container.attr('data-section-id');
     const type = $container.attr('data-section-type');
 
     const constructor = SectionConstructorDictionary[type];
@@ -29,23 +26,17 @@ export default class BaseView {
 
     // console.log('creating new section instance for type - ' + type );
 
-    this.sections.push( new constructor($container) );
+    this.sections.push(new constructor($container));
   }
 
   onSectionLoad(e) {
-    // console.log('[BaseView] - calling section LOAD');
-
     this._createSectionInstance($('[data-section-id]', e.target));
-  }  
+  }
 
   onSectionUnload(e) {
-    // console.log('[BaseView] - calling section UNLOAD');
-    // console.log('sections count - ' + this.sections.length);
-
-    var remainingSections = [];
+    const remainingSections = [];
     this.sections.forEach((section) => {
-      if (section.id == e.detail.sectionId) {
-        // console.log('removing section for type - ' + section.type);
+      if (section.id === e.detail.sectionId) {
         section.onUnload();
       }
       else {
@@ -54,11 +45,9 @@ export default class BaseView {
     });
 
     this.sections = remainingSections;
-    // console.log('updated sections count - ' + this.sections.length);
   }
 
   destroy() {
-    // console.log('[BaseView] - calling DESTROY');
     if (this.sections.length) {
       this.sections.forEach((section) => {
         section.onUnload && section.onUnload();
@@ -67,7 +56,7 @@ export default class BaseView {
   }
 
   transitionIn() {
-    // console.log('transition in!');
+
   }
 
   transitionOut(callback) {

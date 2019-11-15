@@ -11,7 +11,6 @@ import AJAXCart from '../ajaxCart';
  */
 
 export default class AJAXCartSection extends BaseSection {
-
   constructor(container) {
     super(container, 'ajaxCart');
 
@@ -33,5 +32,5 @@ export default class AJAXCartSection extends BaseSection {
 
   onUnload(e) {
     this.ajaxCart.$backdrop && this.ajaxCart.$backdrop.remove();
-  }  
+  }
 }

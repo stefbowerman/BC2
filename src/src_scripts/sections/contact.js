@@ -6,11 +6,9 @@ const selectors = {
 };
 
 export default class ContactSection extends BaseSection {
-
   constructor(container) {
     super(container, 'contact');
 
     this.form = new ContactForm($(selectors.form, this.$container).first());
   }
-  
 }

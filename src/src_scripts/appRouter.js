@@ -1,4 +1,5 @@
 import 'navigo';
+import Utils from './utils';
 
 // Views
 import BaseView       from './views/base';
@@ -14,11 +15,11 @@ const $body = $(document.body);
 const $viewContainer = $('#view-container');
 const $loader = $('#loader');
 const TEMPLATE_REGEX = /(^|\s)template-\S+/g;
+const transitionEndEvent = Utils.whichTransitionEnd();
 let firstRoute = true;
 
 export default class AppRouter {
   constructor(options = {}) {
-
     const defaults = {
       onRouteStart: $.noop,
       onViewTransitionOutDone: $.noop,
@@ -26,12 +27,12 @@ export default class AppRouter {
     };
 
     this.viewConstructors = {
-      'index': IndexView,
-      'product': ProductView,
-      'collection': CollectionView,
-      'cart': CartView,
-      'contact': ContactView,
-      'stockists': StockistsView
+      index: IndexView,
+      product: ProductView,
+      collection: CollectionView,
+      cart: CartView,
+      contact: ContactView,
+      stockists: StockistsView
     };
 
     this.router = new Navigo(window.location.origin, false, '#!');
@@ -55,10 +56,12 @@ export default class AppRouter {
     });    
 
     this.router.on('/collections/:slug', (params, query) => {
-      var url = `/collections/${params.slug}`;
+      let url = `/collections/${params.slug}`;
+
       if (query) {
         url += `?${query}`;
       }
+
       this.doRoute(url, 'collection');
     });
 
@@ -106,11 +109,10 @@ export default class AppRouter {
   }
 
   doRoute(url, type) {
-    const self = this;
-    const viewConstructor = this.viewConstructors[type] || BaseView;
+    const ViewConstructor = this.viewConstructors[type] || BaseView;
 
     if (firstRoute) {
-      this.currentView = new viewConstructor($viewContainer);   
+      this.currentView = new ViewConstructor($viewContainer);   
       firstRoute = false;
       return;
     }
@@ -125,7 +127,7 @@ export default class AppRouter {
       window.location = url;
     }, 4000);
 
-    $.get(url, function(response) {
+    $.get(url, (response) => {
       clearTimeout(t);
       ajaxDeferred.resolve(response);
     });
@@ -134,26 +136,25 @@ export default class AppRouter {
 
     // Let the current view do it's 'out' transition and then apply the loading state
     this.currentView.transitionOut(() => {
-
       this.settings.onViewTransitionOutDone(url);
 
       $loader.addClass('is-visible');
-      $loader.on('transitionend', function() {      
+      $loader.on(transitionEndEvent, () => {
         transitionDeferred.resolve();
       });
     });
 
     // Once AJAX *and* css animations are done, trigger the callback
     $.when(ajaxDeferred, transitionDeferred).done((response) => {
-      this.doViewChange(response, viewConstructor);
+      this.doViewChange(response, ViewConstructor);
     }); 
   }
 
-  doViewChange(AJAXResponse, viewConstructor) {
+  doViewChange(AJAXResponse, ViewConstructor) {
     // Kill the current view
     this.currentView.destroy();
 
-    const $responseHtml = $(document.createElement("html"));
+    const $responseHtml = $(document.createElement('html'));
     
     $responseHtml.get(0).innerHTML = AJAXResponse;
 
@@ -170,18 +171,16 @@ export default class AppRouter {
     });
 
     const responseBodyClasses = $responseBody.attr('class').split(' ');
-    $body.addClass((i, classname) => {
-      const addClasses = responseBodyClasses.map((classname) => {
+    $body.addClass(() => {
+      return responseBodyClasses.map((classname) => {
         return classname.match(TEMPLATE_REGEX);
       }).join(' ');
-
-      return addClasses;
     });
-    // Finish DOM updates
 
+    // Finish DOM updates
     this.settings.onViewChangeDOMUpdatesComplete($responseHead, $responseBody);
 
-    this.currentView = new viewConstructor($viewContainer);
+    this.currentView = new ViewConstructor($viewContainer);
 
     $viewContainer.imagesLoaded(() => {
       $loader.removeClass('is-visible');
@@ -194,5 +193,4 @@ export default class AppRouter {
   navigate(url) {
     this.router.navigate(url);
   }
-
 }

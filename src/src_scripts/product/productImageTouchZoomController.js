@@ -5,7 +5,7 @@ const selectors = {
   galleryImage: '[data-gallery-image]',
   blowup: '[data-blowup]',
   blowupScroll: '[data-blowup-scroll]',
-  blowupImage: '[data-blowup-image]'  
+  blowupImage: '[data-blowup-image]'
 };
 
 const classes = {
@@ -17,7 +17,6 @@ const $window = $(window);
 const $body   = $(document.body);
 
 export default class ProductImageTouchZoomController {
-  
   /**
    * ProductImageTouchZoomController
    *
@@ -30,7 +29,7 @@ export default class ProductImageTouchZoomController {
 
     this.events = {
       CLICK:  'click'  + this.namespace
-    };    
+    };
 
     this.enabled = false;
     this.isZoomed = false;
@@ -46,7 +45,7 @@ export default class ProductImageTouchZoomController {
 
     this.$blowup       = $(selectors.blowup, this.$container);
     this.$blowupScroll = $(selectors.blowupScroll, this.$container);
-    this.$blowupImage  = $(selectors.blowupImage, this.$container);    
+    this.$blowupImage  = $(selectors.blowupImage, this.$container);
   }
 
   enable() {
@@ -66,31 +65,30 @@ export default class ProductImageTouchZoomController {
   zoomIn(src) {
     if (this.isZoomed) return;
     
-    this.$blowupImage.one('load', function() {
-
-      var startZoom;
-      var startZoomRatio = 1.2; // Start by making the image 120% in the shortest direction
-      var zoomMin = 0.4;
-      var imageHeight = this.$blowupImage.outerHeight();
-      var imageWidth = this.$blowupImage.outerHeight();
-      var winHeight = $window.height();
-      var winWidth = $window.width();
+    this.$blowupImage.one('load', () => {
+      let startZoom;
+      const startZoomRatio = 1.2; // Start by making the image 120% in the shortest direction
+      const zoomMin = 0.4;
+      const imageHeight = this.$blowupImage.outerHeight();
+      const imageWidth = this.$blowupImage.outerHeight();
+      const winHeight = $window.height();
+      const winWidth = $window.width();
 
       // Landscape
       if (window.innerWidth > window.innerHeight) {
-        startZoom = startZoomRatio * winHeight/imageHeight;
+        startZoom = startZoomRatio * (winHeight/imageHeight);
       }
       // Portrait
       else {
-        startZoom = startZoomRatio * winWidth/imageWidth;
+        startZoom = startZoomRatio * (winWidth/imageWidth);
       }
 
       if (startZoom < zoomMin) {
         startZoom = zoomMin;
       }
 
-      var startX = -1 * (((imageWidth * startZoom) - winWidth)/2);
-      var startY = -1 * (((imageHeight * startZoom) - winHeight)/2);
+      const startX = -1 * (((imageWidth * startZoom) - winWidth)/2);
+      const startY = -1 * (((imageHeight * startZoom) - winHeight)/2);
 
       this.iscrollInstance = new IScroll(this.$blowupScroll.get(0), {
         zoom: true,
@@ -105,13 +103,11 @@ export default class ProductImageTouchZoomController {
         directionLockThreshold: 20,
         tap: true,
         click: true
-      }); 
-
-
-    }.bind(this));
+      });
+    });
 
     // Set the smaller image immediately (it should already be loaded from the slideshow)
-    this.$blowupImage.attr('src', src);   
+    this.$blowupImage.attr('src', src);
 
     this.$blowup.addClass(classes.blowupActive);
     $body.addClass(classes.bodyBlowupOpen);
@@ -127,7 +123,7 @@ export default class ProductImageTouchZoomController {
     this.$blowup.one(this.transitionEndEvent, () => {
       this.iscrollInstance && this.iscrollInstance.destroy();
       this.$blowupImage.attr('src', '');
-      this.isZoomed = false;      
+      this.isZoomed = false;
     });
   }
 

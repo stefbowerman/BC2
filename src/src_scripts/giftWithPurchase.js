@@ -1,7 +1,7 @@
 export default class GiftWithPurchase {
-  constructor({id, amount}) {
-    this.id = id;
-    this.amount = amount;
+  constructor(settings = {}) {
+    this.id = settings.id;
+    this.amount = settings.amount;
   }
 
   isValid() {
@@ -27,9 +27,9 @@ export default class GiftWithPurchase {
     let quantity = 0;
     
     if (cart && cart.items && cart.items.length) {
-      for (var i = cart.items.length - 1; i >= 0; i--) {
+      for (let i = cart.items.length - 1; i >= 0; i--) {
         if (cart.items[i].id === this.id) {
-          quantity += cart.items[i].quantity
+          quantity += cart.items[i].quantity;
         }
       }
     }

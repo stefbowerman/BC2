@@ -9,3 +9,9 @@
 | `size_guide` | `model_image` | Image source of the model wearing the product |
 | `size_guide` | `model_description` | Description of the model wearing the product |
 | `size_guide` | `html` | HTML containing the size description for the product  |
+| `subtitle` | `text` | Text showing in bold below the product title |
+
+
+old GA account -> UA-47737056-1
+
+Only change the styling for the last product image if it's a portrait image otherwise it fucks with the product images if there's no model shot

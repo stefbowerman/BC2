@@ -18,7 +18,10 @@
   },
   "globals": {
     "Modernizr": "readonly",
-    "theme": "readonly"
+    "theme": "readonly",
+    "$": "readonly",
+    "jQuery": "readonly",
+    "Handlebars": "readonly"
   },
   "rules": {
     "comma-dangle": "off",
@@ -62,6 +65,7 @@
       allow: ["warn", "error"]
     }],
     "arrow-body-style": "off",
+    "arrow-parens": [0, "as-needed"],
     "no-unused-expressions": ["error", {
       "allowShortCircuit": true,
       "allowTernary": true
@@ -69,6 +73,8 @@
     "object-shorthand": ["error", "consistent-as-needed"],
     "operator-linebreak": ["error", "after"],
     "no-new": "off",
-    "no-alert": "off"
+    "no-alert": "off",
+    "indent": ["warn"],
+    "semi": ["warn"]
   }
 }

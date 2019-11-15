@@ -11,7 +11,6 @@ import Utils from '../utils';
  */
 
 export default class ProductVariants {
-  
   constructor(options) {
     this.$container = options.$container;
     this.product = options.product;
@@ -30,10 +29,10 @@ export default class ProductVariants {
    * @return {array} options - Values of currently selected variants
    */
   _getCurrentOptions() {
-    var currentOptions = $.map($(this.singleOptionSelector, this.$container), function(element) {
-      var $element = $(element);
-      var type = $element.attr('type');
-      var currentOption = {};
+    let currentOptions = $.map($(this.singleOptionSelector, this.$container), (element) => {
+      const $element = $(element);
+      const type = $element.attr('type');
+      const currentOption = {};
 
       if (type === 'radio' || type === 'checkbox') {
         if ($element[0].checked) {
@@ -41,15 +40,13 @@ export default class ProductVariants {
           currentOption.index = $element.data('index');
 
           return currentOption;
-        } else {
-          return false;
         }
-      } else {
-        currentOption.value = $element.val();
-        currentOption.index = $element.data('index');
-
-        return currentOption;
+        return false;
       }
+      currentOption.value = $element.val();
+      currentOption.index = $element.data('index');
+
+      return currentOption;
     });
 
     // remove any unchecked input values if using radio buttons or checkboxes
@@ -65,14 +62,14 @@ export default class ProductVariants {
    * @return {object || undefined} found - Variant object from product.variants
    */
   _getVariantFromOptions() {
-    var selectedValues = this._getCurrentOptions();
-    var variants = this.product.variants;
-    var found = false;
+    const selectedValues = this._getCurrentOptions();
+    const variants = this.product.variants;
+    let found = false;
 
-    variants.forEach(function(variant) {
-      var satisfied = true;
+    variants.forEach((variant) => {
+      let satisfied = true;
 
-      selectedValues.forEach(function(option) {
+      selectedValues.forEach((option) => {
         if (satisfied) {
           satisfied = (option.value === variant[option.index]);
         }
@@ -90,7 +87,7 @@ export default class ProductVariants {
    * Event handler for when a variant input changes.
    */
   _onSelectChange() {
-    var variant = this._getVariantFromOptions();
+    const variant = this._getVariantFromOptions();
 
     this.$container.trigger({
       type: 'variantChange',
@@ -118,8 +115,8 @@ export default class ProductVariants {
    * @return {event}  variantImageChange
    */
   _updateImages(variant) {
-    var variantImage = variant.featured_image || {};
-    var currentVariantImage = this.currentVariant.featured_image || {};
+    const variantImage = variant.featured_image || {};
+    const currentVariantImage = this.currentVariant.featured_image || {};
 
     if (!variant.featured_image || variantImage.src === currentVariantImage.src) {
       return;
@@ -155,12 +152,12 @@ export default class ProductVariants {
    * @return {k}         [description]
    */
   _updateHistoryState(variant) {
-    if (!history.replaceState || !variant) {
+    if (!(window.history && window.history.replaceState) || !variant) {
       return;
     }
 
-    var newurl = window.location.protocol + '//' + window.location.host + window.location.pathname + '?variant=' + variant.id;
-    window.history.replaceState({path: newurl}, '', newurl);
+    const newurl = window.location.protocol + '//' + window.location.host + window.location.pathname + '?variant=' + variant.id;
+    window.history.replaceState({ path: newurl }, '', newurl);
   }
 
   /**
@@ -170,5 +167,5 @@ export default class ProductVariants {
    */
   _updateMasterSelect(variant) {
     $(this.originalSelectorId, this.$container)[0].value = variant.id;
-  }  
+  }
 }

@@ -51,14 +51,14 @@ export default class CartSection extends BaseSection {
       quantity: 0,
       id: $link.data('item-remove-link')
     })
-      .then(cart => {
+      .then((cart) => {
         const event = $.Event('needsUpdate.ajaxCart');
-              event.cart = cart;
+        event.cart = cart;
 
         $window.trigger(event); // Trigger a window event so that the ajax cart knows to update
 
-        const wrapper = document.createElement('div')
-        wrapper.innerHTML = cart.section_html
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = cart.section_html;
 
         const $newContainer = $(wrapper.children[0]);
         this.removeEvents();

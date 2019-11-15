@@ -44,7 +44,6 @@ const classes = {
 const $window = $(window);
 
 export default class ProductDetailForm {
-
   /**
    * ProductDetailForm constructor
    *
@@ -53,7 +52,7 @@ export default class ProductDetailForm {
    * @param { jQuery } config.$container - Container to listen to scope events / element to listen to events on.  Defaults to config.$el
    * @param { Boolean } config.enableHistoryState - If set to "true", turns on URL updating when switching variants
    * @param { Function } config.onReady -  Called after the product form is initialized.
-   */  
+   */
   constructor(config) {
     this.settings = {};
     this.name = 'productDetailForm';
@@ -84,7 +83,7 @@ export default class ProductDetailForm {
       this.transitionEndEvent = Utils.whichTransitionEnd();
       this.settings           = $.extend({}, defaults, config);
 
-      if (!this.settings.$el || this.settings.$el == undefined) {
+      if (!this.settings.$el || this.settings.$el === undefined) {
         console.warn('['+this.name+'] - $el required to initialize');
         return;
       }
@@ -92,7 +91,7 @@ export default class ProductDetailForm {
       this.$el = this.settings.$el;
       this.$container = this.settings.$container;
 
-      if (!this.$container || this.$container == undefined) {
+      if (!this.$container || this.$container === undefined) {
         this.$container = this.$el;
       }
 
@@ -110,11 +109,11 @@ export default class ProductDetailForm {
       this.$productDetailForm    = $(selectors.productDetailForm, this.$container);
       this.$galleriesWrapper     = $(selectors.galleriesWrapper, this.$container);
       this.$galleries            = $(selectors.gallery, this.$container); // can have multiple
-      this.$galleryImages        = $(selectors.galleryImage, this.$container);      
+      this.$galleryImages        = $(selectors.galleryImage, this.$container);
 
       this.productSingleObject  = JSON.parse($(selectors.productJson, this.$container).html());
 
-      var variantOptions = {
+      const variantOptions = {
         $container: this.$container,
         enableHistoryState: this.settings.enableHistoryState,
         singleOptionSelector: selectors.singleOptionSelector,
@@ -132,11 +131,11 @@ export default class ProductDetailForm {
       });
 
       this.$galleryImages.unveil(200, function() {
-        var $img = $(this);
-        $img.on('load', function() {
+        const $img = $(this);
+        $img.on('load', () => {
           $img.addClass(classes.galleryImageLoaded).removeAttr('data-src');
         });
-      });      
+      });
 
       // See productVariants
       this.$container.on('variantChange' + this.namespace, this.onVariantChange.bind(this));
@@ -151,15 +150,15 @@ export default class ProductDetailForm {
 
       setTimeout(this.$stickyForm.addClass.bind(this.$stickyForm, classes.stickyFormReady), 1000);
 
-      var e = $.Event(this.events.READY);
+      const e = $.Event(this.events.READY);
       this.$el.trigger(e);
 
       ready = true;
-    };    
+    };
   }
 
   onVariantChange(evt) {
-    var variant = evt.variant;
+    const variant = evt.variant;
 
     this.updateProductPrices(variant);
     this.updateAddToCartState(variant);
@@ -174,14 +173,14 @@ export default class ProductDetailForm {
    * @param {Object} variant - Shopify variant object
    */
   updateAddToCartState(variant) {
-
-    var $addToCartBtn     = $(selectors.addToCart, this.$container);
-    var $addToCartBtnText = $(selectors.addToCartText, this.$container);
-    var $priceWrapper     = $(selectors.priceWrapper, this.$container);
+    const $addToCartBtn     = $(selectors.addToCart, this.$container);
+    const $addToCartBtnText = $(selectors.addToCartText, this.$container);
+    const $priceWrapper     = $(selectors.priceWrapper, this.$container);
 
     if (variant) {
       $priceWrapper.removeClass(classes.hide);
-    } else {
+    }
+    else {
       $addToCartBtn.prop('disabled', true);
       $addToCartBtnText.html(theme.strings.unavailable);
       $priceWrapper.addClass(classes.hide);
@@ -191,11 +190,12 @@ export default class ProductDetailForm {
     if (variant.available) {
       $addToCartBtn.prop('disabled', false);
       $addToCartBtnText.html(theme.strings.addToCart);
-    } else {
+    }
+    else {
       $addToCartBtn.prop('disabled', true);
       $addToCartBtnText.html(theme.strings.soldOut);
     }
-  } 
+  }
 
   /**
    * Updates the DOM with specified prices
@@ -203,9 +203,9 @@ export default class ProductDetailForm {
    * @param {Object} variant - Shopify variant object
    */
   updateProductPrices(variant) {
-    var $productPrice = $(selectors.productPrice, this.$container);
-    var $comparePrice = $(selectors.comparePrice, this.$container);
-    var $compareEls   = $comparePrice.add( $(selectors.comparePriceText, this.$container) );
+    const $productPrice = $(selectors.productPrice, this.$container);
+    const $comparePrice = $(selectors.comparePrice, this.$container);
+    const $compareEls   = $comparePrice.add($(selectors.comparePriceText, this.$container));
 
     if (variant) {
       $productPrice.html(Currency.stripZeroCents(Currency.formatMoney(variant.price, theme.moneyFormat)));
@@ -213,7 +213,8 @@ export default class ProductDetailForm {
       if (variant.compare_at_price > variant.price) {
         $comparePrice.html(Currency.stripZeroCents(Currency.formatMoney(variant.compare_at_price, theme.moneyFormat)));
         $compareEls.removeClass(classes.hide);
-      } else {
+      }
+      else {
         $comparePrice.html('');
         $compareEls.addClass(classes.hide);
       }
@@ -239,8 +240,8 @@ export default class ProductDetailForm {
         const $variantOptionValueList = $(selectors.variantOptionValueList, this.$container).filter('[data-option-position="'+i+'"]');
         const $variantOptionValueUI = $('[data-variant-option-value="'+variantOptionValue+'"]', $variantOptionValueList);
 
-        $variantOptionValueUI.addClass( classes.variantOptionValueSelected );
-        $variantOptionValueUI.siblings().removeClass( classes.variantOptionValueSelected );
+        $variantOptionValueUI.addClass(classes.variantOptionValueSelected);
+        $variantOptionValueUI.siblings().removeClass(classes.variantOptionValueSelected);
 
         const $stickySelect = $(selectors.stickyOptionSelector, this.$container).filter('[data-option-position="'+i+'"]');
         // console.log('update the following sticky select with value = ' + variantOptionValue);
@@ -250,7 +251,6 @@ export default class ProductDetailForm {
         const $placeholder = $stickySelect.siblings('.sticky-select-placeholder');
         $placeholder.find('.sticky-select-placeholder-text').text(variantOptionValue);
         $placeholder.find('.sticky-select-label').css('display', (variantOptionValue ? 'inline-block' : 'none'));
-
       }
     }
   }
@@ -304,7 +304,7 @@ export default class ProductDetailForm {
   //           // console.log('checking variant with option 1 - ' + _v.option1);
   //           // console.log('checking variant with option 2 - ' + _v.option2);
 
-  //           if (_v.option1 == variant.option1 && _v.option2 == secondOptionValue) {
+  //           if (_v.option1 === variant.option1 && _v.option2 === secondOptionValue) {
   //             // console.log('found a matching variant');
   //             // console.log(_v);
   //             if (_v.available) {
@@ -316,7 +316,7 @@ export default class ProductDetailForm {
   //           }
   //         }
 
-  //         if (valueHasAvailableVariants == false) {
+  //         if (valueHasAvailableVariants === false) {
   //           console.log('disable UI for - ' + secondOptionValue);
   //           $('[data-variant-option-value="'+ secondOptionValue +'"]').addClass('is-disabled');
   //         }
@@ -339,7 +339,7 @@ export default class ProductDetailForm {
   //               // console.log('checking variant with option 2 - ' + __v.option2);
   //               // console.log('checking variant with option 3 - ' + __v.option3);
 
-  //               if (__v.option1 == variant.option1 && __v.option2 == variant.option2 && __v.option3 == thirdOptionValue) {
+  //               if (__v.option1 === variant.option1 && __v.option2 === variant.option2 && __v.option3 === thirdOptionValue) {
   //                 console.log('found a matching variant');
   //                 console.log(_v);
   //                 if (__v.available) {
@@ -351,7 +351,7 @@ export default class ProductDetailForm {
   //               }
   //             }
 
-  //             if (_valueHasAvailableVariants == false) {
+  //             if (_valueHasAvailableVariants === false) {
   //               console.log('disable UI for - ' + thirdOptionValue);
   //               $('[data-variant-option-value="'+ thirdOptionValue +'"]').addClass('is-disabled');
   //             }
@@ -373,22 +373,21 @@ export default class ProductDetailForm {
    * @param {Object} variant - Shopify variant object
    */
   updateGalleries(variant) {
-    if (!variant || this.$galleries.length == 1) return;
+    if (!variant || this.$galleries.length === 1) return;
 
     const self = this;
     const $activeGalleries = this.$galleries.filter(`.${classes.galleryActive}`);
     
     function getVariantGalleryForOption(option) {
       return self.$galleries.filter(function() {
-        return $(this).data('variant-option-gallery') == option;
+        return $(this).data('variant-option-gallery') === option;
       });
     }
 
-    for (var i = 3; i >= 1; i--) {
+    for (let i = 3; i >= 1; i--) {
       const $vGallery = getVariantGalleryForOption(variant['option' + i]);
 
       if ($vGallery.length && !$vGallery.hasClass(classes.galleryActive)) {
-        
         // Do the hiding / showing of the correct gallery
         $activeGalleries.first().one(this.transitionEndEvent, () => {
           $activeGalleries.css('display', 'none');
@@ -397,11 +396,11 @@ export default class ProductDetailForm {
           // Only scroll to the top if we're on a larger screen with fixed elements
           // Otherwise it's annoying on mobile
           if (window.innerWidth > this.desktopMinWidth) {
-            $window.scrollTop(0);  
+            $window.scrollTop(0);
           }
           
           $vGallery.css('display', 'block');
-          void $vGallery.get(0).offsetWidth;
+          void $vGallery.get(0).offsetWidth; // eslint-disable-line
           $vGallery.addClass(classes.galleryActive);
           $window.trigger('lookup'); // For unveil plugin
         });
@@ -423,7 +422,7 @@ export default class ProductDetailForm {
 
     const $option = $(e.currentTarget);
 
-    if ($option.hasClass(classes.variantOptionValueSelected) || $option.hasClass(classes.variantOptionValueDisabled) || $option.attr('disabled') != undefined) {
+    if ($option.hasClass(classes.variantOptionValueSelected) || $option.hasClass(classes.variantOptionValueDisabled) || $option.attr('disabled') !== undefined) {
       return;
     }
 
@@ -435,7 +434,7 @@ export default class ProductDetailForm {
     $selector.trigger('change');
 
     $option.addClass(classes.variantOptionValueSelected);
-    $option.siblings().removeClass( classes.variantOptionValueSelected );      
+    $option.siblings().removeClass(classes.variantOptionValueSelected);
   }
 
   onStickyOptionSelectorChange(e) {
@@ -456,15 +455,14 @@ export default class ProductDetailForm {
     $placeholder.find('.sticky-select-label').css('display', (value ? 'inline-block' : 'none'));
 
     $selector.val(value);
-    $selector.trigger('change');     
-
+    $selector.trigger('change');
   }
 
   onVariantOptionValueMouseenter(e) {
     const $option = $(e.currentTarget);
     const $list = $option.parents(selectors.variantOptionValueList);
 
-    if ($option.hasClass(classes.variantOptionValueDisabled) || $option.attr('disabled') != undefined) return;
+    if ($option.hasClass(classes.variantOptionValueDisabled) || $option.attr('disabled') !== undefined) return;
 
     $list.find(selectors.variantOptionValue).not($option).addClass(classes.variantOptionValueNotHovered);
   }
@@ -480,10 +478,8 @@ export default class ProductDetailForm {
       this.productImageTouchZoomController.disable();
       this.productImageDesktopZoomController.enable();
     }
-    else {
-      if (Modernizr && Modernizr.touchevents) {
-        this.productImageTouchZoomController.enable();
-      }
+    else if (Modernizr && Modernizr.touchevents) {
+      this.productImageTouchZoomController.enable();
     }
 
     if (window.innerWidth < this.stickyMaxWidth) {

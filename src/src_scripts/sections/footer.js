@@ -11,10 +11,9 @@ const selectors = {
 const classes = {
   showMessage: 'show-message',
   contentsGoAway: 'go-away'
-}
+};
 
 export default class FooterSection extends BaseSection {
-
   constructor(container) {
     super(container, 'footer');
     
@@ -28,10 +27,10 @@ export default class FooterSection extends BaseSection {
     this.AJAXMailchimpForm = new AJAXMailchimpForm(this.$subscribeForm, {
       onSubscribeFail: (msg) => {
         if (msg.match(/already subscribed/)) {
-          this.$formMessage.text('This email address is already subscribed');  
+          this.$formMessage.text('This email address is already subscribed');
         }
         else {
-          this.$formMessage.text('Check your email address and try again');   
+          this.$formMessage.text('Check your email address and try again');
         }
         
         this.$formContents.addClass(classes.showMessage);
@@ -46,10 +45,9 @@ export default class FooterSection extends BaseSection {
         this.$formMessage.text('Thank you for subscribing');
         this.$formContents.addClass(classes.showMessage);
         setTimeout(() => {
-          this.$formContents.addClass(classes.contentsGoAway);         
+          this.$formContents.addClass(classes.contentsGoAway);
         }, 4000);
       }
     });
   }
-  
 }

@@ -1,8 +1,5 @@
 import Utils from '../utils';
 
-const $document = $(document);
-const $body     = $(document.body);
-
 const selectors = {
   close: '[data-toast-close]',
   content: '.toast__content'
@@ -14,13 +11,12 @@ const classes = {
 };
 
 export default class Toast {
-  
- /**
+  /**
   * Toast constructor
   *
   * @param {HTMLElement | $} el - The toast element
   * @param {Object} options
-  */  
+  */
   constructor(el, options) {
     this.name = 'toast';
     this.namespace = `.${this.name}`;
@@ -33,17 +29,17 @@ export default class Toast {
     this.interactionTimeout     = false;
     this.timeoutDuration        = 2000;
 
-    if (this.$el == undefined || !this.$el.hasClass(classes.toast)) {
+    if (this.$el === undefined || !this.$el.hasClass(classes.toast)) {
       console.warn('['+this.name+'] - Element with class `'+classes.toast+'` required to initialize.');
       return;
-    }     
+    }
 
     this.events = {
       HIDE:   'hide'   + this.namespace,
       HIDDEN: 'hidden' + this.namespace,
       SHOW:   'show'   + this.namespace,
       SHOWN:  'shown'  + this.namespace
-    };    
+    };
 
     this.$el.on('mouseenter', this.onMouseenter.bind(this));
     this.$el.on('mouseleave', this.onMouseleave.bind(this));
@@ -66,7 +62,7 @@ export default class Toast {
   
   /**
    * Called after the closing animation has run
-   */    
+   */
   onHidden() {
     this.stateIsOpen = false;
     this.clearInteractionTimeout();
@@ -79,7 +75,7 @@ export default class Toast {
    */
   onShown() {
     this.setInteractionTimeout();
-    var e = $.Event(this.events.SHOWN);
+    const e = $.Event(this.events.SHOWN);
     this.$el.trigger(e);
   }
 
@@ -89,7 +85,7 @@ export default class Toast {
 
     if (!this.stateIsOpen) return;
 
-    this.$el.removeClass(classes.visible);   
+    this.$el.removeClass(classes.visible);
 
     if (this.supportsCssTransitions) {
       this.$el.one(this.transitionEndEvent, this.onHidden.bind(this));
@@ -107,14 +103,14 @@ export default class Toast {
 
     this.stateIsOpen = true;
 
-    this.$el.addClass(classes.visible);  
+    this.$el.addClass(classes.visible);
 
     if (this.supportsCssTransitions) {
       this.$el.one(this.transitionEndEvent, this.onShown.bind(this));
     }
     else {
       this.onShown();
-    }        
+    }
   }
 
   toggle() {
@@ -132,6 +128,5 @@ export default class Toast {
 
   onMouseleave() {
     this.setInteractionTimeout();
-  } 
-
+  }
 }

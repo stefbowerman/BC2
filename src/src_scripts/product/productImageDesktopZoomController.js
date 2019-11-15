@@ -7,11 +7,7 @@ const classes = {
   isZoomed: 'is-zoomed'
 };
 
-const $window = $(window);
-const $body   = $(document.body);
-
 export default class ProductImageDesktopZoomController {
-  
   /**
    * ProductImageDesktopZoomController
    *
@@ -24,7 +20,7 @@ export default class ProductImageDesktopZoomController {
 
     this.events = {
       CLICK:      'click' + this.namespace
-    };    
+    };
 
     this.enabled = false;
     this.isZoomed = false;
@@ -79,10 +75,10 @@ export default class ProductImageDesktopZoomController {
 
   setCursors(type) {
     const $images = this.$gallery.find('img');
-    if (type == 'in') {
+    if (type === 'in') {
       $images.css('cursor', 'zoom-in');
     }
-    else if (type == 'out') {
+    else if (type === 'out') {
       $images.css('cursor', 'zoom-out');
     }
     else {

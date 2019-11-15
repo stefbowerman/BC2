@@ -23,12 +23,11 @@ export default class StockistsSection extends BaseSection {
         if (aAlph > bAlph) {
           return 1;
         }
-        else if (aAlph < bAlph) {
+        if (aAlph < bAlph) {
           return -1;
         }
-        else {
-          return 0;
-        }
+        
+        return 0;
       });
 
       $list.append($lis);

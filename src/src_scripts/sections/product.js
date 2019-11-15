@@ -1,9 +1,9 @@
+import SmoothScroll from 'smooth-scroll';
+import { throttle } from 'throttle-debounce';
 import BaseSection from './base';
 import ProductDetailForm from '../product/productDetailForm';
 import Drawer from '../uiComponents/drawer';
 import * as Breakpoints from '../breakpoints';
-import SmoothScroll from 'smooth-scroll';
-import { throttle, debounce } from 'throttle-debounce';
 
 const selectors = {
   sizeGuideDrawer: '[data-size-guide-drawer]',
@@ -17,12 +17,11 @@ const selectors = {
 const classes = {
   secondaryLinkHidden: 'is-hidden',
   hide: 'hide'
-}
+};
 
 const $window = $(window);
 
 export default class ProductSection extends BaseSection {
-
   constructor(container) {
     super(container, 'product');
 
@@ -67,7 +66,7 @@ export default class ProductSection extends BaseSection {
 
   secondaryDescriptionCheck() {
     const triggerOffset = $window.scrollTop() + window.innerHeight - 100; // Make sure at least 100px of the description are in view
-    this.secondaryDescriptionInView = (this.$secondaryDescription.offset()['top'] < triggerOffset);
+    this.secondaryDescriptionInView = (this.$secondaryDescription.offset().top < triggerOffset);
 
     if (this.secondaryDescriptionInView) {
       this.$secondaryDescriptionLink.addClass(classes.secondaryLinkHidden);
@@ -76,7 +75,7 @@ export default class ProductSection extends BaseSection {
     else {
       this.$secondaryDescriptionLink.removeClass(classes.secondaryLinkHidden);
       // console.log('fixed description NOT in view');
-    }    
+    }
   }
 
   onScroll() {
@@ -84,20 +83,20 @@ export default class ProductSection extends BaseSection {
   }
 
   onResize() {
-    this.secondaryDescriptionCheck()
+    this.secondaryDescriptionCheck();
 
-    if (this.fixedFormFullHeight == null && window.innerWidth >= this.bpDesktopMin) {
+    if (this.fixedFormFullHeight === null && window.innerWidth >= this.bpDesktopMin) {
       this.fixedFormFullHeight = this.$productEssential.outerHeight();
     }
 
     if (this.fixedFormFullHeight) {
-      if (window.innerHeight < this.fixedFormFullHeight && this.fixedDescriptionHidden == false) {
+      if (window.innerHeight < this.fixedFormFullHeight && this.fixedDescriptionHidden === false) {
         this.$fixedDescription.addClass(classes.hide);
         this.$secondaryDescriptionLink.css('display', 'block');
         this.$secondaryDescription.css('display', 'block');
         this.fixedDescriptionHidden = true;
       }
-      else if (window.innerHeight >= this.fixedFormFullHeight && this.fixedDescriptionHidden == true) {
+      else if (window.innerHeight >= this.fixedFormFullHeight && this.fixedDescriptionHidden === true) {
         this.$fixedDescription.removeClass(classes.hide);
         this.$secondaryDescriptionLink.css('display', 'none');
         this.$secondaryDescription.css('display', '');
@@ -117,7 +116,7 @@ export default class ProductSection extends BaseSection {
 
     if (this.secondaryDescriptionInView) return;
 
-    const scrollToOffset = this.$secondaryDescription.offset()['top'] - 80;
+    const scrollToOffset = this.$secondaryDescription.offset().top - 80;
     
     this.smoothScroll.animateScroll(scrollToOffset, 0, {
       speed: 1000,

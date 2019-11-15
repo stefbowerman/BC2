@@ -33,9 +33,9 @@ export default {
       type: 'post',
       dataType: 'json',
       url: '/cart/add.js',
-      data,
+      data: data,
       success: () => {
-        this.getCart().then(data => promise.resolve(data))
+        this.getCart().then(response => promise.resolve(response));
       },
       error: function () {
         promise.reject({
@@ -45,7 +45,7 @@ export default {
     });
 
     return promise;
-  },  
+  },
 
  /**
   * AJAX change line item
@@ -60,9 +60,9 @@ export default {
       type: 'post',
       dataType: 'json',
       url: '/cart/change.js',
-      data,
+      data: data,
       success: () => {
-        this.getCart().then(data => promise.resolve(data))
+        this.getCart().then(response => promise.resolve(response))
       },
       error: function () {
         promise.reject({
@@ -81,13 +81,13 @@ export default {
   */
   getCart() {
     const promise = $.Deferred();
-    const url = `/cart${Shopify && Shopify.designMode ? '.js' : '?view=json'}`
+    const url = `/cart${window.Shopify && window.Shopify.designMode ? '.js' : '?view=json'}`
     
     $.ajax({
       type: 'get',
       url: url,
       success: (data) => promise.resolve(JSON.parse(data)),
-      error: function () {
+      error: function() {
         promise.reject({
           message: 'Could not retrieve cart items'
         });
@@ -96,4 +96,4 @@ export default {
 
     return promise;
   }
-}
+};

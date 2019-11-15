@@ -8,7 +8,7 @@ import GiftWithPurchase from './giftWithPurchase';
 // and fixing the cart
 class CartAPI {
   constructor() {
-    this.giftWithPurchase = new GiftWithPurchase(window.GWP)
+    this.giftWithPurchase = new GiftWithPurchase(window.GWP);
   }
 
   _onRequestDone(cart, promise) {
@@ -18,20 +18,20 @@ class CartAPI {
 
     // If the cart needs the gift, make one more request and *then* resolve
     if (this.giftWithPurchase.cartNeedsGift(cart)) {
-      ShopifyAPI.addVariant(this.giftWithPurchase.id, 1).then(cart => {
-        promise.resolve(this.fixCart(cart))
+      ShopifyAPI.addVariant(this.giftWithPurchase.id, 1).then(c => {
+        promise.resolve(this.fixCart(c))
       })
     }
     // If we ended up with more than one gift in the cart, fix it and *then* resolve
     else if (this.giftWithPurchase.cartQualifiesButHasMultipleGifts(cart)) {
-      ShopifyAPI.changeLineItem({id: this.giftWithPurchase.id, quantity: 1}).then(cart => {
-        promise.resolve(this.fixCart(cart))
+      ShopifyAPI.changeLineItem({ id: this.giftWithPurchase.id, quantity: 1 }).then(c => {
+        promise.resolve(this.fixCart(c))
       })
     }
     // If the cart has a gift in it but it shouldn't..
     else if (this.giftWithPurchase.cartContainsGiftButDoesntQualify(cart)) {
-      ShopifyAPI.changeLineItem({id: this.giftWithPurchase.id, quantity: 0}).then(cart => {
-        promise.resolve(this.fixCart(cart))
+      ShopifyAPI.changeLineItem({ id: this.giftWithPurchase.id, quantity: 0 }).then(c => {
+        promise.resolve(this.fixCart(c))
       })
     }
     else {
@@ -72,10 +72,10 @@ class CartAPI {
 
     ShopifyAPI.changeLineItem(data)
       .done(cart => {
-        this._onRequestDone(cart, promise)
+        this._onRequestDone(cart, promise);
       })
-      .fail(data => {
-        promise.reject(data)
+      .fail(response => {
+        promise.reject(response);
       });
 
     return promise
@@ -109,14 +109,14 @@ class CartAPI {
 
       // Adjust the item's variant options to add "name" and "value" properties
       if (product) {
-        for (var i = item.variant_options.length - 1; i >= 0; i--) {
-          let name  = product.options[i];
-          let value = item.variant_options[i];
+        for (let i = item.variant_options.length - 1; i >= 0; i--) {
+          const name  = product.options[i];
+          const value = item.variant_options[i];
 
           item.variant_options[i] = { name, value };
 
           // Don't show this info if it's the default variant that Shopify creates
-          if (value == "Default Title") {
+          if (value === 'Default Title') {
             delete item.variant_options[i];
           }
         }
