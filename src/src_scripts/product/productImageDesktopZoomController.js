@@ -19,7 +19,7 @@ export default class ProductImageDesktopZoomController {
     this.namespace = '.'+this.name;
 
     this.events = {
-      CLICK:      'click' + this.namespace
+      CLICK: `click${this.namespace}`
     };
 
     this.enabled = false;
@@ -62,6 +62,13 @@ export default class ProductImageDesktopZoomController {
     this.$gallery.addClass(classes.isZoomed);
     this.setCursors('out');
     this.isZoomed = true;
+
+    window.ga && window.ga('send', {
+      hitType: 'event',
+      eventCategory: 'PDP Image',
+      eventAction: 'zoom in',
+      eventLabel: 'touch'
+    });
   }
 
   zoomOut() {
@@ -71,6 +78,13 @@ export default class ProductImageDesktopZoomController {
 
     this.setCursors('in');
     this.isZoomed = false;
+
+    window.ga && window.ga('send', {
+      hitType: 'event',
+      eventCategory: 'PDP Image',
+      eventAction: 'zoom out',
+      eventLabel: 'touch'
+    });
   }
 
   setCursors(type) {

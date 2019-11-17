@@ -56,12 +56,6 @@ $cart-padding-v: 15px;
   text-align: center;
 }
 
-.cart-list__col-remove {
-  svg {
-    fill: $text-color;
-  }
-}
-
 .cart-list__row .cart-list__col-product {
   padding-left: 0;
   padding-right: 0;
@@ -109,15 +103,12 @@ $cart-padding-v: 15px;
 }
 
 .cart-list__item-details-remove {
+  @include remove-link;
   
   @media (min-width: $screen-xs-min) {
     position: absolute;
     bottom: $cart-padding-h;
-    right: 0;    
-  }
-
-  svg {
-    fill: $text-color;
+    right: 0;
   }
 }
 

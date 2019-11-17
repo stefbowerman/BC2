@@ -50,18 +50,16 @@
   {% endif %}
 
   {% if has_size and size_guide_source != false %}
-
     <div class="drawer drawer--size-guide" data-size-guide-drawer>
       <div class="drawer__inner">
         <a href="#" class="drawer__close" data-drawer-close>
           Close
-        </a>         
+        </a>
         <div class="drawer__body">
           <div class="drawer__body-contents" style="max-width: 450px;margin: 0 auto;">
-            <h5 style="text-align: center;">Size Guide</h5>
+            <h5 class="u-ta-center">Size Guide</h5>
             <div style="font-size: 12px; width: 100%;">
               <div class="sg-source">
-
                 {% comment %} If the size guide is at the product level, reiterate the product title for clarity {% endcomment %}
                 {% if size_guide_source_is_metafield %}
                   <h6>{{ product.title }}</h6>
@@ -69,6 +67,7 @@
 
                 {{ size_guide_source }}
               </div>
+              <p class="u-ta-center">*All measurements listed are in inches.</p>
               {% if product.metafields.size_guide.model_image %}
                 <div class="sg-model">
                   <img src="{{ product.metafields.size_guide.model_image | strip }}" />

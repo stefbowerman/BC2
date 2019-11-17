@@ -29,9 +29,15 @@ const $body = $(document.body);
       sections.mobileMenu.drawer.hide();
     },
     onViewTransitionOutDone: (url) => {
-      // Update the menu immediately or wait?
       sections.nav.deactivateMenuLinks();
+    },
+    onViewChangeStart: (url) => {
       sections.nav.activateMenuLinkForUrl(url);
+
+      if (window.ga) {
+        window.ga('set', 'page', window.location.pathname);
+        window.ga('send', 'pageview');
+      }
     },
     onViewChangeDOMUpdatesComplete: ($responseHead, $responseBody) => {
       window.scrollTop = 0;

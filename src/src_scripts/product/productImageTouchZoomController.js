@@ -28,7 +28,7 @@ export default class ProductImageTouchZoomController {
     this.namespace = '.'+this.name;
 
     this.events = {
-      CLICK:  'click'  + this.namespace
+      CLICK: `click${this.namespace}`
     };
 
     this.enabled = false;
@@ -113,6 +113,13 @@ export default class ProductImageTouchZoomController {
     $body.addClass(classes.bodyBlowupOpen);
     this.$blowup.one(this.events.CLICK, this.zoomOut.bind(this));
     this.isZoomed = true;
+
+    window.ga && window.ga('send', {
+      hitType: 'event',
+      eventCategory: 'PDP Image',
+      eventAction: 'zoom in',
+      eventLabel: 'touch'
+    });
   }
 
   zoomOut() {
@@ -124,6 +131,13 @@ export default class ProductImageTouchZoomController {
       this.iscrollInstance && this.iscrollInstance.destroy();
       this.$blowupImage.attr('src', '');
       this.isZoomed = false;
+    });
+
+    window.ga && window.ga('send', {
+      hitType: 'event',
+      eventCategory: 'PDP Image',
+      eventAction: 'zoom out',
+      eventLabel: 'touch'
     });
   }
 

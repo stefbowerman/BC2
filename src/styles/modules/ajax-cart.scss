@@ -196,7 +196,7 @@ body.ajax-cart-open {
 }
 
 .ajax-cart__item-remove {
-
+  @include remove-link;
 }
 
 .ajax-cart__footer {

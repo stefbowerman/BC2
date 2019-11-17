@@ -13,5 +13,3 @@
 
 
 old GA account -> UA-47737056-1
-
-Only change the styling for the last product image if it's a portrait image otherwise it fucks with the product images if there's no model shot

@@ -23,6 +23,7 @@ export default class AppRouter {
     const defaults = {
       onRouteStart: $.noop,
       onViewTransitionOutDone: $.noop,
+      onViewChangeStart: $.noop,
       onViewChangeDOMUpdatesComplete: $.noop
     };
 
@@ -146,11 +147,13 @@ export default class AppRouter {
 
     // Once AJAX *and* css animations are done, trigger the callback
     $.when(ajaxDeferred, transitionDeferred).done((response) => {
-      this.doViewChange(response, ViewConstructor);
+      this.doViewChange(response, ViewConstructor, url);
     }); 
   }
 
-  doViewChange(AJAXResponse, ViewConstructor) {
+  doViewChange(AJAXResponse, ViewConstructor, url) {
+    this.settings.onViewChangeStart(url)
+
     this.currentView.destroy(); // Kill the current view
 
     const $responseHtml = $(document.createElement('html'));
