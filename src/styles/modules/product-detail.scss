@@ -426,7 +426,8 @@ body.template-product {
     }    
   }
 
-  &:last-child:not(:only-child) {
+  // Last child portrait image is a model image
+  &.product-gallery__item--portrait:last-child:not(:only-child) {
     min-height: auto;
     height: auto;
   }

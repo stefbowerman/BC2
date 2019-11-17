@@ -52,8 +52,14 @@
               {% for image in product.images %}
                 {% assign image_alt_upcase = image.alt | upcase %}
                 {% comment %} Looking for an exact match here {% endcomment %}
-                {% if image_alt_upcase contains color_upcase %}            
-                  <li class="product-gallery__item" data-image="{{ image.id }}" data-gallery-item>   
+                {% if image_alt_upcase contains color_upcase %}
+                  {% assign orientation = "square" %}
+                  {% if image.height > image.width %}
+                    {% assign orientation = "portrait" %}
+                  {% elsif image.height < image.width %}
+                    {% assign orientation = "landscape" %}
+                  {% endif %}                
+                  <li class="product-gallery__item product-gallery__item--{{ orientation }}" data-image="{{ image.id }}" data-gallery-item>   
                     <img {% if outputted_image_count == 0 %}src={% else %}data-src={% endif%}"{{ image | img_url: photo_main_dimension }}" 
                          alt="{{ image.alt | escape }}"
                          class="product-gallery__image"
@@ -75,7 +81,13 @@
     <div class="product-gallery is-active" data-gallery>
       <ul class="product-gallery__list">
         {% for image in product.images %}
-          <li class="product-gallery__item" data-image="{{ image.id }}" data-gallery-item>   
+          {% assign orientation = "square" %}
+          {% if image.height > image.width %}
+            {% assign orientation = "portrait" %}
+          {% elsif image.height < image.width %}
+            {% assign orientation = "landscape" %}
+          {% endif %}
+          <li class="product-gallery__item product-gallery__item--{{ orientation }}" data-image="{{ image.id }}" data-gallery-item>   
             <img {% if forloop.index0 == 0 %}src={% else %}data-src={% endif%}"{{ image | img_url: photo_main_dimension }}" alt="{{ image.alt | escape }}" class="product-gallery__image" data-gallery-image>
           </li>
         {% endfor %}
