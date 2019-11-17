@@ -4,52 +4,41 @@ export default class GiftWithPurchase {
     this.amount = settings.amount;
   }
 
+  // Checks the validity of the gift based on the settings passed into the contructor
   isValid() {
     return !!(this.id && (!Number.isNaN(this.amount) && this.amount > 0));
   }
 
+  // Checks if the value passed in qualifies for the gift
   qualifies(amount) {
     return amount >= this.amount;
   }
 
-  cartNeedsGift(cart) {
-    let needs = false;
+  getCartData(cart) {
+    let giftQuantity = 0;
 
-    if (this.isValid() && this.qualifies(cart.total_price/100) && !this.cartContainsGift(cart)) {
-      needs = true;
-    }
-
-    return needs;
-  }
-
-  // Retrieves the quantity of gifts in the cart
-  cartGetGiftQuantity(cart) {
-    let quantity = 0;
-    
     if (cart && cart.items && cart.items.length) {
       for (let i = cart.items.length - 1; i >= 0; i--) {
         if (cart.items[i].id === this.id) {
-          quantity += cart.items[i].quantity;
+          giftQuantity += cart.items[i].quantity;
         }
       }
     }
+    
+    const qualifies = this.qualifies(cart.total_price/100);
+    const containsGift = giftQuantity > 0;
+    const needsGift = (this.isValid() && qualifies && !containsGift);
+    const hasMultipleGifts = giftQuantity > 1;
+    const qualifiesButHasMultipleGifts = (qualifies && hasMultipleGifts);
+    const containsGiftButDoesntQualify = (containsGift && !qualifies)
 
-    return quantity;
-  }
-
-  cartHasMultipleGifts(cart) {
-    return this.cartGetGiftQuantity(cart) > 1;
-  }
-
-  cartContainsGift(cart) {
-    return this.cartGetGiftQuantity(cart) > 0;
-  }
-
-  cartQualifiesButHasMultipleGifts(cart) {
-    return this.qualifies(cart.total_price/100) && this.cartHasMultipleGifts(cart);
-  }
-
-  cartContainsGiftButDoesntQualify(cart) {
-    return this.cartContainsGift(cart) && !this.qualifies(cart.total_price/100);
+    return {
+      needsGift,
+      giftQuantity,
+      containsGift,
+      hasMultipleGifts,
+      qualifiesButHasMultipleGifts,
+      containsGiftButDoesntQualify
+    };
   }
 }

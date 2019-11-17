@@ -16,26 +16,28 @@ class CartAPI {
     // so now is a good time to check if the gift with purchase applies, needs to be added, removed
     // or none of the above
 
+    const gwpCartData = this.giftWithPurchase.getCartData(cart);
+
     // If the cart needs the gift, make one more request and *then* resolve
-    if (this.giftWithPurchase.cartNeedsGift(cart)) {
+    if (gwpCartData.needsGift) {
       ShopifyAPI.addVariant(this.giftWithPurchase.id, 1).then(c => {
         promise.resolve(this.fixCart(c))
-      })
+      });
     }
     // If we ended up with more than one gift in the cart, fix it and *then* resolve
-    else if (this.giftWithPurchase.cartQualifiesButHasMultipleGifts(cart)) {
+    else if (gwpCartData.qualifiesButHasMultipleGifts) {
       ShopifyAPI.changeLineItem({ id: this.giftWithPurchase.id, quantity: 1 }).then(c => {
         promise.resolve(this.fixCart(c))
-      })
+      });
     }
     // If the cart has a gift in it but it shouldn't..
-    else if (this.giftWithPurchase.cartContainsGiftButDoesntQualify(cart)) {
+    else if (gwpCartData.containsGiftButDoesntQualify) {
       ShopifyAPI.changeLineItem({ id: this.giftWithPurchase.id, quantity: 0 }).then(c => {
         promise.resolve(this.fixCart(c))
-      })
+      });
     }
     else {
-      promise.resolve(this.fixCart(cart))
+      promise.resolve(this.fixCart(cart));
     }
   }
 
@@ -44,13 +46,13 @@ class CartAPI {
 
     ShopifyAPI.getCart()
       .done(cart => {
-        this._onRequestDone(cart, promise)
+        this._onRequestDone(cart, promise);
       })
       .fail(data => {
-        promise.reject(data)
+        promise.reject(data);
       });
 
-    return promise
+    return promise;
   }
 
   addItemFromForm($form) {
@@ -58,13 +60,13 @@ class CartAPI {
     
     ShopifyAPI.addItemFromForm($form)
       .done(cart => {
-        this._onRequestDone(cart, promise)
+        this._onRequestDone(cart, promise);
       })
       .fail(data => {
-        promise.reject(data)
+        promise.reject(data);
       });
 
-    return promise
+    return promise;
   }
 
   changeLineItem(data) {
@@ -78,7 +80,7 @@ class CartAPI {
         promise.reject(response);
       });
 
-    return promise
+    return promise;
   }
 
  /**
