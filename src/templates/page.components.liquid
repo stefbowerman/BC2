@@ -20,8 +20,6 @@
           <li><a href="#docs-modals">Modals</a></li>
           <li><a href="#docs-overlays">Overlays</a></li>
           <li><a href="#docs-drawer">Drawer</a></li>
-          <li><a href="#docs-slideup">Slideup</a></li>
-          <li><a href="#docs-slideup-alert">Slideup Alert</a></li>
           <li><a href="#docs-collapse">Collapse</a></li>
           <li><a href="#docs-quantity-adjuster">Quantity Adjuster</a></li>
         </ul>
@@ -640,109 +638,7 @@ The color is "{{ color }}"
               </tr>
             </tbody>
           </table>
-        </div> 
-
-        <h3 id="docs-slideup" class="docs-title">Slideup</h3>
-        <p>Slideups are similar to drawers in that they are fixed to the screen but they are positioned at the bottom of the viewport and are generally used for site notices as opposed to site functionality.</p>
-
-        <p>The example below is included statically to use as reference while styling.  Clicking the trigger below will show a live, working demo.</p>        
-
-        <div class="docs-well">
-          <div class="slideup is-visible" style="position: relative; z-index: 1">
-            <div class="container">
-              <a href="#" class="slideup__close" data-slideup-close>{% include 'icon-close' %}</a>
-              <div class="slideup__content">
-                <h4 class="slideup__title">Slideup Title</h4>
-                <div class="slideup__text">
-                  <p class="p1">Throw some text in here that you want to force the user to see.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>    
-
-        <p>The API closely follows the one for Bootstrap's modals.  You can create the slideup programatically by calling the <code>Slideup</code> constructor and passing in options or by using <code>data-*</code> attributes to specify the element, trigger and options.  The example below uses the data API.</p>
-
-        <p>
-          <button data-toggle="slideup" data-target="#my-slideup" class="btn btn-primary">Trigger slideup</button>
-        </p>
-
-        <div id="my-slideup" class="slideup">
-          <div class="container">
-            <a href="#" class="slideup__close" data-slideup-close>{% include 'icon-close' %}</a>
-            <div class="slideup__content">
-              <h4 class="slideup__title">Slideup Title</h4>
-              <div class="slideup__text">
-                <p class="p1">Throw some text in here that you want to force the user to see.</p>
-              </div>
-            </div>
-          </div>
         </div>
-
-        <h4 class="docs-subtitle">Options</h4>
-
-        <div class="table-responsive">
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Type</th>
-                <th>Default</th>
-                <th>Description</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><code>closeSelector</code></td>
-                <td>String</td>
-                <td>[data-slideup-close]</td>
-                <td>Selector for the close button contained within the slideup element.</td>
-              </tr>           
-            </tbody>
-          </table>
-        </div> 
-
-        <h4 class="docs-subtitle">Events</h4>
-
-        <div class="table-responsive">
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Description</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><code>hide.slideup</code></td>
-                <td>Triggered when the <code>hide</code> method is called even if the slideup is already closed.</td>
-              </tr>
-              <tr>
-                <td><code>hidden.slideup</code></td>
-                <td>Triggered when the hide animation completes</td>
-              </tr>
-              <tr>
-                <td><code>show.slideup</code></td>
-                <td>Triggered when the <code>show</code> method is called even if the slideup is already open.</td>
-              </tr>
-              <tr>
-                <td><code>shown.slideup</code></td>
-                <td>Triggered when the show animation completes.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <h3 id="docs-slideup-alert" class="docs-title">Slideup Alert</h3>
-        <p>Slideup alerts are one time alerts that utilize the slideup class.  Use the form below to test how alerts will show up.</p>
-
-        <form class="form-inline" data-slideup-alert-form>
-          <div class="form-group">
-            <input type="text" name="title" class="form-control" placeholder="Enter Title">
-            <input type="text" name="text" class="form-control" placeholder="Enter Message">
-          </div>
-          <button type="submit" class="btn btn-primary">Show Alert</button>
-        </form>
 
         <h3 id="docs-collapse" class="docs-title">Collapse</h3>
 

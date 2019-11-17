@@ -88,7 +88,8 @@ body.ajax-cart-open {
   }
 }
 
-body.ajax-cart-open {
+body.ajax-cart-open,
+body.size-guide-open {
   .mobile-menu-toggle {
     opacity: 0;
     pointer-events: none;

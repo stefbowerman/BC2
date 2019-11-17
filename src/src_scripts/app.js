@@ -80,7 +80,18 @@ const $body = $(document.body);
     });
   }
 
-  // Return early cause I'm not 100% that this helps...
+  // Add "development mode" class for CSS hook
+  if (window.location.hostname === 'localhost') {
+    $body.addClass('development-mode');
+  }
+
+  // Credits
+  if (window.location.hostname !== 'localhost') {
+    // eslint-disable-next-line no-console max-len
+    console.log('%c Bianca Chandôn - design + development → stefanbowerman.com', 'font-family: Helvetica; font-size: 11px; color: #111; text-transform: uppercase; background-color: #FFF; padding: 3px 10px;');
+  }
+
+  // Return early cause I'm not 100% that prefetching helps...
   return;
 
   // Prefetching :)

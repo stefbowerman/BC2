@@ -16,10 +16,12 @@ const selectors = {
 
 const classes = {
   secondaryLinkHidden: 'is-hidden',
-  hide: 'hide'
+  hide: 'hide',
+  bodySizeGuideOpen: 'size-guide-open'
 };
 
 const $window = $(window);
+const $body = $(document.body);
 
 export default class ProductSection extends BaseSection {
   constructor(container) {
@@ -48,6 +50,14 @@ export default class ProductSection extends BaseSection {
       this.$container.on('click', selectors.sizeGuideShow, (e) => {
         e.preventDefault();
         this.drawer.show();
+      });
+
+      this.$sizeGuideDrawerEl.on(this.drawer.events.SHOW, (e) => {
+        $body.addClass(classes.bodySizeGuideOpen);
+      });
+
+      this.$sizeGuideDrawerEl.on(this.drawer.events.HIDDEN, (e) => {
+        $body.removeClass(classes.bodySizeGuideOpen);
       });
     }
 

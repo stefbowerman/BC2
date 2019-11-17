@@ -36,7 +36,7 @@ export default class AppRouter {
       stockists: StockistsView
     };
 
-    this.router = new Navigo(window.location.origin, false, '#!');
+    this.router = new Navigo(window.location.origin, false, '#!'); // eslint-disable-line no-undef
     this.isTransitioning = false;
     this.currentView = null;
     this.settings = $.extend({}, defaults, options);
@@ -172,9 +172,8 @@ export default class AppRouter {
       return (classname.match(TEMPLATE_REGEX) || []).join(' ');
     });
 
-    const responseBodyClasses = $responseBody.attr('class').split(' ');
     $body.addClass(() => {
-      return responseBodyClasses.map((classname) => {
+      return $responseBody.attr('class').split(' ').map((classname) => {
         return classname.match(TEMPLATE_REGEX);
       }).join(' ');
     });

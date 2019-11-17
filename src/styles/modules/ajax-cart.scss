@@ -82,14 +82,19 @@ body.ajax-cart-open {
   }
 
   opacity: 0;
-  transform: translateY(-5px);
+  transform: translate(0px, -5px);
   transition-property: opacity, transform;
   transition-duration: 700ms;
-  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);  
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+
+  // Larger screens it comes in from the side
+  @media (min-width: $screen-sm-min) {
+    transform: translate(5px, 0px);
+  }  
 
   .ajax-cart-container.is-open & {
     opacity: 1;
-    transform: translateY(0px);
+    transform: translate(0px, 0px);
     transition-delay: 80ms, 80ms;
   }
 }
