@@ -57,6 +57,18 @@
     margin-bottom: $layout-margin-bottom;
   }
 
+  // For pages without a lot of content
+  // and flex alignment to make the content centered
+  &.layout-content-wrapper--even {
+    margin-top: $layout-margin-top-mobile;
+    margin-bottom: $layout-margin-top-mobile;
+
+    @media (min-width: $screen-md-min) {
+      margin-top: $layout-margin-bottom;
+      margin-bottom: $layout-margin-bottom;
+    }
+  }
+
   &.flush-top {
     margin-top: 0;
   }
