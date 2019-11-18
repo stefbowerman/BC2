@@ -80,11 +80,11 @@ body.drawer-open {
 .drawer__close {
   position: absolute;
   z-index: 1;
-  top: 22px;
+  top: 20px;
   right: $grid-gutter-width/2;
 
   @media (min-width: $screen-xs-min) {
-    top: 25px;
+    top: $grid-gutter-width/2;
   }
 }
 
