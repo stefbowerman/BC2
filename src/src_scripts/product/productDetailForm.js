@@ -121,9 +121,13 @@ export default class ProductDetailForm {
         product: this.productSingleObject
       };
 
+      const zoomOptions = {
+        onZoomIn: this.onZoomIn.bind(this)
+      };
+
       this.variants = new ProductVariants(variantOptions);
-      this.productImageTouchZoomController = new ProductImageTouchZoomController(this.$container);
-      this.productImageDesktopZoomController = new ProductImageDesktopZoomController(this.$container);
+      this.productImageTouchZoomController = new ProductImageTouchZoomController(this.$container, zoomOptions);
+      this.productImageDesktopZoomController = new ProductImageDesktopZoomController(this.$container, zoomOptions);
 
       // Do images loaded check on the first active gallery
       this.$galleries.filter(`.${classes.galleryActive}`).find(selectors.galleryImage).first().imagesLoaded(() => {
@@ -440,14 +444,10 @@ export default class ProductDetailForm {
   onStickyOptionSelectorChange(e) {
     e.preventDefault();
 
-    // console.log('change');
-
     const $stickySelect = $(e.currentTarget);
     const value = $stickySelect.val();
     const position  = $stickySelect.data('option-position');
     const $selector = $(selectors.singleOptionSelector, this.$container).filter('[data-index="option'+position+'"]');
-
-    // console.log(value);
 
     // TODO - Clean this up
     const $placeholder = $stickySelect.siblings('.sticky-select-placeholder');
@@ -471,6 +471,16 @@ export default class ProductDetailForm {
     const $option = $(e.currentTarget);
     const $list = $option.parents(selectors.variantOptionValueList);
     $list.find(selectors.variantOptionValue).removeClass(classes.variantOptionValueNotHovered);
+  }
+
+  onZoomIn() {
+    window.ga && window.ga('send', {
+      hitType: 'event',
+      eventCategory: 'PDP Image',
+      eventAction: 'zoom in',
+      eventLabel: this.productSingleObject.handle,
+      eventValue: this.productSingleObject.id // Just in case?
+    });
   }
 
   onResize(e) {
