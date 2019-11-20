@@ -51,19 +51,14 @@ nav.main-nav {
     > li > a {
       display: block;
       padding-bottom: 5px;
-      @include transition(opacity 200ms ease-in); // @TODO - move this stuff to vars?  It's shared between here and option values
+      @include transition(opacity $transition-duration-quick ease-in); // @TODO - move this stuff to vars?  It's shared between here and option values
 
       &.is-active {
         font-weight: bold;
       }
 
-      // &.is-hovered {
-      //   opacity: 1;
-      // }
-
       &.is-not-hovered {
         opacity: 0.2;
-        @include transition(opacity 100ms ease-in);
       }
     }
   }
@@ -156,7 +151,7 @@ a.intermediate-nav__next-product-link {
 
   .intermediate-nav__next-product-link:hover & {
     opacity: 1;
-    transition-duration: 200ms;
+    transition-duration: $transition-duration-quick;
     transition-delay: 80ms;
   }
 }
