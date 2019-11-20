@@ -28,10 +28,12 @@
   {% endif %}
 {% endif %}
 
+{% comment %} Cart can only qualify if there is a gift to qualify *for* {% endcomment %}
 {% assign cart_price = cart.original_total_price | divided_by: 100 %}
-{% if cart_price >= gwp_qualification_price %}
+{% if cart_price >= gwp_qualification_price and gwp_variant_id != false %}
   {% assign gwp_cart_qualifies = true %}
 {% endif %}
+
 {% comment %} END Gift with Purchase {% endcomment %}
 
 {% capture items %}
