@@ -25,9 +25,9 @@ export default class ProductImageDesktopZoomController {
     const defaults = {
       onZoomIn: () => {},
       onZoomOut: () => {}
-    };   
+    };
     
-    this.settings = $.extend({}, defaults, options); 
+    this.settings = $.extend({}, defaults, options);
     this.enabled = false;
     this.isZoomed = false;
 

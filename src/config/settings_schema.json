@@ -78,8 +78,8 @@
       },
       {
         "type": "text",
-        "id": "gwp_amount",
-        "label": "Amount",
+        "id": "gwp_qualification_price",
+        "label": "Qualification Price",
         "info": "Minimum cart amount to qualify for this gift",
         "default": "100.00"
       }
