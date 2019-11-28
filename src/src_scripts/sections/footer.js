@@ -47,6 +47,13 @@ export default class FooterSection extends BaseSection {
         setTimeout(() => {
           this.$formContents.addClass(classes.contentsGoAway);
         }, 4000);
+
+        window.ga && window.ga('send', {
+          hitType: 'event',
+          eventCategory: 'Mailing List',
+          eventAction: 'Subscribe Success',
+          eventLabel: 'footer'
+        });
       }
     });
   }

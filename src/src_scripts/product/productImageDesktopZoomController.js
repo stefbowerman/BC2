@@ -14,7 +14,7 @@ export default class ProductImageDesktopZoomController {
    * @constructor
    * @param {jQuery} $el - element containing all required elements
    */
-  constructor($el) {
+  constructor($el, options) {
     this.name = 'productImageDesktopZoomController';
     this.namespace = '.'+this.name;
 
@@ -22,6 +22,12 @@ export default class ProductImageDesktopZoomController {
       CLICK: `click${this.namespace}`
     };
 
+    const defaults = {
+      onZoomIn: () => {},
+      onZoomOut: () => {}
+    };
+    
+    this.settings = $.extend({}, defaults, options);
     this.enabled = false;
     this.isZoomed = false;
 
@@ -63,12 +69,7 @@ export default class ProductImageDesktopZoomController {
     this.setCursors('out');
     this.isZoomed = true;
 
-    window.ga && window.ga('send', {
-      hitType: 'event',
-      eventCategory: 'PDP Image',
-      eventAction: 'zoom in',
-      eventLabel: 'touch'
-    });
+    this.settings.onZoomIn();
   }
 
   zoomOut() {
@@ -79,12 +80,7 @@ export default class ProductImageDesktopZoomController {
     this.setCursors('in');
     this.isZoomed = false;
 
-    window.ga && window.ga('send', {
-      hitType: 'event',
-      eventCategory: 'PDP Image',
-      eventAction: 'zoom out',
-      eventLabel: 'touch'
-    });
+    this.settings.onZoomOut();
   }
 
   setCursors(type) {

@@ -14,14 +14,11 @@
           <li><a href="#docs-article-card">Article Card</a></li>
           <li><a href="#docs-content-card">Content Card</a></li>
           <li><a href="#docs-overlay-card">Overlay Card</a></li>
-          <li><a href="#docs-banners">Banners</a></li>
           <li><a href="#docs-page-hero">Page Hero</a></li>
           <li><a href="#docs-promo">Promo</a></li>
           <li><a href="#docs-modals">Modals</a></li>
-          <li><a href="#docs-overlays">Overlays</a></li>
           <li><a href="#docs-drawer">Drawer</a></li>
           <li><a href="#docs-collapse">Collapse</a></li>
-          <li><a href="#docs-quantity-adjuster">Quantity Adjuster</a></li>
         </ul>
 
         <h3 class="docs-title">Note About Liquid Snippets</h3>
@@ -302,34 +299,6 @@ The color is "{{ color }}"
           </table>
         </div>        
 
-        <h3 id="docs-banners" class="docs-title">Banners</h3>
-        <p>Banners are one of the most flexible and re-usable components on the site.  They consist of a parent <code>.banner</code> element and any number of child <code>.banner__panel</code> elements. The parent <code>.banner</code> element accepts <code>.banner--large</code> and <code>.banner--small</code> modifier classes to create different sized banners.  Note that these modifier classes affect the vertical padding of the child banner panels.</p>
-
-        <p>Each banner panel has options for content alignment, text alignment, ctas, color inversion, custom vertical padding and content width, overlays and background images plus positioning at 3 different screen sizes.  Most options are optional and have fallbacks.  See <code>snippets/banner-panel.liquid</code> for the full list of options.</p>
-
-        <p>Banners should generally be used <em>outside</em> of <code>.container</code> elements in order to be full bleed.  They have their own child <code>.container</code> elements to ensure that content doesn't stretch beyond the max content width for the site.</p>
-
-        <p><strong>Note</strong>: Banner panel styling is set via a small style block contained within the snippet.  Because we use an ID inside this style block to target the specific panel, you <strong>must</strong> pass a unique ID string into the snippet.  For most use cases, some combination of section ID, block ID, and forloop index will do the trick.</p>
-
-        <div class="banner">
-          {% include 'banner-panel',
-                      id: "123abc",
-                      content_alignment: "center",
-                      title: "Banner Panel Title 1",
-                      content_alignment: "left",
-                      text: "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-                      light_text: false
-          %}
-          {% include 'banner-panel',
-                      id: "abc123",
-                      content_alignment: "center",
-                      title: "Banner Panel Title 2",
-                      content_alignment: "right",
-                      text: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-                      light_text: false
-          %}  
-        </div>
-
         <h3 id="docs-page-hero" class="docs-title">Page Hero</h3>
         <p>Page heroes function similar to banners but should only be used at the top of a page.  They are typically used as an enhancement over the text-only <code>.page-header</code> element when we want to display text over a background image.  Although their base styling is similar, they are built separately from banners to allow more flexibility.  The snippet API is also slightly different to support different features.</p>
         
@@ -433,82 +402,6 @@ The color is "{{ color }}"
             </div>
           </div>
         </div>
-
-        <h3 id="docs-overlays" class="docs-title">Overlays</h3>
-
-        <p>Overlays are similar to modals but are more generic and have more flexibility.  They take over the entire screen but don't use a dialog box to hold content.  Content is vertically centered within the viewport, but horizontal alignment is up to you.  See the "search" example.  They use a data-api that is similar to modals.</p>
-        <p><strong>NOTE:</strong> These are still a work in progress, I'm having trouble with the close button on mobile.</p>
-
-        <p>
-          <button data-toggle="overlay" data-target="#test-overlay" class="btn btn-primary">Trigger overlay</button>
-          <button data-toggle="overlay" data-target="#test-overlay-2" class="btn btn-primary">Trigger search overlay</button>
-        </p>
-
-        <div id="test-overlay" class="overlay" tabindex="-1">
-          <a href="#" class="overlay__close" data-overlay-close title="Close overlay">{% include 'icon-close' %}</a>
-          <div class="overlay__content-wrapper">
-            <div class="overlay__content">    
-              {% comment %} Put whatever you want in here {% endcomment %}
-                <h1>Here's some important stuff</h1>
-                {% for i in (1..10) %}
-                  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                  tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-                  quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                  consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-                  cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-                  proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-                {% endfor %}
-            </div>
-          </div>
-        </div>        
-
-        <div id="test-overlay-2" class="overlay" tabindex="-1">
-          <div class="overlay__content-wrapper">
-            <div class="overlay__content">
-              <div style="width: 500px; max-width: 100%; padding: 20px 35px; margin: 0 auto; position: relative;">
-                <a href="#" class="overlay__close" data-overlay-close style="position: absolute; top: 0; right: 0;" title="Close overlay">{% include 'icon-close' %}</a>
-                <div class="minimal-input-box minimal-input-box--large">
-                  <input type="search" placeholder="{{ 'general.search.placeholder' | t }}" class="minimal-input-box__input" />
-                  <button type="submit" class="minimal-input-box__submit">
-                    {% include 'icon-search' %}
-                    <span class="icon-fallback-text">{{ 'general.search.submit' | t }}</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <h4 class="docs-subtitle">Events</h4>
-
-        <div class="table-responsive">
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Description</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><code>hide.overlay</code></td>
-                <td>Triggered when the <code>hide</code> method is called even if the overlay is already closed.</td>
-              </tr>
-              <tr>
-                <td><code>hidden.overlay</code></td>
-                <td>Triggered when the hide animation completes.</td>
-              </tr>
-              <tr>
-                <td><code>show.overlay</code></td>
-                <td>Triggered when the <code>show</code> method is called even if the overlay is already open.</td>
-              </tr>
-              <tr>
-                <td><code>shown.overlay</code></td>
-                <td>Triggered when the show animation completes.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>   
 
         <h3 id="docs-drawer" class="docs-title">Drawer</h3>
 
@@ -682,20 +575,6 @@ The color is "{{ color }}"
             consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
             cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
             proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-            <div class="dots">
-              <div class="dot dot--solid dot--white">
-                <div class="dot__inner"></div>
-              </div>
-              <div class="dot dot--solid dot--black">
-                <div class="dot__inner"></div>
-              </div>
-              <div class="dot dot--solid dot--gray">
-                <div class="dot__inner"></div>
-              </div>
-              <div class="dot dot--solid dot--khaki">
-                <div class="dot__inner"></div>
-              </div>
-            </div>         
           </div>
         </div>
 
@@ -833,36 +712,6 @@ The color is "{{ color }}"
               </div>
             </div>      
           </div>
-        </div>
-
-        <h3 id="docs-quantity-adjuster" class="docs-title">Quantity Adjuster</h3>
-        <p>The quantity adjuster automatically comes with javascript functionality that provides input validation and UI constraints around <code>min</code> / <code>max</code> attributes set on the input element (including responding to changes during the component's lifetime).  It requires a specific markup structure with the following data attributes.</p>
-
-        <div class="docs-well docs-well--constrained">
-<pre style="margin: 0;">
-- [data-quantity-adjuster]
-  - [data-increment]
-  - input[type="number"]
-  - [data-decrement]
-</pre>
-        </div>
-
-        <p>By default, the component's javascript will initialize all quantityAdjuster components on page load as well as on all Shopify them editor events.  There is a single method available as <code>slate.quantityAdjuster.refresh()</code> which will initialize any components on the page that have yet to be initialized.</p>
-
-        <p>The example below has a default value of <strong>2</strong> with min / max values set at <strong>1</strong> and <strong>10</strong> respectively.  Click the buttons below to make changes to the component and see how it responds.</p>
-
-        <div class="docs-well">
-          <div class="quantity-adjuster" data-quantity-adjuster>
-            <button class="quantity-adjuster__decrement" data-decrement>-</button>
-            <input type="number" value="2" min="1" max="10" />
-            <button class="quantity-adjuster__increment" data-increment>+</button>
-          </div>
-          <br />
-          <br />
-
-          <a href="#" class="btn" data-qa-set-max="2">Set max to 2</a>
-          <a href="#" class="btn" data-qa-set-max="10">Set Max to 10</a>
-          <a href="#" class="btn" data-qa-toggle-enabled>Toggle Enabled</a>
         </div>
 
       </div>

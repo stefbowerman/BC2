@@ -2,18 +2,57 @@
 
 {% layout none %}
 
+{% comment %} Do a check for Gift with purchase {% endcomment %}
+{% assign gwp_variant_id = false %}
+{% assign gwp_qualification_price = 0 %}
+{% assign gwp_cart_qualifies = false %}
+{% assign gwp_cart_gift_count = 0 %}
+{% assign gwp_needs_gift = false %}
+
+{% if settings.gwp_qualification_price != blank %}
+  {% assign gwp_qualification_price_num = settings.gwp_qualification_price | plus: 0 %}
+  {% if gwp_qualification_price_num > 0 %}
+    {% assign gwp_qualification_price = gwp_qualification_price_num %}
+  {% endif %}
+{% endif %}
+
+{% if settings.gwp_product != blank %}
+  {% assign gwp_product = all_products[settings.gwp_product] %}
+
+  {% comment %} GWP product needs to: 1) have a single variant that is free and 2) not belong to any collection {% endcomment %}
+  {% if gwp_product.has_only_default_variant and
+        gwp_product.first_available_variant.price == 0 and
+        gwp_product.collections.size == 0
+  %}
+    {% assign gwp_variant_id = gwp_product.first_available_variant.id %}
+  {% endif %}
+{% endif %}
+
+{% comment %} Cart can only qualify if there is a gift to qualify *for* {% endcomment %}
+{% assign cart_price = cart.original_total_price | divided_by: 100 %}
+{% if cart_price >= gwp_qualification_price and gwp_variant_id != false %}
+  {% assign gwp_cart_qualifies = true %}
+{% endif %}
+
+{% comment %} END Gift with Purchase {% endcomment %}
+
 {% capture items %}
   {% for item in cart.items %}
     {% assign product = item.product %}
+    {% assign variant = item.variant %}
 
     {% assign available = true %}
-    {% if item.variant.available == false %}
+    {% if variant.available == false %}
       {% assign available = false %}
     {% elsif variant.inventory_management == "shopify" and
              variant.inventory_policy != "continue" and
              variant.inventory_quantity < item.quantity 
     %}
       {% assign available = false %}
+    {% endif %}
+
+    {% if variant.id == gwp_variant_id %}
+      {% assign gwp_cart_gift_count = gwp_cart_gift_count | plus: item.quantity %}
     {% endif %}
 
     {
@@ -51,11 +90,11 @@
       "product_title": {{ product.title | json }},
       "product_description": {{ product.description | json }},
       "product_type": {{ product.type | json }},
-      "variant_title": {{ item.variant.title | json }},
+      "variant_title": {{ variant.title | json }},
       "variant_options": [
-        {% if item.variant.option1 != blank %}  {{ item.variant.option1 | json }}{% endif %}
-        {% if item.variant.option2 != blank %}, {{ item.variant.option2 | json }}{% endif %}
-        {% if item.variant.option3 != blank %}, {{ item.variant.option3 | json }}{% endif %}
+        {% if variant.option1 != blank %}  {{ variant.option1 | json }}{% endif %}
+        {% if variant.option2 != blank %}, {{ variant.option2 | json }}{% endif %}
+        {% if variant.option3 != blank %}, {{ variant.option3 | json }}{% endif %}
       ]
     }
     {% unless forloop.last %},{% endunless %}
@@ -67,6 +106,10 @@
   {% section 'cart' %}
 {% endcapture %}
 
+{% if gwp_cart_gift_count == 0 and gwp_cart_qualifies %}
+  {% assign gwp_needs_gift = true %}
+{% endif %}
+
 {
   "total_price": {{ cart.total_price }},
   "original_total_price": {{ cart.original_total_price }},
@@ -75,5 +118,10 @@
   "note": {{ cart.note | json }},
   "item_count": {{ cart.item_count }},
   "items": [{{ items }}],
-  "section_html": {{ cart_section_html | json }}
+  "section_html": {{ cart_section_html | json }},
+  "gwp_variant_id": {{ gwp_variant_id }},
+  "gwp_qualification_price": {{ gwp_qualification_price }},
+  "gwp_cart_qualifies": {{ gwp_cart_qualifies }},
+  "gwp_cart_gift_count": {{ gwp_cart_gift_count }},
+  "gwp_needs_gift": {{ gwp_needs_gift }}
 }

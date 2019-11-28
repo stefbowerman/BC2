@@ -1,38 +1,30 @@
 import ShopifyAPI from './shopifyAPI';
 import Currency from './currency';
 import { getSizedImageUrl } from './images';
-import GiftWithPurchase from './giftWithPurchase';
 
 // Proxy to the shopify AJAX API calls 
-// Intercept because we need to handle logic around GWP
-// and fixing the cart
+// Intercept because we need to handle logic around GWP and fix the cart
 class CartAPI {
-  constructor() {
-    this.giftWithPurchase = new GiftWithPurchase(window.GWP);
-  }
-
   _onRequestDone(cart, promise) {
     // "On request done" means we made an alteration to the cart
     // so now is a good time to check if the gift with purchase applies, needs to be added, removed
     // or none of the above
 
-    const gwpCartData = this.giftWithPurchase.getCartData(cart);
-
     // If the cart needs the gift, make one more request and *then* resolve
-    if (gwpCartData.needsGift) {
-      ShopifyAPI.addVariant(this.giftWithPurchase.id, 1).then(c => {
+    if (cart.gwp_needs_gift) {
+      ShopifyAPI.addVariant(cart.gwp_variant_id, 1).then(c => {
         promise.resolve(this.fixCart(c))
       });
     }
     // If we ended up with more than one gift in the cart, fix it and *then* resolve
-    else if (gwpCartData.qualifiesButHasMultipleGifts) {
-      ShopifyAPI.changeLineItem({ id: this.giftWithPurchase.id, quantity: 1 }).then(c => {
+    else if (cart.gwp_cart_qualifies && cart.gwp_cart_gift_count > 1) {
+      ShopifyAPI.changeLineItem({ id: cart.gwp_variant_id, quantity: 1 }).then(c => {
         promise.resolve(this.fixCart(c))
       });
     }
     // If the cart has a gift in it but it shouldn't..
-    else if (gwpCartData.containsGiftButDoesntQualify) {
-      ShopifyAPI.changeLineItem({ id: this.giftWithPurchase.id, quantity: 0 }).then(c => {
+    else if (cart.gwp_cart_gift_count > 0 && !cart.gwp_cart_qualifies) {
+      ShopifyAPI.changeLineItem({ id: cart.gwp_variant_id, quantity: 0 }).then(c => {
         promise.resolve(this.fixCart(c))
       });
     }
@@ -101,7 +93,7 @@ class CartAPI {
       item.line_price   = Currency.formatMoney(item.line_price, theme.moneyFormat);
       item.line_price   = Currency.stripZeroCents(item.line_price);
       item.unavailable  = !item.available;
-      item.has_multiple = (item.quantity > 1);
+      item.has_multiple = item.quantity > 1;
 
       if (item.unavailable) {
         cart.has_unavailable_items = true;
@@ -129,7 +121,7 @@ class CartAPI {
         delete item.variant_options; // skip it and use the variant title instead
       }
 
-      if (item.id === this.giftWithPurchase.id) {
+      if (item.id === cart.gwp_variant_id) {
         gwpIndex = index
       }
 
@@ -138,7 +130,7 @@ class CartAPI {
 
     // GWP check
     if (gwpIndex > -1) {
-      cart.items = cart.items.filter(item => item.id !== this.giftWithPurchase.id)
+      cart.items = cart.items.filter(item => item.id !== cart.gwp_variant_id)
 
       // Update the item count now that the cart.items array has been modified
       cart.item_count = cart.items.reduce((count, item) => count + item.quantity, 0)

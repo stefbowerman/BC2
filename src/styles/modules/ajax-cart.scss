@@ -255,9 +255,9 @@ body.ajax-cart-open {
       image: url({{ 'cursor-close.png' | asset_url }});
       size: cover;
     }
-    transform: translate(-24px, -24px);
+    @include translate(-24px, -24px);
     opacity: 0;
-    transition: opacity 200ms ease-in;
+    @include transition(opacity $transition-duration-quick ease-in);
   }
 
   &.is-visible:before {

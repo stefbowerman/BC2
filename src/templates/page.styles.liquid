@@ -37,7 +37,6 @@
               <li><a href="#docs-breadcrumbs">Breadcrumbs</a></li>
               <li><a href="#docs-pagination">Pagination</a></li>
               <li><a href="#docs-minimal-input">Minimal Input</a></li>
-              <li><a href="#docs-dots">Dots</a></li>
             </ul>
           </li>
         </ul>        
@@ -994,117 +993,6 @@
             </button>
           </div>
         </div>
-
-        <h4 id="docs-dots" class="docs-subtitle">Dots</h4>
-
-        <p>Dots are an alternate UI used primarily for displaying / selecting variant option values. They respond to the two state classes <code>.is-active</code> and <code>.is-disabled</code>.  Active dots will show a border around them, disabled dots will show with partial opacity and a strike through.</p>
-        <div class="dots">
-          <div class="dot is-active" title="Small">
-            <div class="dot__inner">S</div>
-          </div>
-          <div class="dot" title="Medium">
-            <div class="dot__inner">M</div>
-          </div>
-          <div class="dot" title="Large">
-            <div class="dot__inner">L</div>
-          </div>
-          <div class="dot" title="Extra Large">
-            <div class="dot__inner">XL</div>
-          </div>
-          <div class="dot is-disabled" title="Extra Large">
-            <div class="dot__inner">OS</div>
-          </div>          
-        </div>
-
-        <br /><br />
-
-        <p>Use the <code>.dots--small</code> modifier class to create smaller dots when space is tight.</p>
-
-        <div class="dots dots--small">
-          <div class="dot is-active" title="Small">
-            <div class="dot__inner">S</div>
-          </div>
-          <div class="dot" title="Medium">
-            <div class="dot__inner">M</div>
-          </div>
-          <div class="dot" title="Large">
-            <div class="dot__inner">L</div>
-          </div>
-          <div class="dot" title="Extra Large">
-            <div class="dot__inner">XL</div>
-          </div>
-          <div class="dot is-disabled" title="Extra Large">
-            <div class="dot__inner">OS</div>
-          </div>          
-        </div>
-
-        <br /><br />
-
-        <p>Apply a background color or background image to the <code>.dot__inner</code> element to use them as swatches.</p>
-        <div class="dots">
-          <div class="dot is-active" title="Navy">
-            <div class="dot__inner" style="background-color:#081847;"></div>
-          </div>
-          <div class="dot" title="Maroon">
-            <div class="dot__inner" style="background-color:#AD172B;"></div>
-          </div>
-          <div class="dot" title="Maude">
-            <div class="dot__inner" style="background-color:#A06B6B;"></div>
-          </div>
-          <div class="dot" title="Gold">
-            <div class="dot__inner" style="background-image: url({{ 'test-swatch-1.png' | asset_img_url: '50x50', crop: 'center' }})"></div>
-          </div>
-          <div class="dot" title="Multi Plaid">
-            <div class="dot__inner" style="background-image: url({{ 'test-swatch-2.png' | asset_img_url: '50x50', crop: 'center' }})"></div>
-          </div>
-          <div class="dot" title="Red Plaid">
-            <div class="dot__inner" style="background-image: url({{ 'test-swatch-3.png' | asset_img_url: '50x50', crop: 'center' }})"></div>
-          </div>                              
-        </div>
-        <br /><br />
-        <p>Or apply a modifier class to apply a background color as defined in the swatch palette.  The list of available color-modifier classes is below.</p>
-        <div class="dots">
-          <div class="dot dot--solid dot--white">
-            <div class="dot__inner"></div>
-          </div>
-          <div class="dot dot--solid dot--black">
-            <div class="dot__inner"></div>
-          </div>
-          <div class="dot dot--solid dot--gray">
-            <div class="dot__inner"></div>
-          </div>
-          <div class="dot dot--solid dot--khaki">
-            <div class="dot__inner"></div>
-          </div>
-          <div class="dot dot--solid dot--pink">
-            <div class="dot__inner"></div>
-          </div>
-          <div class="dot dot--solid dot--orange">
-            <div class="dot__inner"></div>
-          </div>
-          <div class="dot dot--solid dot--purple">
-            <div class="dot__inner"></div>
-          </div>
-          <div class="dot dot--solid dot--brown">
-            <div class="dot__inner"></div>
-          </div>
-          <div class="dot dot--solid dot--tan">
-            <div class="dot__inner"></div>
-          </div>
-          <div class="dot dot--solid dot--red">
-            <div class="dot__inner"></div>
-          </div>
-          <div class="dot dot--solid dot--green">
-            <div class="dot__inner"></div>
-          </div>
-          <div class="dot dot--solid dot--yellow">
-            <div class="dot__inner"></div>
-          </div>
-          <div class="dot dot--solid dot--blue">
-            <div class="dot__inner"></div>
-          </div>
-        </div>               
-
       </div>
     </div>
   </div>

@@ -40,10 +40,9 @@
   }
 
   // @TODO - move this stuff to vars?  It's shared between here and the nav links
-  @include transition(opacity 200ms ease-in);
+  @include transition(opacity $transition-duration-quick ease-in);
 
   &.is-not-hovered {
     opacity: 0.2;
-    @include transition(opacity 100ms ease-in);
   }
 }

@@ -16,10 +16,7 @@ export default class AJAXCartSection extends BaseSection {
 
     this.ajaxCart = new AJAXCart();
 
-    this.ajaxCart.init({
-      gwpVariantId: this.$container.data('gwp-variant'),
-      gwpAmount: Number.parseFloat(this.$container.data('gwp-amount'))
-    });
+    this.ajaxCart.init();
   }
 
   onSelect(e) {
