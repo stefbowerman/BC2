@@ -54,6 +54,13 @@ export default class ProductSection extends BaseSection {
 
       this.$sizeGuideDrawerEl.on(this.drawer.events.SHOW, (e) => {
         $body.addClass(classes.bodySizeGuideOpen);
+
+        window.ga && window.ga('send', {
+          hitType: 'event',
+          eventCategory: 'PDP',
+          eventAction: 'View size guide',
+          eventLabel: this.productDetailForm.productSingleObject.handle
+        });
       });
 
       this.$sizeGuideDrawerEl.on(this.drawer.events.HIDDEN, (e) => {

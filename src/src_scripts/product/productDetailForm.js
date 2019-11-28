@@ -476,10 +476,9 @@ export default class ProductDetailForm {
   onZoomIn() {
     window.ga && window.ga('send', {
       hitType: 'event',
-      eventCategory: 'PDP Image',
-      eventAction: 'zoom in',
-      eventLabel: this.productSingleObject.handle,
-      eventValue: this.productSingleObject.id // Just in case?
+      eventCategory: 'PDP',
+      eventAction: 'Image zoom in',
+      eventLabel: this.productSingleObject.handle
     });
   }
 
