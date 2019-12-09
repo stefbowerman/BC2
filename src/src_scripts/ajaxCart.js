@@ -125,7 +125,7 @@ export default class AJAXCart {
 
       CartAPI.addItemFromForm($(e.target))
         .done(cart => {
-          this.onItemAddSuccess(cart)
+          this.onItemAddSuccess(cart);
         })
         .fail(cart => {
           this.onItemAddFail(cart);
@@ -134,26 +134,26 @@ export default class AJAXCart {
           this._onRequestFinish();
           $submitButton.prop('disabled', false);
           $submitButtonText.html(theme.strings.addToCart);
-        })
+        });
     });
   }
 
- /**
-  * Ensure we are working with a valid number
-  *
-  * @param {int|string} qty
-  * @return {int} - Integer quantity.  Defaults to 1
-  */
+  /**
+   * Ensure we are working with a valid number
+   *
+   * @param {int|string} qty
+   * @return {int} - Integer quantity.  Defaults to 1
+   */
   _validateQty(qty) {
     return (parseFloat(qty) === parseInt(qty)) && !Number.isNaN(qty) ? qty : 1;
   }
 
- /**
-  * Ensure we are working with a valid number
-  *
-  * @param {element} el - cart item row or child element
-  * @return {obj}
-  */
+  /**
+   * Ensure we are working with a valid number
+   *
+   * @param {element} el - cart item row or child element
+   * @return {obj}
+   */
   _getItemRowAttributes(el) {
     const $el = $(el);
     const $row = $el.is(selectors.item) ? $el : $el.parents(selectors.item);
@@ -182,11 +182,8 @@ export default class AJAXCart {
       this.$backdrop = $(document.createElement('div'));
       this.$backdropCursor = $(document.createElement('div'));
 
-      this.$backdropCursor.addClass(classes.backdropCursor)
-                          .appendTo(this.$backdrop);
-
-      this.$backdrop.addClass(classes.backdrop)
-                    .appendTo($body);
+      this.$backdropCursor.addClass(classes.backdropCursor).appendTo(this.$backdrop);
+      this.$backdrop.addClass(classes.backdrop).appendTo($body);
 
       this.$backdrop.one(this.transitionEndEvent, cb);
       this.$backdrop.one('click', this.close.bind(this));
@@ -276,11 +273,11 @@ export default class AJAXCart {
   */
   onNeedsUpdate(e) {
     if (e.cart) {
-      this.renderCart(e.cart)
+      this.renderCart(e.cart);
     }
     else {
       CartAPI.getCart().then(cart => {
-        this.renderCart(cart)
+        this.renderCart(cart);
       });
     }
   }
@@ -350,11 +347,11 @@ export default class AJAXCart {
       quantity: 0
     })
       .then(cart => {
-        this.renderCart(cart)
+        this.renderCart(cart);
       })
       .always(() => {
-        this._onRequestFinish()
-      })
+        this._onRequestFinish();
+      });
   }
 
  /**

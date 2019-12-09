@@ -4,6 +4,7 @@ import ProductImageDesktopZoomController from './productImageDesktopZoomControll
 import * as Breakpoints from '../breakpoints';
 import Utils from '../utils';
 import Currency from '../currency';
+import analytics from '../analytics';
 
 const selectors = {
   addToCart: '[data-add-to-cart]',
@@ -474,11 +475,10 @@ export default class ProductDetailForm {
   }
 
   onZoomIn() {
-    window.ga && window.ga('send', {
-      hitType: 'event',
-      eventCategory: 'PDP',
-      eventAction: 'Image zoom in',
-      eventLabel: this.productSingleObject.handle
+    analytics.trackEvent({
+      category: 'PDP',
+      action: 'Image zoom in',
+      label: this.productSingleObject.handle
     });
   }
 

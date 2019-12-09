@@ -74,8 +74,9 @@
     "operator-linebreak": ["error", "after"],
     "no-new": "off",
     "no-alert": "off",
-    "indent": ["warn"],
+    "indent": "off",
     "semi": ["warn"],
-    "space-in-parens": ["warn"]
+    "space-in-parens": ["warn"],
+    "object-curly-newline": "off"
   }
 }
