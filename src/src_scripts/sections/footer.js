@@ -1,6 +1,7 @@
 import BaseSection from './base';
 import AJAXMailchimpForm from '../ajaxMailchimpForm';
 import Utils from '../utils';
+import analytics from '../analytics';
 
 const selectors = {
   formContents: '[data-form-contents]',
@@ -48,11 +49,10 @@ export default class FooterSection extends BaseSection {
           this.$formContents.addClass(classes.contentsGoAway);
         }, 4000);
 
-        window.ga && window.ga('send', {
-          hitType: 'event',
-          eventCategory: 'Mailing List',
-          eventAction: 'Subscribe Success',
-          eventLabel: 'footer'
+        analytics.trackEvent({
+          category: 'Mailing List',
+          action: 'Subscribe Success',
+          label: 'footer'
         });
       }
     });

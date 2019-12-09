@@ -4,6 +4,7 @@ import BaseSection from './base';
 import ProductDetailForm from '../product/productDetailForm';
 import Drawer from '../uiComponents/drawer';
 import * as Breakpoints from '../breakpoints';
+import analytics from '../analytics';
 
 const selectors = {
   sizeGuideDrawer: '[data-size-guide-drawer]',
@@ -55,11 +56,10 @@ export default class ProductSection extends BaseSection {
       this.$sizeGuideDrawerEl.on(this.drawer.events.SHOW, (e) => {
         $body.addClass(classes.bodySizeGuideOpen);
 
-        window.ga && window.ga('send', {
-          hitType: 'event',
-          eventCategory: 'PDP',
-          eventAction: 'View size guide',
-          eventLabel: this.productDetailForm.productSingleObject.handle
+        analytics.trackEvent({
+          category: 'PDP',
+          action: 'View size guide',
+          label: this.productDetailForm.productSingleObject.handle
         });
       });
 

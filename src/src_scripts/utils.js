@@ -207,8 +207,10 @@ export default {
 
     let which = transitions['transition'];
 
+    // Some browsers fire prefixed AND unprefixed versions
+    // Make sure it *doesn't* support the unprefixed version first
     Object.keys(transitions).forEach((key) => {
-      if (el.style[key] !== undefined ){
+      if (el.style['transition'] === undefined && el.style[key] !== undefined){
         which = transitions[key];
       }
     });

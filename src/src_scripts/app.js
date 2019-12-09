@@ -1,5 +1,6 @@
 import Utils from './utils';
 import AppRouter from './appRouter';
+import analytics from './analytics';
 
 // Sections
 // import SectionManager  from './sectionManager';
@@ -33,11 +34,7 @@ const $body = $(document.body);
     },
     onViewChangeStart: (url) => {
       sections.nav.activateMenuLinkForUrl(url);
-
-      if (window.ga) {
-        window.ga('set', 'page', window.location.pathname);
-        window.ga('send', 'pageview');
-      }
+      analytics.trackPageView(window.location.pathname)
     },
     onViewChangeDOMUpdatesComplete: ($responseHead, $responseBody) => {
       window.scrollTop = 0;
@@ -79,6 +76,14 @@ const $body = $(document.body);
       appRouter.navigate(url);
     });
   }
+
+  // Send browser details
+  analytics.trackEventWithRetry({
+    category: 'Browser Capability',
+    action: 'CSS - Transition End',
+    label: Utils.whichTransitionEnd(),
+    nonInteraction: true
+  })
 
   // Add "development mode" class for CSS hook
   if (window.location.hostname === 'localhost') {
