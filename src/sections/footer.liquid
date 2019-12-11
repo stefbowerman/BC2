@@ -2,6 +2,9 @@
   {% unless settings.mailchimp_form_url == blank %}
     <form action="{{ settings.mailchimp_form_url }}" method="post">
       <div class="form-contents" data-form-contents>
+        {% if section.settings.subscribe_helper_text != blank %}
+          <p class="form-helper-text">{{ section.settings.subscribe_helper_text }}</p>
+        {% endif %}
         <div class="form-inputs" data-form-inputs>
           <div class="minimal-input-box">
             {% assign input_id = 'email-input-' | append: section.id %}
@@ -25,12 +28,56 @@
       {% endfor %}
     </div>
   {% endif %}
+
+  <script type="application/json" data-footer-json>
+    {
+      "messages": {
+        "subscribe_success": {{ section.settings.subscribe_message_success | default: 'Thank you for subscribing' | json }},
+        "subscribe_fail": {{ section.settings.subscribe_message_fail | default: 'Check your email address and try again' | json }},
+        "subscribe_already_subscribed": {{ section.settings.subscribe_message_already_subscribed | default: 'This email address is already subscribed' | json }}
+      }
+    }
+  </script>
 </footer>
 
 {% schema %}
   {
     "name": "Footer",
     "settings": [
+      {
+       "type": "header",
+       "content": "Subscribe Form"
+      },
+      {
+        "type": "textarea",
+        "id": "subscribe_helper_text",
+        "label": "Helper Text",
+        "default": "Enter your email to receive updates",
+        "info": "Shown when the user is interacting with the subscribe form."
+      },
+      {
+        "type": "textarea",
+        "id": "subscribe_message_success",
+        "label": "Message - Success",
+        "default": "Thank you for subscribing",
+        "info": "Shown to the user when they successfully subscribe"
+      },
+      {
+        "type": "textarea",
+        "id": "subscribe_message_subscribe_fail",
+        "label": "Message - Subscribe Fail",
+        "default": "Check your email address and try again"
+      },
+      {
+        "type": "textarea",
+        "id": "subscribe_message_already_subscribed",
+        "label": "Message - Already Subscribed",
+        "default": "This email address is already subscribed"
+      },
+      {
+       "type": "header",
+       "content": "Footer Menu"
+      },
       {
         "type": "link_list",
         "id": "menu",

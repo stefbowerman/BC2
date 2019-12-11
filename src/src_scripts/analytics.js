@@ -35,14 +35,12 @@ class Analytics {
       if (this.gaLoaded()) {
         t();
       }
-      else {
-        if (tries < 6) {
-          setTimeout(checkWithRetry, wait);
-        }
-        else {
-          // GA not loaded after 6 secs..
-        }
+      else if (tries < 6) {
+        setTimeout(checkWithRetry, wait);
       }
+      // else {
+      //   // GA not loaded after 6 secs..
+      // }
 
       tries++;
     };

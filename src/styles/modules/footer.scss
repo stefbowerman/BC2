@@ -57,6 +57,8 @@
     left: 0;
     bottom: 0;
     width: 100%;
+    @include display-flex;
+    @include align-items(flex-end);
 
     opacity: 0;
     pointer-events: none;
@@ -86,19 +88,52 @@
       transition-timing-function: ease-out;
     }
   }
+}
 
+
+.form-helper-text,
+.footer-menu {
+  transition: opacity 300ms ease-out;
+
+  @media (min-width: $screen-xs-min) {
+    font-size: $font-size-xsmall;
+  }
+}
+
+.form-helper-text {
+  pointer-events: none;
+  margin-bottom: 4px;
+  opacity: 0;
+
+  .form-active & {
+    opacity: 1;
+  }
 }
 
 .footer-menu {
+  margin-left: -1px;
+  margin-right: -1px;
+
+  a {
+    margin: 0 1px;
+  }
+
   form + & {
     margin-top: 20px;
   }
   
   @media (min-width: $screen-xs-min) {
-    font-size: $font-size-xsmall;
-
     form + & {
       margin-top: 12px;
+    }
+  }
+
+  .form-active & {
+    opacity: 0.15;
+
+    // If they manage to hover on this, they should be able to see the links
+    &:hover {
+      opacity: 1;
     }
   }
 }
