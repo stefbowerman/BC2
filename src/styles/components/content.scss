@@ -40,7 +40,7 @@ $content-grid-item-vertical-spacing-loose: $grid-gutter-width * 2;
   @include flex(1);
   @include flex-basis(percentage(1/1));
   margin-bottom: $content-grid-item-vertical-spacing;
-  padding: 0;
+  padding: 0 $grid-gutter-width/4;
   max-width: percentage(1/1);
   min-height: 80vh; // On tiny screens we don't want grid items bunched up on the screen
 

@@ -90,13 +90,13 @@
 }
 
 .footer-menu {
+  font-size: $font-size-xsmall;
+  
   form + & {
     margin-top: 20px;
   }
   
   @media (min-width: $screen-xs-min) {
-    font-size: $font-size-xsmall;
-
     form + & {
       margin-top: 12px;
     }

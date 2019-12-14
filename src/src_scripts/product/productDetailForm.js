@@ -1,3 +1,4 @@
+import { throttle } from 'throttle-debounce';
 import ProductVariants from './productVariants';
 import ProductImageTouchZoomController from './productImageTouchZoomController';
 import ProductImageDesktopZoomController from './productImageDesktopZoomController';
@@ -149,7 +150,7 @@ export default class ProductDetailForm {
       this.$container.on(this.events.CLICK, selectors.variantOptionValue, this.onVariantOptionValueClick.bind(this));
       this.$container.on(this.events.MOUSEENTER, selectors.variantOptionValue, this.onVariantOptionValueMouseenter.bind(this));
       this.$container.on(this.events.MOUSELEAVE, selectors.variantOptionValue, this.onVariantOptionValueMouseleave.bind(this));
-      $window.on('resize', $.throttle(50, this.onResize.bind(this)));
+      $window.on('resize', throttle(50, this.onResize.bind(this)));
 
       this.onResize();
 

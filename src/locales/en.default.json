@@ -86,6 +86,7 @@
       "shipping_at_checkout": "Shipping & taxes calculated at checkout",
       "update": "Update Cart",
       "checkout": "Check Out",
+      "go_to_checkout": "Go to Check Out",
       "view_cart_and_check_out": "View Cart and Check Out",
       "view": "View Cart",
       "empty": "Your cart is empty.",

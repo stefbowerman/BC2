@@ -13,7 +13,7 @@ export default class CollectionSection extends BaseSection {
   constructor(container) {
     super(container, 'collection');
 
-    this.$container.find(selectors.mainLazyImg).unveil(200, function() {
+    this.$container.find(selectors.mainLazyImg).unveil(500, function() {
       const $img = $(this);
       $img.on('load', () => {
         $img.parents(selectors.gallery).addClass(classes.galleryLoaded);
