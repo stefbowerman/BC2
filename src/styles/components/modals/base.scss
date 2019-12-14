@@ -29,11 +29,11 @@
 
   &.fade .modal-dialog {
     opacity: 0;
-    @include transition(opacity 150ms ease-out);
+    transition: opacity 150ms ease-out;
   }
   &.in .modal-dialog {
     opacity: 1;
-    @include transition(opacity 150ms ease-out);
+    transition: opacity 150ms ease-out;
   }
 }
 
@@ -77,11 +77,11 @@
   // Fade for backdrop
   &.fade {
     opacity: 0;
-    @include transition(opacity 300ms ease-out);
+    transition: opacity 300ms ease-out;
   }
   &.in {
     opacity: $modal-backdrop-opacity;
-    @include transition(opacity 300ms ease-out);
+    transition: opacity 300ms ease-out;
   }
 }
 

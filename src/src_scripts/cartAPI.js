@@ -13,19 +13,19 @@ class CartAPI {
     // If the cart needs the gift, make one more request and *then* resolve
     if (cart.gwp_needs_gift) {
       ShopifyAPI.addVariant(cart.gwp_variant_id, 1).then(c => {
-        promise.resolve(this.fixCart(c))
+        promise.resolve(this.fixCart(c));
       });
     }
     // If we ended up with more than one gift in the cart, fix it and *then* resolve
     else if (cart.gwp_cart_qualifies && cart.gwp_cart_gift_count > 1) {
       ShopifyAPI.changeLineItem({ id: cart.gwp_variant_id, quantity: 1 }).then(c => {
-        promise.resolve(this.fixCart(c))
+        promise.resolve(this.fixCart(c));
       });
     }
     // If the cart has a gift in it but it shouldn't..
     else if (cart.gwp_cart_gift_count > 0 && !cart.gwp_cart_qualifies) {
       ShopifyAPI.changeLineItem({ id: cart.gwp_variant_id, quantity: 0 }).then(c => {
-        promise.resolve(this.fixCart(c))
+        promise.resolve(this.fixCart(c));
       });
     }
     else {
@@ -122,7 +122,7 @@ class CartAPI {
       }
 
       if (item.id === cart.gwp_variant_id) {
-        gwpIndex = index
+        gwpIndex = index;
       }
 
       return item;
@@ -130,14 +130,14 @@ class CartAPI {
 
     // GWP check
     if (gwpIndex > -1) {
-      cart.items = cart.items.filter(item => item.id !== cart.gwp_variant_id)
+      cart.items = cart.items.filter(item => item.id !== cart.gwp_variant_id);
 
       // Update the item count now that the cart.items array has been modified
-      cart.item_count = cart.items.reduce((count, item) => count + item.quantity, 0)
+      cart.item_count = cart.items.reduce((count, item) => count + item.quantity, 0);
     }
 
-    return cart
+    return cart;
   }
 }
 
-export default new CartAPI()
+export default new CartAPI();

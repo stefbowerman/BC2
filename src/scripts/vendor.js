@@ -10,6 +10,11 @@
 // 3. There is a comment at the *previous* line, and it matches 1, 2, or 3.
 
 /*!
+ * jquery.min.js
+ */
+// =require /../../node_modules/jquery/dist/jquery.min.js
+
+/*!
  * Zoom 1.7.18
  * http://www.jacklmoore.com/zoom
  */

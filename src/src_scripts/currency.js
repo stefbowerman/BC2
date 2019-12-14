@@ -1,6 +1,6 @@
 import Utils from './utils';
 
-const moneyFormat = '${{amount}}';
+const moneyFormat = '${{amount}}'; // eslint-disable-line no-template-curly-in-string
 
 /**
  * Currency Helpers
@@ -22,27 +22,28 @@ export default {
    * @return {String} value - formatted value
    */
   formatMoney(cents, format) {
+    let value = '';
+    const placeholderRegex = /\{\{\s*(\w+)\s*\}\}/;
+    const formatString = (format || moneyFormat);
+
     if (typeof cents === 'string') {
       cents = cents.replace('.', '');
     }
-    var value = '';
-    var placeholderRegex = /\{\{\s*(\w+)\s*\}\}/;
-    var formatString = (format || moneyFormat);
 
     function formatWithDelimiters(number, precision, thousands, decimal) {
       precision = Utils.defaultTo(precision, 2);
       thousands = Utils.defaultTo(thousands, ',');
       decimal = Utils.defaultTo(decimal, '.');
 
-      if (isNaN(number) || number == null) {
+      if (Number.isNan(number) || number == null) {
         return 0;
       }
 
       number = (number / 100.0).toFixed(precision);
 
-      var parts = number.split('.');
-      var dollarsAmount = parts[0].replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1' + thousands);
-      var centsAmount = parts[1] ? (decimal + parts[1]) : '';
+      const parts = number.split('.');
+      const dollarsAmount = parts[0].replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1' + thousands);
+      const centsAmount = parts[1] ? (decimal + parts[1]) : '';
 
       return dollarsAmount + centsAmount;
     }
@@ -75,6 +76,6 @@ export default {
    * @return {string} value - formatted value
    */
   stripZeroCents(string) {
-    return string.replace(/\.00$/,'');
+    return string.replace(/\.00$/, '');
   }
-}
+};

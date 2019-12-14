@@ -34,7 +34,7 @@ const $body = $(document.body);
     },
     onViewChangeStart: (url) => {
       sections.nav.activateMenuLinkForUrl(url);
-      analytics.trackPageView(window.location.pathname)
+      analytics.trackPageView(window.location.pathname);
     },
     onViewChangeDOMUpdatesComplete: ($responseHead, $responseBody) => {
       window.scrollTop = 0;
@@ -59,7 +59,7 @@ const $body = $(document.body);
   // Stop here...no AJAX navigation inside the theme editor
   if (window.Shopify && window.Shopify.designMode) {
     return;
-  }  
+  }
 
   if (window.history && window.history.pushState) {
     $body.on('click', 'a', (e) => {
@@ -77,14 +77,6 @@ const $body = $(document.body);
     });
   }
 
-  // Send browser details
-  analytics.trackEventWithRetry({
-    category: 'Browser Capability',
-    action: 'CSS - Transition End',
-    label: Utils.whichTransitionEnd(),
-    nonInteraction: true
-  })
-
   // Add "development mode" class for CSS hook
   if (window.location.hostname === 'localhost') {
     $body.addClass('development-mode');
@@ -92,32 +84,32 @@ const $body = $(document.body);
 
   // Credits
   if (window.location.hostname !== 'localhost') {
-    // eslint-disable-next-line no-console max-len
+    // eslint-disable-next-line no-console, max-len
     console.log('%cô', 'font-family: Helvetica; font-size: 35px; color: #111; text-transform: uppercase; background-color: #FFF; padding: 5px 10px 0; line-height: 50px; font-weight: bold;');
-    // eslint-disable-next-line no-console max-len
+    // eslint-disable-next-line no-console, max-len
     console.log('%cBianca Chandôn - design + development → stefanbowerman.com', 'font-family: Helvetica; font-size: 11px; color: #111; text-transform: uppercase; background-color: #FFF; padding: 3px 10px;');
   }
 
   // Return early cause I'm not 100% that prefetching helps...
-  return;
+  // return;
 
   // Prefetching :)
-  let linkInteractivityTimeout = false;
-  let prefetchCache = {};
-  $body.on('mouseenter', 'a', (e) => {
-    const url = e.currentTarget.getAttribute('href');
-    const urlHash = Math.abs(Utils.hashFromString(url));
+  // let linkInteractivityTimeout = false;
+  // let prefetchCache = {};
+  // $body.on('mouseenter', 'a', (e) => {
+  //   const url = e.currentTarget.getAttribute('href');
+  //   const urlHash = Math.abs(Utils.hashFromString(url));
 
-    if (Utils.isExternal(url) || url === '#' || prefetchCache.hasOwnProperty(urlHash)) return;
+  //   if (Utils.isExternal(url) || url === '#' || prefetchCache.hasOwnProperty(urlHash)) return;
 
-    let linkInteractivityTimeout = setTimeout(() => {
-      $.get(url, () => {
-        prefetchCache[urlHash] = true;
-      });
-    }, 500);
-  });
+  //   let linkInteractivityTimeout = setTimeout(() => {
+  //     $.get(url, () => {
+  //       prefetchCache[urlHash] = true;
+  //     });
+  //   }, 500);
+  // });
 
-  $body.on('mouseleave', 'a', (e) => {
-    linkInteractivityTimeout = false;
-  });
+  // $body.on('mouseleave', 'a', (e) => {
+  //   linkInteractivityTimeout = false;
+  // });
 })(jQuery);

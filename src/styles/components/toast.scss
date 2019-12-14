@@ -16,7 +16,8 @@
   pointer-events: none;
   opacity: 0;
   @include translate(-50%, -3px);
-  @include transition(transform $transition-duration-base $transition-timing-function-slide-in, opacity $transition-duration-fast $transition-timing-function-slide-in);
+  transition: transform $transition-duration-base $transition-timing-function-slide-in,
+              opacity $transition-duration-fast $transition-timing-function-slide-in;
 
   padding: 7px 26px;
   border: 1px solid;
@@ -29,7 +30,8 @@
     pointer-events: auto;
     opacity: 1;
     @include translate(-50%, 0px);
-    @include transition(transform $transition-duration-base $transition-timing-function-slide-in, opacity $transition-duration-fast $transition-timing-function-slide-in);
+    transition: transform $transition-duration-base $transition-timing-function-slide-in,
+                opacity $transition-duration-fast $transition-timing-function-slide-in;
   }
 }
 

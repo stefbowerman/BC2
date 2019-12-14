@@ -134,7 +134,7 @@ output {
   background-image: none; // Reset unusual Firefox-on-Android default style; see https://github.com/necolas/normalize.css/issues/214
   border: 1px solid $input-border;
   border-radius: $input-border-radius; // Note: This has no effect on <select>s in some browsers, due to the limited stylability of <select>s in CSS.
-  @include transition(all $transition-duration-fast $transition-timing-function-base);
+  transition: all $transition-duration-fast $transition-timing-function-base;
 
   // Customize the `:focus` state to imitate native WebKit styles.
   @include form-control-focus;
@@ -469,57 +469,57 @@ input[type="checkbox"] {
 // The `.form-group-* form-control` variations are sadly duplicated to avoid the
 // issue documented in https://github.com/twbs/bootstrap/issues/15074.
 
-@include input-size('.input-sm', $input-height-small, $padding-small-vertical, $padding-small-horizontal, $font-size-small, $line-height-small, $input-border-radius-small);
-.form-group-sm {
-  .form-control {
-    height: $input-height-small;
-    padding: $padding-small-vertical $padding-small-horizontal;
-    font-size: $font-size-small;
-    line-height: $line-height-small;
-    border-radius: $input-border-radius-small;
-  }
-  select.form-control {
-    height: $input-height-small;
-    line-height: $input-height-small;
-  }
-  textarea.form-control,
-  select[multiple].form-control {
-    height: auto;
-  }
-  .form-control-static {
-    height: $input-height-small;
-    min-height: ($line-height-computed + $font-size-small);
-    padding: ($padding-small-vertical + 1) $padding-small-horizontal;
-    font-size: $font-size-small;
-    line-height: $line-height-small;
-  }
-}
+// @include input-size('.input-sm', $input-height-small, $padding-small-vertical, $padding-small-horizontal, $font-size-small, $line-height-small, $input-border-radius-small);
+// .form-group-sm {
+//   .form-control {
+//     height: $input-height-small;
+//     padding: $padding-small-vertical $padding-small-horizontal;
+//     font-size: $font-size-small;
+//     line-height: $line-height-small;
+//     border-radius: $input-border-radius-small;
+//   }
+//   select.form-control {
+//     height: $input-height-small;
+//     line-height: $input-height-small;
+//   }
+//   textarea.form-control,
+//   select[multiple].form-control {
+//     height: auto;
+//   }
+//   .form-control-static {
+//     height: $input-height-small;
+//     min-height: ($line-height-computed + $font-size-small);
+//     padding: ($padding-small-vertical + 1) $padding-small-horizontal;
+//     font-size: $font-size-small;
+//     line-height: $line-height-small;
+//   }
+// }
 
-@include input-size('.input-lg', $input-height-large, $padding-large-vertical, $padding-large-horizontal, $font-size-large, $line-height-large, $input-border-radius-large);
-.form-group-lg {
-  .form-control {
-    height: $input-height-large;
-    padding: $padding-large-vertical $padding-large-horizontal;
-    font-size: $font-size-large;
-    line-height: $line-height-large;
-    border-radius: $input-border-radius-large;
-  }
-  select.form-control {
-    height: $input-height-large;
-    line-height: $input-height-large;
-  }
-  textarea.form-control,
-  select[multiple].form-control {
-    height: auto;
-  }
-  .form-control-static {
-    height: $input-height-large;
-    min-height: ($line-height-computed + $font-size-large);
-    padding: ($padding-large-vertical + 1) $padding-large-horizontal;
-    font-size: $font-size-large;
-    line-height: $line-height-large;
-  }
-}
+// @include input-size('.input-lg', $input-height-large, $padding-large-vertical, $padding-large-horizontal, $font-size-large, $line-height-large, $input-border-radius-large);
+// .form-group-lg {
+//   .form-control {
+//     height: $input-height-large;
+//     padding: $padding-large-vertical $padding-large-horizontal;
+//     font-size: $font-size-large;
+//     line-height: $line-height-large;
+//     border-radius: $input-border-radius-large;
+//   }
+//   select.form-control {
+//     height: $input-height-large;
+//     line-height: $input-height-large;
+//   }
+//   textarea.form-control,
+//   select[multiple].form-control {
+//     height: auto;
+//   }
+//   .form-control-static {
+//     height: $input-height-large;
+//     min-height: ($line-height-computed + $font-size-large);
+//     padding: ($padding-large-vertical + 1) $padding-large-horizontal;
+//     font-size: $font-size-large;
+//     line-height: $line-height-large;
+//   }
+// }
 
 
 // Form control feedback states
@@ -681,9 +681,9 @@ input[type="checkbox"] {
   }
 }
 // [converter] extracted as `@mixin form-inline` for libsass compatibility
-.form-inline {
-  @include form-inline;
-}
+// .form-inline {
+//   @include form-inline;
+// }
 
 
 
@@ -692,77 +692,77 @@ input[type="checkbox"] {
 // Horizontal forms are built on grid classes and allow you to create forms with
 // labels on the left and inputs on the right.
 
-.form-horizontal {
+// .form-horizontal {
 
-  // Consistent vertical alignment of radios and checkboxes
-  //
-  // Labels also get some reset styles, but that is scoped to a media query below.
-  .radio,
-  .checkbox,
-  .radio-inline,
-  .checkbox-inline {
-    margin-top: 0;
-    margin-bottom: 0;
-    padding-top: ($padding-base-vertical + 1); // Default padding plus a border
-  }
-  // Account for padding we're adding to ensure the alignment and of help text
-  // and other content below items
-  .radio,
-  .checkbox {
-    min-height: ($line-height-computed + ($padding-base-vertical + 1));
-  }
+//   // Consistent vertical alignment of radios and checkboxes
+//   //
+//   // Labels also get some reset styles, but that is scoped to a media query below.
+//   .radio,
+//   .checkbox,
+//   .radio-inline,
+//   .checkbox-inline {
+//     margin-top: 0;
+//     margin-bottom: 0;
+//     padding-top: ($padding-base-vertical + 1); // Default padding plus a border
+//   }
+//   // Account for padding we're adding to ensure the alignment and of help text
+//   // and other content below items
+//   .radio,
+//   .checkbox {
+//     min-height: ($line-height-computed + ($padding-base-vertical + 1));
+//   }
 
-  // Make form groups behave like rows
-  .form-group {
-    @include make-row;
-  }
+//   // Make form groups behave like rows
+//   .form-group {
+//     @include make-row;
+//   }
 
-  // Reset spacing and left align labels, but scope to media queries so that
-  // labels on narrow viewports stack the same as a default form example.
-  @media (min-width: $screen-sm-min) {
-    .form-group {
-      display: flex;
-      .control-label {
-        align-self: center;
-      }
-    }
-    .control-label {
-      text-align: left;
-      margin-bottom: 0;
+//   // Reset spacing and left align labels, but scope to media queries so that
+//   // labels on narrow viewports stack the same as a default form example.
+//   @media (min-width: $screen-sm-min) {
+//     .form-group {
+//       display: flex;
+//       .control-label {
+//         align-self: center;
+//       }
+//     }
+//     .control-label {
+//       text-align: left;
+//       margin-bottom: 0;
 
-      &.textarea-label {
-        align-self: flex-start;
-        padding-top: 1rem;
-      }
-    }
-  }
+//       &.textarea-label {
+//         align-self: flex-start;
+//         padding-top: 1rem;
+//       }
+//     }
+//   }
 
-  // Validation states
-  //
-  // Reposition the icon because it's now within a grid column and columns have
-  // `position: relative;` on them. Also accounts for the grid gutter padding.
-  .has-feedback .form-control-feedback {
-    right: floor(($grid-gutter-width / 2));
-  }
+//   // Validation states
+//   //
+//   // Reposition the icon because it's now within a grid column and columns have
+//   // `position: relative;` on them. Also accounts for the grid gutter padding.
+//   .has-feedback .form-control-feedback {
+//     right: floor(($grid-gutter-width / 2));
+//   }
 
-  // Form group sizes
-  //
-  // Quick utility class for applying `.input-lg` and `.input-sm` styles to the
-  // inputs and labels within a `.form-group`.
-  .form-group-lg {
-    @media (min-width: $screen-sm-min) {
-      .control-label {
-        padding-top: ($padding-large-vertical + 1);
-        font-size: $font-size-large;
-      }
-    }
-  }
-  .form-group-sm {
-    @media (min-width: $screen-sm-min) {
-      .control-label {
-        padding-top: ($padding-small-vertical + 1);
-        font-size: $font-size-small;
-      }
-    }
-  }
-}
+//   // Form group sizes
+//   //
+//   // Quick utility class for applying `.input-lg` and `.input-sm` styles to the
+//   // inputs and labels within a `.form-group`.
+//   .form-group-lg {
+//     @media (min-width: $screen-sm-min) {
+//       .control-label {
+//         padding-top: ($padding-large-vertical + 1);
+//         font-size: $font-size-large;
+//       }
+//     }
+//   }
+//   .form-group-sm {
+//     @media (min-width: $screen-sm-min) {
+//       .control-label {
+//         padding-top: ($padding-small-vertical + 1);
+//         font-size: $font-size-small;
+//       }
+//     }
+//   }
+// }

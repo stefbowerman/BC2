@@ -37,7 +37,7 @@
 .mobile-menu-toggle,
 .header-cart {
   &, &:focus {
-    @include transition(opacity 500ms ease-in-out);
+    transition: opacity 500ms ease-in-out;
   }
 }
 

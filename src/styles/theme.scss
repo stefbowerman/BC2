@@ -13,7 +13,7 @@
 @import url('global/helper-classes.scss');
 @import url('global/grid.scss');
 @import url('global/layout.scss');
-@import url('global/flexbox.scss');
+// @import url('global/flexbox.scss');
 @import url('global/component-animations.scss');
 
 /*================ COMPONENTS ================*/
@@ -21,7 +21,7 @@
 @import url('components/icons.scss');
 @import url('components/buttons.scss');
 @import url('components/modals.scss');
-@import url('components/page.scss');
+// @import url('components/page.scss');
 @import url('components/forms.scss');
 @import url('components/rte.scss');
 @import url('components/tables.scss');
@@ -59,18 +59,18 @@
 @import url('global/utilities.scss');
 @import url('global/responsive-utilities.scss');
 
-@keyframes loader {
+@include keyframes(loader) {
   0% {
     opacity: 1;
-    @include scale(1);
+    transform: scale(1);
   }
   33% {
     opacity: 0.9;
-    @include scale(0.91);
+    transform: scale(0.91);
   }
   100% {
     opacity: 1;
-    @include scale(1);
+    transform: scale(1);
   }
 }
 

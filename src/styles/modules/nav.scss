@@ -51,7 +51,7 @@ nav.main-nav {
     > li > a {
       display: block;
       padding-bottom: 5px;
-      @include transition(opacity $transition-duration-quick ease-in); // @TODO - move this stuff to vars?  It's shared between here and option values
+      transition: opacity $transition-duration-quick ease-in; // @TODO - move this stuff to vars?  It's shared between here and option values
 
       &.is-active {
         font-weight: bold;
@@ -145,7 +145,7 @@ a.intermediate-nav__next-product-link {
   top: 0;
   right: 0;
   z-index: -1;
-  transform: translateY(-6px);
+  @include translateY(-6px);
   opacity: 0;
   transition: opacity 500ms ease;
 

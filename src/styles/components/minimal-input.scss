@@ -32,37 +32,37 @@
 }
 
 // White form controls for placement on dark backgrounds
-.minimal-input-box--inverted {
+// .minimal-input-box--inverted {
 
-  .minimal-input-box__input {
-    color: $color-white;
+//   .minimal-input-box__input {
+//     color: $color-white;
 
-    &:focus {
-      color: $color-white;
-      border-color: $color-white;
-    }
-  }
+//     &:focus {
+//       color: $color-white;
+//       border-color: $color-white;
+//     }
+//   }
 
 
-  .minimal-input-box__submit {
-    svg {
-      fill: $color-white;
-    }
-  }
-}
+//   .minimal-input-box__submit {
+//     svg {
+//       fill: $color-white;
+//     }
+//   }
+// }
 
 // Large minimal input
-.minimal-input-box--large {
+// .minimal-input-box--large {
 
-  .minimal-input-box__input {
-    height: $minimal-input-height-large;
-    font-size: $font-size-large;
-  }
+//   .minimal-input-box__input {
+//     height: $minimal-input-height-large;
+//     font-size: $font-size-large;
+//   }
 
-  .minimal-input-box__submit {
-    svg {
-      height: 25px;
-      width: 25px;
-    }
-  }  
-}
+//   .minimal-input-box__submit {
+//     svg {
+//       height: 25px;
+//       width: 25px;
+//     }
+//   }  
+// }

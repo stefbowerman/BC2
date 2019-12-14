@@ -56,9 +56,9 @@ body.drawer-open {
 .drawer__close {
   opacity: 0;
   @include translateY(-5px);
-  @include transition-property(opacity, transform);
-  @include transition-duration(700ms);
-  @include transition-timing-function(cubic-bezier(0.2, 0, 0, 1));
+  transition-property: opacity, transform;
+  transition-duration: 700ms;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
 
   .drawer.is-visible & {
     opacity: 1;
@@ -114,13 +114,13 @@ body.drawer-open {
   opacity: 0;
   cursor: none; // see below
   pointer-events: none;
-  @include transition(all 450ms cubic-bezier(0.35, 0.02, 0.11, 1.02));
+  transition: all 450ms cubic-bezier(0.35, 0.02, 0.11, 1.02);
 
   @media (min-width: $screen-sm-min) {
     &.is-visible {
       opacity: $drawer-backdrop-opacity;
       pointer-events: auto;
-      @include transition(all 500ms cubic-bezier(0.36, 0.35, 0.12, 1.01));
+      transition: all 500ms cubic-bezier(0.36, 0.35, 0.12, 1.01);
     }
   }
 }
@@ -131,7 +131,7 @@ body.drawer-open {
   left: 0;
   height: 48px;
   width: 48px;
-  @include transition-transform(20ms ease);
+  transition: transform 20ms ease;
 
   &:before {
     content: '';
@@ -140,9 +140,9 @@ body.drawer-open {
       image: url({{ 'cursor-close.png' | asset_url }});
       size: cover;
     }
-    opacity: 0;    
+    opacity: 0;
     @include translate(-24px, -24px);
-    @include transition(opacity $transition-duration-quick ease-in);
+    transition: opacity $transition-duration-quick ease-in;
   }
 
   &.is-visible:before {
