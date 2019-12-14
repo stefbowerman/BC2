@@ -48,7 +48,7 @@
   .product-card__gallery-image.is-loaded & {
     opacity: 0;
     pointer-events: none;
-    @include transition(opacity $transition-duration-base $transition-timing-function-out);
+    @include transition(opacity $transition-duration-quick $transition-timing-function-out);
   }
 }
 

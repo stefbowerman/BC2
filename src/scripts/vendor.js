@@ -21,11 +21,6 @@
 // =require vendor/handlebars-v4.0.10.js
 
 /*!
- * jQuery Throttle / Debounce
- */
-// =require vendor/jquery.ba-throttle-debounce.min.js
-
-/*!
 * js-cookie
 */
 // =require /../../node_modules/js-cookie/src/js.cookie.js

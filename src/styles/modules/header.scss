@@ -22,7 +22,7 @@
   max-width: $header-logo-width;
 
   @media (max-width: $screen-xs-min - 1px) {
-    max-width: 160px;
+    max-width: $header-logo-width-mobile;
     position: absolute;
     top: 0;
     left: 50%;
