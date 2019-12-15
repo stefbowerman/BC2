@@ -35,7 +35,7 @@ export default {
       thousands = Utils.defaultTo(thousands, ',');
       decimal = Utils.defaultTo(decimal, '.');
 
-      if (Number.isNan(number) || number == null) {
+      if (Number.isNaN(number) || number == null) {
         return 0;
       }
 

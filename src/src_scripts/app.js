@@ -2,20 +2,27 @@ import Utils from './utils';
 import AppRouter from './appRouter';
 import analytics from './analytics';
 
+// Views
+import IndexView      from './views/index';
+import ProductView    from './views/product';
+import CollectionView from './views/collection';
+import CartView       from './views/cart';
+import ContactView    from './views/contact';
+import StockistsView  from './views/stockists';
+
 // Sections
-// import SectionManager  from './sectionManager';
 import HeaderSection     from './sections/header';
 import NavSection        from './sections/nav';
 import FooterSection     from './sections/footer';
 import AJAXCartSection   from './sections/ajaxCart';
 import MobileMenuSection from './sections/mobileMenu';
 
-const $body = $(document.body);
-
 (($) => {
-  // Sections Stuff 
-  // window.sectionManager = new SectionManager();
+  const $body = $(document.body);
+  const $loader = $('#loader');
+  const $title = $('#title');
 
+  const transitionEndEvent = Utils.whichTransitionEnd();
   const sections = {};
 
   sections.header     = new HeaderSection($('[data-section-type="header"]'));
@@ -25,24 +32,37 @@ const $body = $(document.body);
   sections.mobileMenu = new MobileMenuSection($('[data-section-type="mobile-menu"]'));
   
   const appRouter = new AppRouter({
+    viewConstructors: {
+      index: IndexView,
+      product: ProductView,
+      collection: CollectionView,
+      cart: CartView,
+      contact: ContactView,
+      stockists: StockistsView
+    },
     onRouteStart: (url) => {
       sections.ajaxCart.ajaxCart.close();  // Run this immediately in case it's open
       sections.mobileMenu.drawer.hide();
     },
-    onViewTransitionOutDone: (url) => {
+    onViewTransitionOutDone: (url, deferred) => {
       sections.nav.deactivateMenuLinks();
+      $loader.addClass('is-visible');
+      $loader.on(transitionEndEvent, deferred.resolve);
     },
     onViewChangeStart: (url) => {
       sections.nav.activateMenuLinkForUrl(url);
       analytics.trackPageView(window.location.pathname);
     },
     onViewChangeDOMUpdatesComplete: ($responseHead, $responseBody) => {
-      window.scrollTop = 0;
-
-      const title = $responseBody.find('#title').text();
-      $('#title').text(title);
+      window.scrollTo && window.scrollTo(0, 0);
+      $title.text($responseBody.find('#title').text());
+    },
+    onViewReady: (view) => {
+      $loader.removeClass('is-visible');
     }
   });
+
+
   // Misc Stuff
 
   // Apply UA classes to the document
