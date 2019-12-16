@@ -24,12 +24,12 @@ body.ajax-cart-open {
     z-index: -1;
     right: -100%;
     bottom: -100%;
-    background: radial-gradient(ellipse at top left, rgba(255,255,255,1) 50%,rgba(255,255,255,0.07) 86%);
+    background: radial-gradient(ellipse at top left, rgba(255,255,255,1) 50%, rgba(255,255,255,0.07) 86%);
     opacity: 0;
-    transform: translate(-100%, -100%);
-    transition: opacity 700ms cubic-bezier(0.19, 0.04, 0.43, 0.96) 150ms,transform 800ms cubic-bezier(0.84, 0.01, 0.65, 0.99);
-    transform-origin: top left;
-  }  
+    @include translate(-100%, -100%);
+    @include transform-origin(top left);
+    transition: opacity 700ms cubic-bezier(0.19, 0.04, 0.43, 0.96) 150ms, transform 800ms cubic-bezier(0.84, 0.01, 0.65, 0.99);
+  }
 
   @media (min-width: $screen-sm-min) {
     max-width: 380px;
@@ -56,7 +56,7 @@ body.ajax-cart-open {
     background: transparentize($ajax-cart-bg, 0.5);
     opacity: 0;
     pointer-events: none;
-    @include transition(opacity $transition-duration-base $transition-timing-function-base);   
+    transition: opacity $transition-duration-base $transition-timing-function-base;
   }
 
   &.request-in-progress:after {
@@ -71,17 +71,14 @@ body.ajax-cart-open {
 }
 
 .ajax-cart {
+  height: 100%;
   max-height: 100%;
   @include display-flex;
   @include flex-direction(column);
 
-  @media (max-width: $screen-xs-max) {
-    height: 100%; // Pushes the footer to the bottom on tiny screens
-  }  
-
   @media (min-width: $screen-sm-min) {
     border-left: 1px solid $color-off-white;
-  }
+  }  
 
   opacity: 0;
   transform: translate(0px, -5px);
@@ -160,7 +157,7 @@ body.ajax-cart-open {
 
   &.is-being-removed {
     opacity: 0;
-    @include transition(opacity $transition-duration-base $transition-timing-function-in);
+    transition: opacity $transition-duration-base $transition-timing-function-in;
   }
 
   &.ajax-cart__item--unavailable {
@@ -280,12 +277,12 @@ body.ajax-cart-open {
   opacity: 0;
   cursor: none; // see below
   pointer-events: none;
-  @include transition(all $transition-duration-slide $transition-timing-function-slide-out);
+  transition: all $transition-duration-slide $transition-timing-function-slide-out;
 
   &.is-visible {
     opacity: $ajax-cart-backdrop-opacity;
     pointer-events: auto;
-    @include transition(all $transition-duration-slide $transition-timing-function-slide-in);
+    transition: all $transition-duration-slide $transition-timing-function-slide-in;
   }
 }
 
@@ -306,7 +303,7 @@ body.ajax-cart-open {
     }
     @include translate(-24px, -24px);
     opacity: 0;
-    @include transition(opacity $transition-duration-quick ease-in);
+    transition: opacity $transition-duration-quick ease-in;
   }
 
   &.is-visible:before {

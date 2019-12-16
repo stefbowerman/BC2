@@ -181,7 +181,7 @@ export default class AJAXCart {
     const bodyHeight = $('.ajax-cart__body-scroll').outerHeight() - 15; // There's a little padding on the bottom of the body to account for
     const availableHeight = $('.ajax-cart').outerHeight() - $('.ajax-cart__footer').outerHeight();
 
-    if(bodyHeight > availableHeight) {
+    if (bodyHeight > availableHeight) {
       this.$el.addClass(classes.cartHasOverflow);
     }
     else {

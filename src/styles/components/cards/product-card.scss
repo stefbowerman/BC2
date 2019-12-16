@@ -48,7 +48,7 @@
   .product-card__gallery-image.is-loaded & {
     opacity: 0;
     pointer-events: none;
-    @include transition(opacity $transition-duration-quick $transition-timing-function-out);
+    transition: opacity $transition-duration-quick $transition-timing-function-out;
   }
 }
 
@@ -69,7 +69,7 @@
 html:not(.touchevents) {
   .product-card__info {
     opacity: 0;
-    @include transition(opacity $transition-duration-fast $transition-timing-function-base);
+    transition: opacity $transition-duration-fast $transition-timing-function-base;
   }
 
   .product-card:hover .product-card__info {

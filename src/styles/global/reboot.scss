@@ -204,23 +204,23 @@ a {
   text-decoration: $link-decoration;
   background-color: transparent; // Remove the gray background on active links in IE 10.
   -webkit-text-decoration-skip: objects; // Remove gaps in links underline in iOS 8+ and Safari 8+.
-  @include transition(color $transition-duration-base $transition-timing-function-out);
+  transition: color $transition-duration-base $transition-timing-function-out;
 
   // make nested svg icons inside anchor tags to be the same color
   svg {
     fill: $link-color;
-    @include transition(fill $transition-duration-base $transition-timing-function-out, stroke $transition-duration-base $transition-timing-function-out);
+    transition: fill $transition-duration-base $transition-timing-function-out, stroke $transition-duration-base $transition-timing-function-out;
   }  
 
   &:hover,
   &:focus {
     color: $link-hover-color;
     text-decoration: $link-hover-decoration;
-    @include transition(color $transition-duration-base $transition-timing-function-in);
+    transition: color $transition-duration-base $transition-timing-function-in;
 
     svg {
       fill: $link-hover-color;
-      @include transition(fill $transition-duration-base $transition-timing-function-in, stroke $transition-duration-base $transition-timing-function-in);
+      transition: fill $transition-duration-base $transition-timing-function-in, stroke $transition-duration-base $transition-timing-function-in;
     }    
   }
 }
