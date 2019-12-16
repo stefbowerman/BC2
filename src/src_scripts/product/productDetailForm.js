@@ -476,13 +476,14 @@ export default class ProductDetailForm {
   }
 
   onResize(e) {
-    if (window.innerWidth >= this.zoomMinWidth) {
-      this.productImageTouchZoomController.disable();
-      this.productImageDesktopZoomController.enable();
-    }
-    else if (Modernizr && Modernizr.touchevents) {
-      this.productImageTouchZoomController.enable();
-    }
+    this.productImageTouchZoomController.enable();
+    // if (window.innerWidth >= this.zoomMinWidth) {
+    //   this.productImageTouchZoomController.disable();
+    //   this.productImageDesktopZoomController.enable();
+    // }
+    // else if (Modernizr && Modernizr.touchevents) {
+    //   this.productImageTouchZoomController.enable();
+    // }
 
     if (window.innerWidth < this.stickyMaxWidth) {
       this.$productDetailForm.css('margin-bottom', ($('.sticky-form').outerHeight() - 60)); // 60 is the content wrapper bottom margin

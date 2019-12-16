@@ -1,4 +1,5 @@
-import IScroll from '../../../node_modules/iscroll/build/iscroll-zoom';
+// import IScroll from '../../../node_modules/iscroll/build/iscroll-zoom';
+import Panzoom from 'panzoom';
 import Utils from '../utils';
 
 const selectors = {
@@ -41,6 +42,7 @@ export default class ProductImageTouchZoomController {
     this.enabled = false;
     this.isZoomed = false;
     this.iscrollInstance = undefined;
+    this.panZoomInstance = undefined;
     this.transitionEndEvent = Utils.whichTransitionEnd();
 
     this.$container = $el;
@@ -97,19 +99,34 @@ export default class ProductImageTouchZoomController {
       const startX = -1 * (((imageWidth * startZoom) - winWidth)/2);
       const startY = -1 * (((imageHeight * startZoom) - winHeight)/2);
 
-      this.iscrollInstance = new IScroll(this.$blowupScroll.get(0), {
-        zoom: true,
-        hideScrollbar: true,
-        scrollX: true,
-        scrollY: true,
-        zoomMin: zoomMin,
-        zoomMax: 1,
-        startZoom: startZoom,
-        startX: startX,
-        startY: startY,
-        directionLockThreshold: 20,
-        tap: true,
-        click: true
+      // this.iscrollInstance = new IScroll(this.$blowupScroll.get(0), {
+      //   zoom: true,
+      //   hideScrollbar: true,
+      //   scrollX: true,
+      //   scrollY: true,
+      //   zoomMin: zoomMin,
+      //   zoomMax: 1,
+      //   startZoom: startZoom,
+      //   startX: startX,
+      //   startY: startY,
+      //   directionLockThreshold: 20,
+      //   tap: true,
+      //   click: true
+      // });
+
+      this.panZoomInstance = new Panzoom(this.$blowupImage.get(0), {
+        minZoom: 1,
+        maxZoom: 2,
+        filterKey: () => true // Ignore keyboard events
+      }).zoomAbs(startX, startY, startZoom);
+
+      this.$blowupImage.get(0).addEventListener('panzoomchange', (event) => {
+        console.log('panzoomchange');
+        console.log(event.detail) // => { x: 0, y: 0, scale: 1 }
+      });
+      this.$blowupImage.get(0).addEventListener('panzoomstart', (event) => {
+        console.log('panzoomstart');
+        console.log(event.detail) // => { x: 0, y: 0, scale: 1 }
       });
     });
 
@@ -130,7 +147,8 @@ export default class ProductImageTouchZoomController {
     $body.removeClass(classes.bodyBlowupOpen);
     this.$blowup.removeClass(classes.blowupActive);
     this.$blowup.one(this.transitionEndEvent, () => {
-      this.iscrollInstance && this.iscrollInstance.destroy();
+      // this.iscrollInstance && this.iscrollInstance.destroy();
+      this.panZoomInstance && this.panZoomInstance.dispose();
       this.$blowupImage.attr('src', '');
       this.isZoomed = false;
     });
