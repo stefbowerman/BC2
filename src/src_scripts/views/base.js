@@ -17,16 +17,16 @@ export default class BaseView {
     // const id = $container.attr('data-section-id');
     const type = $container.attr('data-section-type');
 
-    const constructor = SectionConstructorDictionary[type];
+    const Constructor = SectionConstructorDictionary[type];
 
     // Need to make sure we're working with actual sections here..
-    if (typeof constructor === 'undefined' || !(constructor.prototype instanceof BaseSection)) {
+    if (typeof Constructor === 'undefined' || !(Constructor.prototype instanceof BaseSection)) {
       return;
     }
 
     // console.log('creating new section instance for type - ' + type );
 
-    this.sections.push(new constructor($container));
+    this.sections.push(new Constructor($container));
   }
 
   onSectionLoad(e) {
@@ -35,6 +35,7 @@ export default class BaseView {
 
   onSectionUnload(e) {
     const remainingSections = [];
+
     this.sections.forEach((section) => {
       if (section.id === e.detail.sectionId) {
         section.onUnload();
@@ -48,11 +49,9 @@ export default class BaseView {
   }
 
   destroy() {
-    if (this.sections.length) {
-      this.sections.forEach((section) => {
-        section.onUnload && section.onUnload();
-      });
-    }
+    this.sections.forEach((section) => {
+      section.onUnload && section.onUnload();
+    });
   }
 
   transitionIn() {

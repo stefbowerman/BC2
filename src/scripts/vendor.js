@@ -39,13 +39,6 @@
  // =require vendor/bootstrap.modal.js
  // =require vendor/bootstrap.collapse.js
 
- /**
- * jQuery Unveil
- * A very lightweight jQuery plugin to lazy load images
- * http://luis-almeida.github.com/unveil
- */
- // =require vendor/jquery.unveil.js
- 
 /*!
  * ImagesLoaded
  */

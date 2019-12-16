@@ -1,3 +1,6 @@
+import 'lazysizes';
+import 'lazysizes/plugins/parent-fit/ls.parent-fit';
+
 import Utils from './utils';
 import AppRouter from './appRouter';
 import analytics from './analytics';
@@ -54,7 +57,6 @@ import MobileMenuSection from './sections/mobileMenu';
       analytics.trackPageView(window.location.pathname);
     },
     onViewChangeDOMUpdatesComplete: ($responseHead, $responseBody) => {
-      window.scrollTo && window.scrollTo(0, 0);
       $title.text($responseBody.find('#title').text());
     },
     onViewReady: (view) => {

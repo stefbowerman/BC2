@@ -1,0 +1,24 @@
+{%- comment %}
+
+  Image Srcset
+  ------------------------------------------------------------------------------
+
+  Usage:
+
+  {% include 'image-srcset',
+              ss_image: { image } - required
+  %}
+
+{% endcomment -%}
+
+{% if ss_image %}
+  {% assign _srcset = '' %}
+  {% assign widths = '250, 440, 720, 930, 1080, 1200, 1400, 1600, 1800' | split: ', ' %}
+  {% for width in widths %}
+    {% assign image_size = width | append: 'x' %}
+    {% capture srcset_size %}{{ ss_image.src | img_url: image_size }} {{ width | append: 'w' }}{% unless forloop.last %},{% endunless %}{% endcapture %}
+    {% assign _srcset = _srcset | append: srcset_size %}
+  {% endfor %}
+  {% assign _srcset = _srcset | strip %}
+  {{ _srcset }}
+{% endif %}

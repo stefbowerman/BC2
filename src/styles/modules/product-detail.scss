@@ -475,14 +475,12 @@ body.template-product {
   }
   
   // Lazy loaded
-  &[data-src] {
+  .js &.is-lazy {
     opacity: 0;
-  }
-
-  &.is-loaded {
-    opacity: 1;
     transition: $product-image-fade-transition-fast;
-    // @include transition(opacity $transition-duration-slow $transition-timing-function-in);
-  }
 
+    &.lazyloaded {
+      opacity: 1;
+    }
+  }
 }
