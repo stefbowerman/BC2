@@ -22,19 +22,12 @@
 }
 
 .product-card__gallery-image {
+  height: 0; // need to inline the height via padding-bottom: aspect-ratio%
   width: 100%;
 
   img {
     display: block;
-    margin-left: auto;
-    margin-right: auto;
-    width: auto;
-    max-width: 100%;
-    max-height: 100vh;
-
-    @media (min-width: $screen-xs-min) {
-      min-height: 0;
-    }
+    width: 100%;
   }
 
   .js & {
