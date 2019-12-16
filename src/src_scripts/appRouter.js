@@ -15,7 +15,7 @@ export default class AppRouter {
       onViewTransitionOutDone: (url, d) => { d.resolve(); },
       onViewChangeStart: () => {},
       onViewChangeDOMUpdatesComplete: () => {},
-      redirectTimeout: 4000
+      redirectTimeout: 5000
     };
 
     this.router = new Navigo(window.location.origin, false, '#!'); // eslint-disable-line no-undef

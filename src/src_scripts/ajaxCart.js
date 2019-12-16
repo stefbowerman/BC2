@@ -205,9 +205,14 @@ export default class AJAXCart {
       this.$backdrop.on('mouseleave', () => { this.$backdropCursor.removeClass(classes.backdropCursorVisible); }); // eslint-disable-line
       this.$backdrop.on('mousemove', (e) => {
         window.requestAnimationFrame(() => {
-          this.$backdropCursor.css({
-            transform: `translate(${e.clientX}px, ${e.clientY}px)`
-          });
+          try {
+            this.$backdropCursor.css({
+              transform: `translate(${e.clientX}px, ${e.clientY}px)`
+            });
+          }
+          catch (err) {
+            // console.log(err)
+          }
         });
       });
 
@@ -234,7 +239,12 @@ export default class AJAXCart {
       });
 
       setTimeout(() => {
-        this.$backdrop.removeClass(classes.backdropVisible);
+        try {
+          this.$backdrop.removeClass(classes.backdropVisible);
+        }
+        catch (err) {
+          // console.log(err)
+        }
       }, 10);
     }
     else {

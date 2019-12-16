@@ -1,0 +1,49 @@
+{%- comment %}
+
+  Product Detail Form Gallery List Item
+  ------------------------------------------------------------------------------
+
+  Usage:
+
+  {% include 'product-detail-form-gallery-list-item',
+              pdfgli_image: { image } - required
+              pdfgli_lazyload: { boolean } - optional - defaults to false
+  %}
+
+{% endcomment -%}
+
+{% assign photo_main_dimension = '1800x' %}
+
+{% comment %} Defaults {% endcomment %}
+{% if pdfgli_lazyload == blank %}
+  {% assign pdfgli_lazyload = false %}
+{% endif %}
+{% comment %} End Defaults {% endcomment %}
+
+{% if pdfgli_image %}
+  
+  {% assign pdfgli_aspect_ratio = pdfgli_image.width | times: 1.00 | divided_by: pdfgli_image.height | round: 4 %}
+  {% assign orientation = "square" %}
+
+  {% if pdfgli_aspect_ratio > 1 %}
+    {% assign orientation = "landscape" %}
+  {% elsif pdfgli_aspect_ratio < 1 %}
+    {% assign orientation = "portrait" %}
+  {% endif %}
+
+  <li class="product-gallery__item product-gallery__item--{{ orientation }}" data-image="{{ pdfgli_image.id }}" data-gallery-item>
+    <img
+      {% if pdfgli_lazyload %}
+        data-src="{{ pdfgli_image | img_url: photo_main_dimension }}"
+        data-srcset="{% include 'image-srcset', ss_image: pdfgli_image %}"
+      {% else %}
+        src="{{ pdfgli_image | img_url: photo_main_dimension }}"
+        srcset="{% include 'image-srcset', ss_image: pdfgli_image %}"
+      {% endif %}
+      alt="{{ pdfgli_image.alt | escape }}"
+      class="product-gallery__image{% if pdfgli_lazyload %} is-lazy lazyload{% endif %}"
+      data-aspectratio="{{ pdfgli_aspect_ratio }}"
+      data-expand="100"
+      data-gallery-image>
+  </li>
+{% endif %}

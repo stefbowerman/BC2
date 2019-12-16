@@ -136,13 +136,6 @@ export default class ProductDetailForm {
         this.$galleriesWrapper.addClass(classes.galleriesAreReady);
       });
 
-      this.$galleryImages.unveil(200, function() {
-        const $img = $(this);
-        $img.on('load', () => {
-          $img.addClass(classes.galleryImageLoaded).removeAttr('data-src');
-        });
-      });
-
       // See productVariants
       this.$container.on('variantChange' + this.namespace, this.onVariantChange.bind(this));
       this.$container.on(this.events.CHANGE, selectors.stickyOptionSelector, this.onStickyOptionSelectorChange.bind(this));
@@ -408,7 +401,6 @@ export default class ProductDetailForm {
           $vGallery.css('display', 'block');
           void $vGallery.get(0).offsetWidth; // eslint-disable-line
           $vGallery.addClass(classes.galleryActive);
-          $window.trigger('lookup'); // For unveil plugin
         });
 
         $activeGalleries.removeClass(classes.galleryActive);
@@ -493,7 +485,7 @@ export default class ProductDetailForm {
     }
 
     if (window.innerWidth < this.stickyMaxWidth) {
-      this.$productDetailForm.css('margin-bottom', $('.sticky-form').outerHeight());
+      this.$productDetailForm.css('margin-bottom', ($('.sticky-form').outerHeight() - 60)); // 60 is the content wrapper bottom margin
     }
     else {
       this.$productDetailForm.css('margin-bottom', '');
