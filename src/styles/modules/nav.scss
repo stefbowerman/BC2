@@ -128,7 +128,7 @@ nav.main-nav {
   }
 }
 
-a.intermediate-nav__next-product-link {
+a.intermediate-nav__next-link {
   display: inline-block;
   padding-right: 0;
   transition: padding-right 300ms ease-in;
@@ -139,7 +139,7 @@ a.intermediate-nav__next-product-link {
   }
 }
 
-.intermediate-nav__next-product-image {
+.intermediate-nav__next-image {
   width: 50px;
   position: absolute;
   top: 0;
@@ -149,7 +149,7 @@ a.intermediate-nav__next-product-link {
   opacity: 0;
   transition: opacity 500ms ease;
 
-  .intermediate-nav__next-product-link:hover & {
+  .intermediate-nav__next-link:hover & {
     opacity: 1;
     transition-duration: $transition-duration-quick;
     transition-delay: 80ms;

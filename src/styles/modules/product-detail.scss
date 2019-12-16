@@ -305,7 +305,7 @@ body.template-product {
 // Secondary description at the bottom of the scroll container
 .secondary-description {
   @include pdf-scrollable;
-  margin-top: 100px;
+  margin-top: 60px;
   padding: 0 $grid-gutter-width/2;
   text-align: center;
 

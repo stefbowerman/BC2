@@ -24,7 +24,7 @@ body.ajax-cart-open {
     z-index: -1;
     right: -100%;
     bottom: -100%;
-    background: radial-gradient(ellipse at top left, rgba(255,255,255,1) 50%,rgba(255,255,255,0.07) 86%);
+    background: radial-gradient(ellipse at top left, rgba(255,255,255,1) 50%, rgba(255,255,255,0.07) 86%);
     opacity: 0;
     @include translate(-100%, -100%);
     @include transform-origin(top left);
@@ -71,17 +71,14 @@ body.ajax-cart-open {
 }
 
 .ajax-cart {
+  height: 100%;
   max-height: 100%;
   @include display-flex;
   @include flex-direction(column);
 
-  @media (max-width: $screen-xs-max) {
-    height: 100%; // Pushes the footer to the bottom on tiny screens
-  }  
-
   @media (min-width: $screen-sm-min) {
     border-left: 1px solid $color-off-white;
-  }
+  }  
 
   opacity: 0;
   transform: translate(0px, -5px);
