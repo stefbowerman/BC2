@@ -11,9 +11,17 @@ module.exports = {
       extractSharedJs: true,
       extensions: ['js'],
       bundles: [{
-        entries: 'app.js',
-        outputName: 'app.js'
+        entries: 'app.password.js',
+        outputName: 'app.password.js'
       }]
+      // bundles: [{
+      //   entries: 'app.js',
+      //   outputName: 'app.js'
+      // },
+      // {
+      //   entries: 'app.password.js',
+      //   outputName: 'app.password.js'
+      // }]
     }
   }
 };

@@ -45,7 +45,10 @@
         addToCart: {{ 'products.product.add_to_cart' | t | json }},
         soldOut: {{ 'products.product.sold_out' | t | json }},
         unavailable: {{ 'products.product.unavailable' | t | json }},
-        adding: {{ 'products.product.adding' | t | json }}
+        adding: {{ 'products.product.adding' | t | json }},
+        subscribeSuccess: {{ settings.subscribe_message_success | default: 'Thank you for subscribing' | json }},
+        subscribeFail: {{ settings.subscribe_message_fail | default: 'Check your email address and try again' | json }},
+        subscribeAlreadySubscribed: {{ settings.subscribe_message_already_subscribed | default: 'This email address is already subscribed' | json }}
       },
       moneyFormat: {{ shop.money_format | json }}
     };
@@ -68,12 +71,7 @@
   {{ content_for_header }} 
 </head>
 
-{% capture body_class %}
-  template-{{ template.name | handle }}
-  {% if template.suffix != blank %} template-{{ template.name | append: '-' | append: template.suffix | handle }} {% endif %}
-{% endcapture %}
-
-<body id="{{ page_title | handle }}" class="{{ body_class | strip | strip_newlines }}">
+<body id="{{ page_title | handle }}" class="{% include 'body-class' %}">
 
   <div class="wrap">
 

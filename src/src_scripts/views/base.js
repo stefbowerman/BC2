@@ -24,8 +24,6 @@ export default class BaseView {
       return;
     }
 
-    // console.log('creating new section instance for type - ' + type );
-
     this.sections.push(new constructor($container));
   }
 

@@ -97,12 +97,35 @@
     ]
   }, 
   {
-    "name": "MailChimp",
+    "name": "Mailing List",
     "settings": [
       {
         "type": "text",
         "id": "mailchimp_form_url",
-        "label": "Form Action URL"
+        "label": "Mailchimp Form Action URL"
+      },
+      {
+       "type": "header",
+       "content": "Messaging"
+      },
+      {
+        "type": "textarea",
+        "id": "subscribe_message_success",
+        "label": "Success",
+        "default": "Thank you for subscribing",
+        "info": "Shown to the user when they successfully subscribe"
+      },
+      {
+        "type": "textarea",
+        "id": "subscribe_message_subscribe_fail",
+        "label": "Subscribe Fail",
+        "default": "Check your email address and try again"
+      },
+      {
+        "type": "textarea",
+        "id": "subscribe_message_already_subscribed",
+        "label": "Already Subscribed",
+        "default": "This email address is already subscribed"
       }
     ]
   }

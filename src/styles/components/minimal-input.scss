@@ -12,6 +12,11 @@
   border-width: 0 0 1px 0;
   background-color: transparent;
   height: $minimal-input-height;
+
+  &.minimal-input-box__input--center {
+    text-align: center;
+    padding-left: 19px;
+  }
 }
 
 .minimal-input-box__submit {

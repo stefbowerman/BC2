@@ -7,8 +7,7 @@ import IndexView      from './views/index';
 import ProductView    from './views/product';
 import CollectionView from './views/collection';
 import CartView       from './views/cart';
-import ContactView    from './views/contact';
-import StockistsView  from './views/stockists';
+import PageView       from './views/page';
 
 // TODO - Move the loader and view-container bits to variables that get passed in
 const $body = $(document.body);
@@ -32,8 +31,7 @@ export default class AppRouter {
       product: ProductView,
       collection: CollectionView,
       cart: CartView,
-      contact: ContactView,
-      stockists: StockistsView
+      page: PageView
     };
 
     this.router = new Navigo(window.location.origin, false, '#!'); // eslint-disable-line no-undef
@@ -79,16 +77,7 @@ export default class AppRouter {
     });
 
     this.router.on('/pages/:slug', (params) => {
-      // @TODO - What to do about this hmmm
-      if (params.slug.indexOf('contact') > -1) {
-        this.doRoute(`/pages/${params.slug}`, 'contact');
-      }
-      else if (params.slug.indexOf('stockists') > -1) {
-        this.doRoute(`/pages/${params.slug}`, 'stockists');
-      }      
-      else {
-        this.doRoute(`/pages/${params.slug}`, 'page');
-      }
+      this.doRoute(`/pages/${params.slug}`, 'page');
     })
 
     this.router.on('/', () => {
@@ -100,9 +89,7 @@ export default class AppRouter {
     });
 
     this.router.notFound((params) => {
-      // called when there is path specified but
-      // there is no route matching
-      // console.log(params);
+      // called when there is path specified but there is no route matching
       this.router.navigate('/'); // Just go back home
     });
 

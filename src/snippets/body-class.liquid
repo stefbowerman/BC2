@@ -1,0 +1,6 @@
+{% capture body_class %}
+  template-{{ template.name | handle }}
+  {% if template.suffix != blank %} template-{{ template.name | append: '-' | append: template.suffix | handle }} {% endif %}
+{% endcapture %}
+
+{{ body_class | strip | strip_newlines }}

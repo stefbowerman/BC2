@@ -1,0 +1,59 @@
+// -------------------------
+// Subscribe Form
+// -------------------------
+
+$t-d-start: 300ms;
+$t-d-end: 500ms;
+
+.subscribe-form {
+  
+  .form-contents {
+    position: relative;
+
+    &.go-away {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity $t-d-end ease-out;
+    }
+  }
+
+  .form-inputs {
+    width: 100%;
+    transition: opacity $t-d-end ease-out;
+    transition-delay: 300ms;
+  }
+
+  .form-message {
+    @include stretch-within;
+    @include display-flex;
+    @include align-items(center);
+
+    opacity: 0;
+    pointer-events: none;
+    font-size: $font-size-xsmall;
+    transition: opacity $t-d-start ease-out;
+    transition-delay: 0ms;
+  }
+
+  .form-contents.show-message {
+    .form-inputs {
+      opacity: 0;
+      pointer-events: none;
+      transition-duration: $t-d-start;
+      transition-delay: 0ms;
+      transition-timing-function: ease-in;
+    }
+
+    .form-message {
+      opacity: 1;
+      pointer-events: auto;
+      transition-duration: $t-d-end;
+      transition-delay: $t-d-start;
+      transition-timing-function: ease-out;
+    }
+  }
+
+  .form-helper-text {
+    font-size: $font-size-xsmall;
+  }
+}

@@ -1,0 +1,55 @@
+// -------------------------
+// Subscribe Page template
+// -------------------------
+
+.template-page-subscribe {
+  .page-subscribe-form {
+    position: relative;
+
+    .subscribe-form-message {
+      padding-top: $spacer;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      text-align: center;
+      pointer-events: none;
+      font-size: $font-size-small;
+      @include translateY(100%);
+      opacity: 0;
+      transition: opacity 300ms ease-out;
+
+      &.is-visible {
+        opacity: 1;
+      }
+    }
+
+    .subscribe-form-success,
+    .subscribe-form-success__text {
+      opacity: 0;
+      transition: opacity 0.5s ease-out;
+    }
+
+    .subscribe-form-success {
+      @include stretch-within;
+      @include display-flex;
+      @include align-items(center);
+      @include justify-content(center);
+      text-align: center;
+      background-color: $body-bg;
+      pointer-events: none;
+      transition-delay: 0.4s;
+    }
+
+    &.show-success .subscribe-form-success {
+      opacity: 1;
+      pointer-events: auto;
+      transition-delay: 0s;
+    }
+
+    &.show-success .subscribe-form-success__text {
+      opacity: 1;
+      transition-delay: 0.4s;
+    }
+  }
+}

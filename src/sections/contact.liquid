@@ -2,7 +2,7 @@
   <div class="layout-content-wrapper layout-content-wrapper--even">
     <div class="container">
 
-      <div class="u-margin-auto" style="max-width: 550px;">
+      <div class="page-form-wrapper">
 
         {% form 'contact' %}
 
@@ -17,8 +17,8 @@
 
           {% else %}
 
-            <div class="u-ta-center">
-              {{ section.settings.form_message | default: 'Please include as much information as possible to help us in assisting you.' }}
+            <div class="rte u-ta-center">
+              {{ section.settings.form_message | default: 'When contacting us, please include as much information as possible to help us assist you.' }}
             </div>
 
             <br />
@@ -30,15 +30,14 @@
             {% endif %}
 
             <div class="form-group">
-              <label for="ContactFormEmail" class="sr-only">{{ 'contact.form.email' | t }}</label>
+              <label for="ContactFormEmail" class="sr-only">{{ 'contact.form.your_email' | t }}</label>
               <input type="email"
                 name="contact[email]"
                 id="ContactFormEmail"
                 class="form-control"
-                placeholder="{{ 'contact.form.email' | t }}"
+                placeholder="{{ 'contact.form.your_email' | t }}"
                 value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"
                 spellcheck="false"
-                autocomplete="off"
                 autocapitalize="off"
                 data-input-email>
             </div>
@@ -52,7 +51,7 @@
                 placeholder="{{ 'contact.form.order_number' | t }} (Optional)"
                 autocomplete="off"
                 autocapitalize="off">
-            </div>        
+            </div>
 
             <div class="form-group">
               <label for="ContactFormMessage" class="sr-only">{{ 'contact.form.message' | t }}</label>
@@ -67,9 +66,7 @@
               </textarea>
             </div>
 
-            <div class="u-ta-right">
-              <input type="submit" class="btn btn-primary btn-block" value="{{ 'contact.form.send' | t }}">
-            </div>          
+            <input type="submit" class="btn btn-primary btn-block" value="{{ 'contact.form.send' | t }}">
           {% endif %}
 
         {% endform %}

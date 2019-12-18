@@ -1,0 +1,45 @@
+{%- comment %}
+
+  Subscribe Form
+  ------------------------------------------------------------------------------
+
+  Usage:
+
+  {% include 'subscribe-form',
+              id: { string } - required ??
+  %}
+
+{% endcomment -%}
+
+{% unless settings.mailchimp_form_url == blank %}
+  <form action="{{ settings.mailchimp_form_url }}" method="post">
+
+    <div class="form-group">
+      <label for="SubscribeFormEmail" class="sr-only">{{ 'subscribe.form.your_email' | t }}</label>
+      <input type="email"
+        name="EMAIL"
+        id="SubscribeFormEmail"
+        class="form-control u-ta-center"
+        placeholder="{{ 'subscribe.form.your_email' | t }}"
+        value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"
+        spellcheck="false"
+        autocapitalize="off"
+        required="required"
+        data-input-email>
+    </div>
+
+    <input type="hidden" name="SIGNUP" value="Site - Subscribe Page" />
+
+    <div class="form-group">
+      <input type="submit" class="btn btn-primary btn-block" value="{{ 'subscribe.form.subscribe' | t }}">
+    </div>
+
+    <div class="subscribe-form-success" data-form-success>
+      <div class="subscribe-form-success__text">
+        <strong>{{ settings.subscribe_message_success | default: 'Thank you for subscribing' }}</strong>
+      </div>
+    </div>
+    <div class="subscribe-form-message" data-form-message></div>
+
+  </form>
+{% endunless %}
