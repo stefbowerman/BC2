@@ -1,7 +1,7 @@
 import { throttle } from 'throttle-debounce';
 
 const $window = $(window);
-let cachedWindowWidth = $window.width(); 
+let cachedWindowWidth = $window.width();
 
 // Match those set in variables.scss
 const _breakpointMinWidths = {
@@ -69,16 +69,18 @@ function onResize() {
 
       return false;
     }
+
+    return true;
   });
 
   cachedWindowWidth = $window.width();
 
-  return true
+  return true;
 }
 
 $(() => {
   $window.on('resize', throttle(50, onResize));
-});  
+});
 
 export {
   getBreakpointMinWidth,

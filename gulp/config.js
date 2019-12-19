@@ -14,6 +14,14 @@ module.exports = {
         entries: 'app.js',
         outputName: 'app.js'
       }]
+      // bundles: [{
+      //   entries: 'app.js',
+      //   outputName: 'app.js'
+      // },
+      // {
+      //   entries: 'app.password.js',
+      //   outputName: 'app.password.js'
+      // }]
     }
   }
 };

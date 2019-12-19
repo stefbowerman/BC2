@@ -1,60 +1,65 @@
 import BaseSection from './base';
-import AJAXMailchimpForm from '../ajaxMailchimpForm';
-import Utils from '../utils';
-import analytics from '../analytics';
-
-const selectors = {
-  formContents: '[data-form-contents]',
-  formInputs: '[data-form-inputs]',
-  formMessage: '[data-form-message]'
-};
+import SubscribeForm from '../uiComponents/subscribeForm';
 
 const classes = {
-  showMessage: 'show-message',
-  contentsGoAway: 'go-away'
+  formActive: 'form-active',
+  showHelperText: 'show-helper-text'
 };
 
 export default class FooterSection extends BaseSection {
   constructor(container) {
     super(container, 'footer');
-    
-    this.transitionEndEvent = Utils.whichTransitionEnd();
 
-    this.$subscribeForm = this.$container.find('form');
-    this.$formContents  = $(selectors.formContents, this.$container);
-    this.$formInputs    = $(selectors.formInputs, this.$container);
-    this.$formMessage   = $(selectors.formMessage, this.$container);
-
-    this.AJAXMailchimpForm = new AJAXMailchimpForm(this.$subscribeForm, {
-      onSubscribeFail: (msg) => {
-        if (msg.match(/already subscribed/)) {
-          this.$formMessage.text('This email address is already subscribed');
-        }
-        else {
-          this.$formMessage.text('Check your email address and try again');
-        }
-        
-        this.$formContents.addClass(classes.showMessage);
-        setTimeout(() => {
-          this.$formContents.removeClass(classes.showMessage);
-          this.$formContents.one(this.transitionEndEvent, () => {
-            this.$formMessage.text('');
-          });
-        }, 4000);
-      },
+    this.subscribeForm = new SubscribeForm(this.$container, {
+      eventLabel: 'footer',
       onSubscribeSuccess: () => {
-        this.$formMessage.text('Thank you for subscribing');
-        this.$formContents.addClass(classes.showMessage);
-        setTimeout(() => {
-          this.$formContents.addClass(classes.contentsGoAway);
-        }, 4000);
-
-        analytics.trackEvent({
-          category: 'Mailing List',
-          action: 'Subscribe Success',
-          label: 'footer'
-        });
+        this.hideHelperText();
+      },
+      onSuccessAnimationComplete: () => {
+        // If they haven't blurred or mouse'd away from the form, show the helper text again
+        if (this.$container.hasClass(classes.formActive)) {
+          this.showHelperText();
+        }
       }
     });
+
+    this.formHovered   = false;
+    this.$input        = this.subscribeForm.$emailInput;
+    this.$formContents = this.subscribeForm.$contents;
+
+    this.$container.on('mouseenter', this.showHelperText.bind(this));
+    this.$container.on('mouseleave', this.hideHelperText.bind(this));
+
+    this.$input.on('focus', this.activateForm.bind(this));
+    this.$input.on('blur', () => {
+      if (this.formHovered) return;
+      this.deactivateForm();
+    });
+
+    this.$formContents.on('mouseenter', () => {
+      this.formHovered = true;
+      this.activateForm();
+
+      this.$formContents.one('mouseleave', () => {
+        this.formHovered = false;
+        this.deactivateForm();
+      });
+    });
+  }
+
+  showHelperText() {
+    this.$container.addClass(classes.showHelperText);
+  }
+
+  hideHelperText() {
+    this.$container.removeClass(classes.showHelperText);
+  }
+
+  activateForm() {
+    this.$container.addClass(classes.formActive);
+  }
+
+  deactivateForm() {
+    this.$container.removeClass(classes.formActive);
   }
 }

@@ -116,11 +116,19 @@
     "form": {
       "name": "Name",
       "email": "Email",
+      "your_email": "Your Email",
       "phone": "Phone Number",
       "order_number": "Order Number",
       "message": "Message",
       "send": "Send",
+      "submit": "Submit",
       "post_success": "Thanks for contacting us. We'll get back to you as soon as possible."
+    }
+  },
+  "subscribe": {
+    "form": {
+      "your_email": "Your Email",
+      "subscribe": "Subscribe"
     }
   },
   "customer": {

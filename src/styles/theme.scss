@@ -33,6 +33,7 @@
 @import url('components/drawer.scss');
 @import url('components/blowup.scss');
 @import url('components/options.scss');
+@import url('components/subscribe-form.scss');
 
 /*================ MODULES ================*/
 // Modules are larger pieces of functionality that consume components
@@ -52,7 +53,9 @@
 @import url('templates/cart.scss');
 @import url('templates/collection.scss');
 @import url('templates/page.scss');
+@import url('templates/page-subscribe.scss');
 @import url('templates/stockists.scss');
+@import url('templates/password.scss');
 @import url('templates/challenge.scss');
 
 // Necessary bottom placement for specificity w/o `!important`
@@ -138,6 +141,10 @@
 .js body.is-loaded .view-container {
   opacity: 1;
   transition-delay: 0.5s;
+}
+
+.js body.template-password.is-loaded .view-container {
+  transition-delay: 1.2s;
 }
 
 // DEV: Don't display Shopify's admin preview bar
