@@ -82,6 +82,7 @@ export default class AJAXMailchimpForm {
     this.$input   = this.$form.find('input[type="email"]');
     this.$submit  = this.$form.find('[type="submit"]');
     this.settings = $.extend({}, defaults, options);
+    this.isSubmitting = false;
 
     if (this.$input.attr('name') !== 'EMAIL') {
       console.warn('['+this.name+'] - Email input *must* have attribute [name="EMAIL"]');
@@ -160,7 +161,6 @@ export default class AJAXMailchimpForm {
 
   onSubmitDone(response) {
     const rspMsg = this.getMessageForResponse(response);
-    this.$submit.prop('disabled', false);
     response.result === 'success' ? this.settings.onSubscribeSuccess(rspMsg) : this.settings.onSubscribeFail(rspMsg);
   }
 
@@ -169,11 +169,15 @@ export default class AJAXMailchimpForm {
   }
 
   onSubmitAlways(response) {
+    this.$submit.prop('disabled', false);
     this.settings.onSubmitAlways(response);
   }
 
   onFormSubmit(e) {
     e.preventDefault();
+
+    if (this.isSubmitting) return false;
+
     const $form = this.$form;
     const data = {};
 
@@ -186,7 +190,10 @@ export default class AJAXMailchimpForm {
         url: $form.attr('action').replace('/post?', '/post-json?').concat('&c=?'),
         dataType: 'jsonp',
         data: data,
-        beforeSend: this.onBeforeSend.bind(this)
+        beforeSend: () => {
+          this.isSubmitting = true;
+          return this.onBeforeSend();
+        }
       })
       .done((response) => {
         this.onSubmitDone(response);
@@ -195,6 +202,7 @@ export default class AJAXMailchimpForm {
         this.onSubmitFail(response);
       })
       .always((response) => {
+        this.isSubmitting = false;
         this.onSubmitAlways(response);
       });
 

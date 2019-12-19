@@ -4,7 +4,7 @@
 
       <div class="page-form-wrapper">
         {% unless settings.mailchimp_form_url == blank %}
-          <form action="{{ settings.mailchimp_form_url }}" class="page-subscribe-form" method="post">
+          <form action="{{ settings.mailchimp_form_url }}" class="subscribe-form" method="post" data-subscribe-form>
 
             <div class="rte u-ta-center">
               {{ section.settings.form_message | default: 'Enter your email to receive updates.' }}
@@ -64,7 +64,7 @@
         "id": "form_message",
         "type": "textarea",
         "label": "Form Message",
-        "info": "Enter your email to receive updates."
+        "info": "Enter your email to receive updates from our online store."
       }
     ]
   }

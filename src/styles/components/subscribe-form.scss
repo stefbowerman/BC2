@@ -9,12 +9,6 @@ $t-d-end: 500ms;
   
   .form-contents {
     position: relative;
-
-    &.go-away {
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity $t-d-end ease-out;
-    }
   }
 
   .form-inputs {
@@ -27,6 +21,7 @@ $t-d-end: 500ms;
     @include stretch-within;
     @include display-flex;
     @include align-items(center);
+    @include justify-content(center);
 
     opacity: 0;
     pointer-events: none;

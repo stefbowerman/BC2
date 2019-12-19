@@ -342,6 +342,11 @@ body.template-product {
   @media (min-width: $screen-sm-min) {
     display: none;
   }
+
+  // This will center a link if it's the only one
+  a:only-child {
+    @include flex(1);
+  }
 }
 
 .secondary-link {

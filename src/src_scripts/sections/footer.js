@@ -1,83 +1,49 @@
 import BaseSection from './base';
-import AJAXMailchimpForm from '../ajaxMailchimpForm';
-import Utils from '../utils';
-import analytics from '../analytics';
-
-const selectors = {
-  formContents: '[data-form-contents]',
-  formMessage: '[data-form-message]'
-};
+import SubscribeForm from '../uiComponents/subscribeForm';
 
 const classes = {
-  showMessage: 'show-message',
-  contentsGoAway: 'go-away',
   formActive: 'form-active',
-  textDanger: 'text-danger',
   showHelperText: 'show-helper-text'
 };
 
 export default class FooterSection extends BaseSection {
   constructor(container) {
     super(container, 'footer');
-    
-    this.transitionEndEvent = Utils.whichTransitionEnd();
-    this.formSubmitting     = false;
 
-    this.$subscribeForm  = this.$container.find('form');
-    this.$formContents   = $(selectors.formContents, this.$container);
-    this.$formMessage    = $(selectors.formMessage, this.$container);
-    this.$formEmailInput = this.$subscribeForm.find('input[type="email"]');
+    this.subscribeForm = new SubscribeForm(this.$container, {
+      eventLabel: 'footer',
+      onSubscribeSuccess: () => {
+        this.hideHelperText();
+      },
+      onSuccessAnimationComplete: () => {
+        // If they haven't blurred or mouse'd away from the form, show the helper text again
+        if (this.$container.hasClass(classes.formActive)) {
+          this.showHelperText();
+        }
+      }
+    });
 
-    this.$subscribeForm.on('focus', 'input, button[type="submit"]', this.onFormInputFocus.bind(this));
-    this.$subscribeForm.on('blur', 'input, button[type="submit"]', this.onFormInputBlur.bind(this));
+    this.formHovered   = false;
+    this.$input        = this.subscribeForm.$emailInput;
+    this.$formContents = this.subscribeForm.$contents;
+
     this.$container.on('mouseenter', this.showHelperText.bind(this));
     this.$container.on('mouseleave', this.hideHelperText.bind(this));
 
-    this.AJAXMailchimpForm = new AJAXMailchimpForm(this.$subscribeForm, {
-      onBeforeSend: () => {
-        this.formSubmitting = true;
-      },
-      onSubscribeAlways: () => {
-        this.formSubmitting = false;
-      },
-      onSubscribeFail: (msg) => {
-        if (msg.match(/already subscribed/)) {
-          this.$formMessage.text(window.theme.strings.subscribeAlreadySubscribed);
-        }
-        else {
-          this.$formMessage.text(window.theme.strings.subscribeFail);
-        }
+    this.$input.on('focus', this.activateForm.bind(this));
+    this.$input.on('blur', () => {
+      if (this.formHovered) return;
+      this.deactivateForm();
+    });
 
-        this.$formMessage.addClass(classes.textDanger);
-        this.$formContents.addClass(classes.showMessage);
-        
-        setTimeout(() => {
-          this.$formContents.removeClass(classes.showMessage);
-          this.$formContents.one(this.transitionEndEvent, () => {
-            this.$formEmailInput.focus();
-            this.$formMessage.text('');
-            this.$formMessage.removeClass(classes.textDanger);
-          });
-        }, 4000);
-      },
-      onSubscribeSuccess: () => {
-        this.$formMessage.text(window.theme.strings.subscribeSuccess);
-        this.$formContents.addClass(classes.showMessage);
-        this.hideHelperText();
+    this.$formContents.on('mouseenter', () => {
+      this.formHovered = true;
+      this.activateForm();
+
+      this.$formContents.one('mouseleave', () => {
+        this.formHovered = false;
         this.deactivateForm();
-
-        setTimeout(() => {
-          // this.$formContents.addClass(classes.contentsGoAway);
-          this.$formContents.removeClass(classes.showMessage);
-          this.$formEmailInput.val('');
-        }, 4000);
-
-        analytics.trackEvent({
-          category: 'Mailing List',
-          action: 'Subscribe Success',
-          label: 'footer'
-        });
-      }
+      });
     });
   }
 
@@ -95,16 +61,5 @@ export default class FooterSection extends BaseSection {
 
   deactivateForm() {
     this.$container.removeClass(classes.formActive);
-  }
-
-  onFormInputFocus(e) {
-    this.activateForm();
-    this.showHelperText();
-  }
-
-  onFormInputBlur(e) {    
-    if(this.formSubmitting) return
-
-    this.deactivateForm();
   }
 }

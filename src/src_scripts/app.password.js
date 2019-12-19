@@ -5,8 +5,7 @@ import credits from './credits';
 const $body = $(document.body);
 
 (($) => {
-  // Sections Stuff 
-  const passwordSection = new PasswordSection($('[data-section-type="password"]'));
+  new PasswordSection($('[data-section-type="password"]'));
 
   // Apply UA classes to the document
   Utils.userAgentBodyClass();
