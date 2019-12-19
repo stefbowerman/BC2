@@ -6,13 +6,12 @@ import AppRouter from './appRouter';
 import analytics from './analytics';
 import credits from './credits';
 
-// Views
+// Views - Views are based on template names
 import IndexView      from './views/index';
 import ProductView    from './views/product';
 import CollectionView from './views/collection';
 import CartView       from './views/cart';
-import ContactView    from './views/contact';
-import StockistsView  from './views/stockists';
+import PageView       from './views/page';
 
 // Sections
 import HeaderSection     from './sections/header';
@@ -22,9 +21,9 @@ import AJAXCartSection   from './sections/ajaxCart';
 import MobileMenuSection from './sections/mobileMenu';
 
 (($) => {
-  const $body = $(document.body);
+  const $body   = $(document.body);
   const $loader = $('#loader');
-  const $title = $('#title');
+  const $title  = $('#title');
 
   const transitionEndEvent = Utils.whichTransitionEnd();
   const sections = {};
@@ -41,8 +40,7 @@ import MobileMenuSection from './sections/mobileMenu';
       product: ProductView,
       collection: CollectionView,
       cart: CartView,
-      contact: ContactView,
-      stockists: StockistsView
+      page: PageView
     },
     onRouteStart: (url) => {
       sections.ajaxCart.ajaxCart.close();  // Run this immediately in case it's open

@@ -12,7 +12,7 @@ export default class AppRouter {
       viewContentSelector: '#view-content',
       viewConstructors: {},
       onRouteStart: () => {},
-      onViewTransitionOutDone: (url, d) => { d.resolve(); },
+      onViewTransitionOutDone: (url, d) => { d.resolve(); }, // eslint-disable-line brace-style
       onViewChangeStart: () => {},
       onViewChangeDOMUpdatesComplete: () => {},
       redirectTimeout: 5000
@@ -38,7 +38,7 @@ export default class AppRouter {
     // Product within collection
     this.router.on('/collections/:slug/products/:handle', (params, query) => {
       this.doRoute(`/collections/${params.slug}/products/${params.handle}`, 'product');
-    });    
+    });
 
     this.router.on('/collections/:slug', (params, query) => {
       let url = `/collections/${params.slug}`;
@@ -56,7 +56,7 @@ export default class AppRouter {
 
     this.router.on('/products', () => {
       this.doRoute('/products', 'list-collections');
-    });    
+    });
 
     this.router.on('/cart', (params) => {
       this.doRoute('/cart', 'cart');
@@ -64,7 +64,7 @@ export default class AppRouter {
 
     this.router.on('/pages/:slug', (params) => {
       this.doRoute(`/pages/${params.slug}`, 'page');
-    })
+    });
 
     this.router.on('/', () => {
       this.doRoute('/', 'index');
@@ -86,7 +86,7 @@ export default class AppRouter {
     const ViewConstructor = this.settings.viewConstructors[type] || BaseView;
 
     if (firstRoute) {
-      this.currentView = new ViewConstructor(this.$viewContainer);   
+      this.currentView = new ViewConstructor(this.$viewContainer);
       firstRoute = false;
       return;
     }
@@ -116,11 +116,11 @@ export default class AppRouter {
     // Once AJAX *and* css animations are done, trigger the callback
     $.when(ajaxDeferred, transitionDeferred).done((response) => {
       this.doViewChange(response, ViewConstructor, url);
-    }); 
+    });
   }
 
   doViewChange(AJAXResponse, ViewConstructor, url) {
-    this.settings.onViewChangeStart(url)
+    this.settings.onViewChangeStart(url);
 
     this.currentView.destroy(); // Kill the current view
 
