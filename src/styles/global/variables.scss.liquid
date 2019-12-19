@@ -449,6 +449,7 @@ $layout-margin-bottom:        9vh;
 $header-bp-min:                         $screen-md-min; // Above this breakpoint, switch to the full desktop nav
 $header-height-mobile:                  60px;
 $header-logo-width:                     200px;
+$header-logo-width-mobile:              180px;
 
 // #Drawer
 $drawer-padding-vertical:               $grid-gutter-width;
@@ -459,13 +460,13 @@ $drawer-header-font-size:               $font-size-h5;
 $drawer-header-border-color:            $color-black;
 
 // #AJAX Cart
-$ajax-cart-width:                       400px;
 $ajax-cart-bg:                          $color-white;
 $ajax-cart-border-color:                darken($ajax-cart-bg, 5%);
-$ajax-cart-padding-vertical:            $grid-gutter-width;
-$ajax-cart-padding-horizontal:          $grid-gutter-width;
+$ajax-cart-padding-vertical:            $grid-gutter-width/2;
+$ajax-cart-padding-horizontal:          $grid-gutter-width/2;
 $ajax-cart-backdrop-color:              $drawer-backdrop-color;
 $ajax-cart-backdrop-opacity:            $drawer-backdrop-opacity;
+$ajax-cart-padding-vertical-mobile:     floor($grid-gutter-width/3);
 
 // #Product Card
 $product-card-text-align:               center;

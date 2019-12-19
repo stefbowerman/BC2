@@ -79,7 +79,7 @@ export default {
    * @return {Object}
    */
   getQueryParams() {
-    var queryString = location.search && location.search.substr(1) || '';
+    var queryString = window.location.search && window.location.search.substr(1) || '';
     var queryParams = {};
 
     queryString

@@ -1,43 +1,29 @@
 import 'navigo';
-import Utils from './utils';
+import BaseView from './views/base';
 
-// Views
-import BaseView       from './views/base';
-import IndexView      from './views/index';
-import ProductView    from './views/product';
-import CollectionView from './views/collection';
-import CartView       from './views/cart';
-import PageView       from './views/page';
-
-// TODO - Move the loader and view-container bits to variables that get passed in
 const $body = $(document.body);
-const $viewContainer = $('#view-container');
-const $loader = $('#loader');
 const TEMPLATE_REGEX = /(^|\s)template-\S+/g;
-const transitionEndEvent = Utils.whichTransitionEnd();
 let firstRoute = true;
 
 export default class AppRouter {
   constructor(options = {}) {
     const defaults = {
-      onRouteStart: $.noop,
-      onViewTransitionOutDone: $.noop,
-      onViewChangeStart: $.noop,
-      onViewChangeDOMUpdatesComplete: $.noop
-    };
-
-    this.viewConstructors = {
-      index: IndexView,
-      product: ProductView,
-      collection: CollectionView,
-      cart: CartView,
-      page: PageView
+      viewContainerSelector: '#view-container',
+      viewContentSelector: '#view-content',
+      viewConstructors: {},
+      onRouteStart: () => {},
+      onViewTransitionOutDone: (url, d) => { d.resolve(); },
+      onViewChangeStart: () => {},
+      onViewChangeDOMUpdatesComplete: () => {},
+      redirectTimeout: 5000
     };
 
     this.router = new Navigo(window.location.origin, false, '#!'); // eslint-disable-line no-undef
     this.isTransitioning = false;
     this.currentView = null;
     this.settings = $.extend({}, defaults, options);
+
+    this.$viewContainer = $(this.settings.viewContainerSelector);
 
     // Add Routes
     this.router.on('/products/:slug', (params) => {
@@ -97,10 +83,10 @@ export default class AppRouter {
   }
 
   doRoute(url, type) {
-    const ViewConstructor = this.viewConstructors[type] || BaseView;
+    const ViewConstructor = this.settings.viewConstructors[type] || BaseView;
 
     if (firstRoute) {
-      this.currentView = new ViewConstructor($viewContainer);   
+      this.currentView = new ViewConstructor(this.$viewContainer);   
       firstRoute = false;
       return;
     }
@@ -113,7 +99,7 @@ export default class AppRouter {
     // Add a timeout to do a basic redirect to the url if the request takes longer than a few seconds
     const t = setTimeout(() => {
       window.location = url;
-    }, 4000);
+    }, this.settings.redirectTimeout);
 
     $.get(url, (response) => {
       clearTimeout(t);
@@ -124,12 +110,7 @@ export default class AppRouter {
 
     // Let the current view do it's 'out' transition and then apply the loading state
     this.currentView.transitionOut(() => {
-      this.settings.onViewTransitionOutDone(url);
-
-      $loader.addClass('is-visible');
-      $loader.on(transitionEndEvent, () => {
-        transitionDeferred.resolve();
-      });
+      this.settings.onViewTransitionOutDone(url, transitionDeferred);
     });
 
     // Once AJAX *and* css animations are done, trigger the callback
@@ -150,11 +131,11 @@ export default class AppRouter {
     const $responseHead = $responseHtml.find('head');
     const $responseBody = $responseHtml.find('body');
 
-    const $dom  = $responseBody.find('#view-content');
+    const $dom  = $responseBody.find(this.settings.viewContentSelector);
 
     // Do DOM updates
     document.title = $responseHead.find('title').text();
-    $viewContainer.find('#view-content').replaceWith($dom);
+    this.$viewContainer.find(this.settings.viewContentSelector).replaceWith($dom);
     $body.removeClass((i, classname) => {
       return (classname.match(TEMPLATE_REGEX) || []).join(' ');
     });
@@ -168,10 +149,10 @@ export default class AppRouter {
     // Finish DOM updates
     this.settings.onViewChangeDOMUpdatesComplete($responseHead, $responseBody);
 
-    this.currentView = new ViewConstructor($viewContainer);
+    this.currentView = new ViewConstructor(this.$viewContainer);
 
-    $viewContainer.imagesLoaded(() => {
-      $loader.removeClass('is-visible');
+    this.$viewContainer.imagesLoaded(() => {
+      this.settings.onViewReady(this.currentView);
       this.currentView.transitionIn();
     });
 

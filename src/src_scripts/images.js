@@ -11,23 +11,23 @@
  * @param {Array} images - A list of image urls
  * @param {String} size - A shopify image size attribute
  */
-function preload(images, size) {
-  if (typeof images === 'string') {
-    images = [images];
-  }
+// function preload(images, size) {
+//   if (typeof images === 'string') {
+//     images = [images];
+//   }
 
-  images.forEach((img) => {
-    loadImage(getSizedImageUrl(img, size));
-  });
-}
+//   images.forEach((img) => {
+//     loadImage(getSizedImageUrl(img, size));
+//   });
+// }
 
 /**
  * Loads and caches an image in the browsers cache.
  * @param {string} path - An image url
  */
-function loadImage(path) {
-  new Image().src = path;
-}
+// function loadImage(path) {
+//   new Image().src = path;
+// }
 
 /**
  * Find the Shopify image attribute size
@@ -35,14 +35,18 @@ function loadImage(path) {
  * @param {string} src
  * @returns {null}
  */
-function imageSize(src) {
-  const match = src.match(/.+_((?:pico|icon|thumb|small|compact|medium|large|grande)|\d{1,4}x\d{0,4}|x\d{1,4})[_\.@]/);
+// function imageSize(src) {
+//   const match = src.match(/.+_((?:pico|icon|thumb|small|compact|medium|large|grande)|\d{1,4}x\d{0,4}|x\d{1,4})[_\.@]/);
 
-  if (match) {
-    return match[1];
-  }
+//   if (match) {
+//     return match[1];
+//   }
 
-  return null;
+//   return null;
+// }
+
+function removeProtocol(path) {
+  return path.replace(/http(s)?:/, '');
 }
 
 /**
@@ -71,10 +75,6 @@ function getSizedImageUrl(src, size) {
   }
   
   return null;
-}
-
-function removeProtocol(path) {
-  return path.replace(/http(s)?:/, '');
 }
 
 export {

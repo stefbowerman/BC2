@@ -1,3 +1,5 @@
+import { throttle } from 'throttle-debounce';
+
 const $window = $(window);
 let cachedWindowWidth = $window.width(); 
 
@@ -75,7 +77,7 @@ function onResize() {
 }
 
 $(() => {
-  $window.on('resize', $.throttle(20, onResize) );
+  $window.on('resize', throttle(50, onResize));
 });  
 
 export {

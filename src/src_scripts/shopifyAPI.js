@@ -6,7 +6,7 @@ export default {
   * @return {Promise} - Resolve returns JSON cart | Reject returns an error message
   */
   addItemFromForm($form) {
-    return this.add($form.serialize())
+    return this.add($form.serialize());
   },
 
  /**
@@ -17,7 +17,7 @@ export default {
   * @return {Promise} - Resolve returns JSON cart | Reject returns an error message
   */
   addVariant(id, quantity = 1) {
-    return this.add({ quantity, id })
+    return this.add({ quantity, id });
   },
 
  /**
@@ -37,7 +37,7 @@ export default {
       success: () => {
         this.getCart().then(response => promise.resolve(response));
       },
-      error: function () {
+      error: function() {
         promise.reject({
           message: 'The quantity you entered is not available.'
         });
@@ -62,9 +62,9 @@ export default {
       url: '/cart/change.js',
       data: data,
       success: () => {
-        this.getCart().then(response => promise.resolve(response))
+        this.getCart().then(response => promise.resolve(response));
       },
-      error: function () {
+      error: function() {
         promise.reject({
           message: 'The quantity you entered is not available.'
         });
@@ -72,7 +72,7 @@ export default {
     });
 
     return promise;
-  },   
+  },
 
  /**
   * Retrieve a JSON respresentation of the users cart
@@ -81,7 +81,7 @@ export default {
   */
   getCart() {
     const promise = $.Deferred();
-    const url = `/cart${window.Shopify && window.Shopify.designMode ? '.js' : '?view=json'}`
+    const url = `/cart${window.Shopify && window.Shopify.designMode ? '.js' : '?view=json'}`;
     
     $.ajax({
       type: 'get',

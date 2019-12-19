@@ -346,7 +346,7 @@
                   name="add"
                   class="btn btn-primary"
                   data-add-to-cart
-                  {% if selection_required or product.available == false %}disabled="disabled"{% endif %}>
+                  {% if selection_required %}disabled="disabled"{% endif %}>
                   <span data-add-to-cart-text>
                     {{ 'products.product.add_to_cart' | t }}
                   </span>
@@ -365,21 +365,20 @@
        
   {{ size_guide_drawer_html }}
 
-  {% unless product == empty %}
-    <script type="application/json" data-product-json>
-      {% include 'product-json', product: product %}
-    </script>
-  {% endunless %}
-
   <div class="intermediate-nav">
     <a href="/">Back to Shop</a>
     {% if next_product %}
       &nbsp; | &nbsp;
-      <a href="{{ next_product.url }}" class="intermediate-nav__next-product-link" title="Next Product: {{ next_product.title | escape }}">
+      <a href="{{ next_product.url }}" class="intermediate-nav__next-link" title="Next Product: {{ next_product.title | escape }}">
         Next Product &rarr;
-        <img src="{{ next_product.featured_image | img_url: '100x' }}" class="intermediate-nav__next-product-image" alt="{{ next_product.featured_image.alt | escape }}" />
+        <img src="{{ next_product.featured_image | img_url: '100x' }}" class="intermediate-nav__next-image" alt="{{ next_product.featured_image.alt | escape }}" />
       </a>
     {% endif %}
   </div>
 
+  {% unless product == empty %}
+    <script type="application/json" data-product-json>
+      {% include 'product-json', product: product %}
+    </script>
+  {% endunless %}  
 </div>

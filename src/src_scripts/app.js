@@ -1,22 +1,32 @@
+import 'lazysizes';
+import 'lazysizes/plugins/parent-fit/ls.parent-fit';
+
 import Utils from './utils';
 import AppRouter from './appRouter';
 import analytics from './analytics';
 import credits from './credits';
 
+// Views
+import IndexView      from './views/index';
+import ProductView    from './views/product';
+import CollectionView from './views/collection';
+import CartView       from './views/cart';
+import ContactView    from './views/contact';
+import StockistsView  from './views/stockists';
+
 // Sections
-// import SectionManager  from './sectionManager';
 import HeaderSection     from './sections/header';
 import NavSection        from './sections/nav';
 import FooterSection     from './sections/footer';
 import AJAXCartSection   from './sections/ajaxCart';
 import MobileMenuSection from './sections/mobileMenu';
 
-const $body = $(document.body);
-
 (($) => {
-  // Sections Stuff 
-  // window.sectionManager = new SectionManager();
+  const $body = $(document.body);
+  const $loader = $('#loader');
+  const $title = $('#title');
 
+  const transitionEndEvent = Utils.whichTransitionEnd();
   const sections = {};
 
   sections.header     = new HeaderSection($('[data-section-type="header"]'));
@@ -26,24 +36,36 @@ const $body = $(document.body);
   sections.mobileMenu = new MobileMenuSection($('[data-section-type="mobile-menu"]'));
   
   const appRouter = new AppRouter({
+    viewConstructors: {
+      index: IndexView,
+      product: ProductView,
+      collection: CollectionView,
+      cart: CartView,
+      contact: ContactView,
+      stockists: StockistsView
+    },
     onRouteStart: (url) => {
       sections.ajaxCart.ajaxCart.close();  // Run this immediately in case it's open
       sections.mobileMenu.drawer.hide();
     },
-    onViewTransitionOutDone: (url) => {
+    onViewTransitionOutDone: (url, deferred) => {
       sections.nav.deactivateMenuLinks();
+      $loader.addClass('is-visible');
+      $loader.on(transitionEndEvent, deferred.resolve);
     },
     onViewChangeStart: (url) => {
       sections.nav.activateMenuLinkForUrl(url);
       analytics.trackPageView(window.location.pathname);
     },
     onViewChangeDOMUpdatesComplete: ($responseHead, $responseBody) => {
-      window.scrollTop = 0;
-
-      const title = $responseBody.find('#title').text();
-      $('#title').text(title);
+      $title.text($responseBody.find('#title').text());
+    },
+    onViewReady: (view) => {
+      $loader.removeClass('is-visible');
     }
   });
+
+
   // Misc Stuff
 
   // Apply UA classes to the document
@@ -78,14 +100,6 @@ const $body = $(document.body);
     });
   }
 
-  // Send browser details
-  analytics.trackEventWithRetry({
-    category: 'Browser Capability',
-    action: 'CSS - Transition End',
-    label: Utils.whichTransitionEnd(),
-    nonInteraction: true
-  });
-
   // Add "development mode" class for CSS hook
   if (window.location.hostname === 'localhost') {
     $body.addClass('development-mode');
@@ -94,28 +108,26 @@ const $body = $(document.body);
   credits();
 
   // Return early cause I'm not 100% that prefetching helps...
-  return;
-
-  /* eslint-disable */
+  // return;
 
   // Prefetching :)
-  let linkInteractivityTimeout = false;
-  let prefetchCache = {};
-  $body.on('mouseenter', 'a', (e) => {
-    const url = e.currentTarget.getAttribute('href');
-    const urlHash = Math.abs(Utils.hashFromString(url));
 
-    if (Utils.isExternal(url) || url === '#' || prefetchCache.hasOwnProperty(urlHash)) return;
+  // let linkInteractivityTimeout = false;
+  // let prefetchCache = {};
+  // $body.on('mouseenter', 'a', (e) => {
+  //   const url = e.currentTarget.getAttribute('href');
+  //   const urlHash = Math.abs(Utils.hashFromString(url));
 
-    let linkInteractivityTimeout = setTimeout(() => {
-      $.get(url, () => {
-        prefetchCache[urlHash] = true;
-      });
-    }, 500);
-  });
+  //   if (Utils.isExternal(url) || url === '#' || prefetchCache.hasOwnProperty(urlHash)) return;
 
-  $body.on('mouseleave', 'a', (e) => {
-    linkInteractivityTimeout = false;
-  });
-  /* eslint-enable */
+  //   let linkInteractivityTimeout = setTimeout(() => {
+  //     $.get(url, () => {
+  //       prefetchCache[urlHash] = true;
+  //     });
+  //   }, 500);
+  // });
+
+  // $body.on('mouseleave', 'a', (e) => {
+  //   linkInteractivityTimeout = false;
+  // });
 })(jQuery);
