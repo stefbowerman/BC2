@@ -1,3 +1,4 @@
+import { throttle } from 'throttle-debounce';
 import BaseSection from './base';
 import Drawer from '../uiComponents/drawer';
 import * as Breakpoints from '../breakpoints';
@@ -25,6 +26,8 @@ export default class MobileMenuSection extends BaseSection {
 
     this.drawer  = new Drawer(this.$el);
 
+    this.throttledResize = throttle(100, this.onResize.bind(this))
+
     this.$toggle.on('click', this.onToggleClick.bind(this));
     this.$el.on('click', 'a', (e) => {
       if (!e.isDefaultPrevented()) {
@@ -34,13 +37,13 @@ export default class MobileMenuSection extends BaseSection {
     this.$el.on('show.drawer', () => {
       this.$toggle.addClass(classes.toggleActive);
       $body.addClass(classes.bodyMenuOpen);
+      $window.on('resize', this.throttledResize);
     });
     this.$el.on('hide.drawer', () => {
       this.$toggle.removeClass(classes.toggleActive);
       $body.removeClass(classes.bodyMenuOpen);
+      $window.off('resize', this.throttledResize);
     });
-
-    $window.on('resize', this.onResize.bind(this));
   }
 
   onToggleClick(e) {
