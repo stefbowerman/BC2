@@ -143,7 +143,9 @@ export default class ProductDetailForm {
       this.$container.on(this.events.CLICK, selectors.variantOptionValue, this.onVariantOptionValueClick.bind(this));
       this.$container.on(this.events.MOUSEENTER, selectors.variantOptionValue, this.onVariantOptionValueMouseenter.bind(this));
       this.$container.on(this.events.MOUSELEAVE, selectors.variantOptionValue, this.onVariantOptionValueMouseleave.bind(this));
-      $window.on('resize', throttle(50, this.onResize.bind(this)));
+      
+      this.throttledResize = throttle(100, this.onResize.bind(this));
+      $window.on('resize', this.throttledResize);
 
       this.onResize();
 
@@ -154,6 +156,14 @@ export default class ProductDetailForm {
 
       ready = true;
     };
+  }
+
+  /**
+   * Since we attach event listeners to elements outside the containing DOM, clean them up here
+   *
+   */
+  destroy() {
+    $window.off('resize', this.throttledResize);
   }
 
   onVariantChange(evt) {
