@@ -308,6 +308,8 @@ export default class AJAXCart {
   }
 
   onResize(e) {
+    if (this.isClosed()) return;
+    
     this._overflowCheck();
   }
 

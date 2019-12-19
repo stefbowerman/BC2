@@ -4,14 +4,14 @@ import 'lazysizes/plugins/parent-fit/ls.parent-fit';
 import Utils from './utils';
 import AppRouter from './appRouter';
 import analytics from './analytics';
+import credits from './credits';
 
-// Views
+// Views - Views are based on template names
 import IndexView      from './views/index';
 import ProductView    from './views/product';
 import CollectionView from './views/collection';
 import CartView       from './views/cart';
-import ContactView    from './views/contact';
-import StockistsView  from './views/stockists';
+import PageView       from './views/page';
 
 // Sections
 import HeaderSection     from './sections/header';
@@ -21,9 +21,9 @@ import AJAXCartSection   from './sections/ajaxCart';
 import MobileMenuSection from './sections/mobileMenu';
 
 (($) => {
-  const $body = $(document.body);
+  const $body   = $(document.body);
   const $loader = $('#loader');
-  const $title = $('#title');
+  const $title  = $('#title');
 
   const transitionEndEvent = Utils.whichTransitionEnd();
   const sections = {};
@@ -40,8 +40,7 @@ import MobileMenuSection from './sections/mobileMenu';
       product: ProductView,
       collection: CollectionView,
       cart: CartView,
-      contact: ContactView,
-      stockists: StockistsView
+      page: PageView
     },
     onRouteStart: (url) => {
       sections.ajaxCart.ajaxCart.close();  // Run this immediately in case it's open
@@ -104,18 +103,13 @@ import MobileMenuSection from './sections/mobileMenu';
     $body.addClass('development-mode');
   }
 
-  // Credits
-  if (window.location.hostname !== 'localhost') {
-    // eslint-disable-next-line no-console, max-len
-    console.log('%cô', 'font-family: Helvetica; font-size: 35px; color: #111; text-transform: uppercase; background-color: #FFF; padding: 5px 10px 0; line-height: 50px; font-weight: bold;');
-    // eslint-disable-next-line no-console, max-len
-    console.log('%cBianca Chandôn - design + development → stefanbowerman.com', 'font-family: Helvetica; font-size: 11px; color: #111; text-transform: uppercase; background-color: #FFF; padding: 3px 10px;');
-  }
+  credits();
 
   // Return early cause I'm not 100% that prefetching helps...
   // return;
 
   // Prefetching :)
+
   // let linkInteractivityTimeout = false;
   // let prefetchCache = {};
   // $body.on('mouseenter', 'a', (e) => {

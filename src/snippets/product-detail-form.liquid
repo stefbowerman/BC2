@@ -196,7 +196,7 @@
                       {% for value in option.values %}
 
                         {% comment %} If the product only has one option (like size) then we can show values as sold out by checking the variant for that option {% endcomment %}
-                        {% assign is_disabled = false %}                       
+                        {% assign is_disabled = false %}
 
                         {% if can_show_sold_out_ui_for_option %}
                           {% for v in product.variants %}
@@ -219,7 +219,7 @@
                     </div>
 
                   </div>
-                {% endcapture %}              
+                {% endcapture %}
 
                 {% capture sticky_row_option_html %}
 

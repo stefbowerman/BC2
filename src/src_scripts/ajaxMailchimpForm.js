@@ -39,7 +39,7 @@ const responses = {
     6: 'Too many subscribe attempts for this email address. Please try again in about 5 minutes.',
     7: 'You\'re already subscribed. Thank you!'
   }
-} 
+};
 
 
 export default class AJAXMailchimpForm {
@@ -55,7 +55,7 @@ export default class AJAXMailchimpForm {
   * @param {Function} options.onSubscribeSuccess
   * @param {Function} options.onSubscribeFail
   * @return {self}
-  */  
+  */
   constructor(form, options = {}) {
     this.name = 'ajaxMailChimpForm';
     this.namespace = '.' + this.name;
@@ -63,14 +63,15 @@ export default class AJAXMailchimpForm {
       SUBMIT: 'submit' + this.namespace
     };
 
-    var _this = this;
-    var defaults = {
-      onInit: $.noop,
-      onDestroy: $.noop,
-      onBeforeSend: $.noop,
-      onSubmitFail: $.noop,
-      onSubscribeSuccess: $.noop,
-      onSubscribeFail: $.noop
+    const _this = this;
+    const defaults = {
+      onInit: () => {},
+      onDestroy: () => {},
+      onBeforeSend: () => {},
+      onSubmitFail: () => {},
+      onSubmitAlways: () => {},
+      onSubscribeSuccess: () => {},
+      onSubscribeFail: () => {}
     };
 
     if (form.length === 0) {
@@ -81,8 +82,9 @@ export default class AJAXMailchimpForm {
     this.$input   = this.$form.find('input[type="email"]');
     this.$submit  = this.$form.find('[type="submit"]');
     this.settings = $.extend({}, defaults, options);
+    this.isSubmitting = false;
 
-    if (this.$input.attr('name') != "EMAIL") {
+    if (this.$input.attr('name') !== 'EMAIL') {
       console.warn('['+this.name+'] - Email input *must* have attribute [name="EMAIL"]');
     }
 
@@ -94,37 +96,41 @@ export default class AJAXMailchimpForm {
   }
 
   getRegexMatch(string, stringKey) {
-    var regexPatterns = regexes[stringKey];
-    var matchedId;
-    $.each(regexPatterns, function(id, regexPattern) {
+    const regexPatterns = regexes[stringKey];
+    let matchedId;
+
+    $.each(regexPatterns, (id, regexPattern) => { // eslint-disable-line consistent-return
       if (string.match(regexPattern) !== null) {
         matchedId = id;
         return false;
       }
     });
+
     return matchedId;
   }
 
   getMessageForResponse(response) {
-    var msg;
+    let msg;
     if (response.result === 'success') {
       msg = responses.success;
-    } else {
-      var index = -1;
+    }
+    else {
       try {
-        var parts = response.msg.split(' - ', 2);
+        const parts = response.msg.split(' - ', 2);
         if (parts[1] === undefined) {
           msg = response.msg;
-        } else {
+        }
+        else {
           msg = parts[1];
         }
-      } catch (e) {
+      }
+      catch (e) {
         msg = response.msg;
       }
 
       // Now that we have the relevant part of the message, lets get the actual string for it
-      var regexPattern = regexes.error;
-      var matchedId = this.getRegexMatch(msg, 'error');
+      const regexPattern = regexes.error;
+      const matchedId = this.getRegexMatch(msg, 'error');
       if (matchedId && regexPattern[matchedId] && responses.error[matchedId]) {
         return msg.replace(regexPattern[matchedId], responses.error[matchedId]);
       }
@@ -139,7 +145,7 @@ export default class AJAXMailchimpForm {
   }
 
   onBeforeSend() {
-    if (this.settings.onBeforeSend() == false) {
+    if (this.settings.onBeforeSend() === false) {
       return false;
     }
 
@@ -154,24 +160,29 @@ export default class AJAXMailchimpForm {
   }
 
   onSubmitDone(response) {
-    var rspMsg = this.getMessageForResponse(response);
-    this.$submit.prop('disabled', false);
+    const rspMsg = this.getMessageForResponse(response);
     response.result === 'success' ? this.settings.onSubscribeSuccess(rspMsg) : this.settings.onSubscribeFail(rspMsg);
   }
 
   onSubmitFail(response) {
-    this.settings.onSubmitFail();
+    this.settings.onSubmitFail(response);
+  }
+
+  onSubmitAlways(response) {
+    this.$submit.prop('disabled', false);
+    this.settings.onSubmitAlways(response);
   }
 
   onFormSubmit(e) {
     e.preventDefault();
-    var _this = this;
-    var $form = this.$form;
-    var data = {};
-    var dataArray = $form.serializeArray();
+
+    if (this.isSubmitting) return false;
+
+    const $form = this.$form;
+    const data = {};
 
     // See - https://github.com/scdoshi/jquery-ajaxchimp/blob/master/jquery.ajaxchimp.js
-    $.each(dataArray, function(index, item) {
+    $.each($form.serializeArray(), (index, item) => {
       data[item.name] = item.value;
     });
 
@@ -179,15 +190,22 @@ export default class AJAXMailchimpForm {
         url: $form.attr('action').replace('/post?', '/post-json?').concat('&c=?'),
         dataType: 'jsonp',
         data: data,
-        beforeSend: _this.onBeforeSend.bind(_this)
+        beforeSend: () => {
+          this.isSubmitting = true;
+          return this.onBeforeSend();
+        }
       })
-      .done(function(response) {
-        _this.onSubmitDone(response);
+      .done((response) => {
+        this.onSubmitDone(response);
       })
-      .fail(function(response) {
-        _this.onSubmitFail(response);
+      .fail((response) => {
+        this.onSubmitFail(response);
+      })
+      .always((response) => {
+        this.isSubmitting = false;
+        this.onSubmitAlways(response);
       });
 
     return false;
-  }  
+  }
 }

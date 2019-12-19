@@ -42,6 +42,10 @@
   p + ol {
     margin-top: -2px;
   }
+
+  a {
+    border-bottom: 1px solid $color-medium-grey;
+  }
 }
 
 .text-center.rte,
