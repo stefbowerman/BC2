@@ -7,7 +7,8 @@
 
   {% include 'product-card',
               product: { product } - required
-              lazy_load: { boolean } - optional, defaults to false,
+              lazy_load: { boolean } - optional, defaults to false
+              prefetch_onload: { boolean } - optional, defaults to false
   %}
 
 {% endcomment -%}
@@ -15,6 +16,10 @@
 {% comment %} Defaults {% endcomment %}
 {% if lazy_load == blank %}
   {% assign lazy_load = false %}
+{% endif %}
+
+{% if prefetch == blank %}
+  {% assign prefetch = false %}
 {% endif %}
 {% comment %} End Defaults {% endcomment %}
 
@@ -83,5 +88,7 @@
         {% endif %}
       </div>
     </a>
+
+    <link rel="prefetch" {% if prefetch %}href{% else %}data-href="{{ product.url }}">
   </div>
 {% endif %}

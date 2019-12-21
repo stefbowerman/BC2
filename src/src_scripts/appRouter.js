@@ -1,9 +1,9 @@
 import 'navigo';
+import Utils from './utils';
 import BaseView from './views/base';
 
 const $body = $(document.body);
 const TEMPLATE_REGEX = /(^|\s)template-\S+/g;
-let firstRoute = true;
 
 export default class AppRouter {
   constructor(options = {}) {
@@ -11,17 +11,19 @@ export default class AppRouter {
       viewContainerSelector: '#view-container',
       viewContentSelector: '#view-content',
       viewConstructors: {},
+      redirectTimeout: 5000,
       onRouteStart: () => {},
       onViewTransitionOutDone: (url, d) => { d.resolve(); }, // eslint-disable-line brace-style
       onViewChangeStart: () => {},
-      onViewChangeDOMUpdatesComplete: () => {},
-      redirectTimeout: 5000
+      onViewChangeDOMUpdatesComplete: () => {}
     };
 
     this.router = new Navigo(window.location.origin, false, '#!'); // eslint-disable-line no-undef
     this.isTransitioning = false;
     this.currentView = null;
+    this.firstRoute = true;
     this.settings = $.extend({}, defaults, options);
+    this.urlCache = {};
 
     this.$viewContainer = $(this.settings.viewContainerSelector);
 
@@ -63,7 +65,7 @@ export default class AppRouter {
     });
 
     this.router.on('/pages/:slug', (params) => {
-      this.doRoute(`/pages/${params.slug}`, 'page');
+      this.doRoute(`/pages/${params.slug}`, 'page', true);
     });
 
     this.router.on('/', () => {
@@ -82,29 +84,51 @@ export default class AppRouter {
     this.router.resolve();
   }
 
-  doRoute(url, type) {
+  /**
+   * Fetches a new page for the passed in url and passes it to the view change method
+   *
+   * @param {string} url
+   * @param {string} type - type of view
+   * @param {boolean} - cacheable - whether or not this page can be cached on the frontend
+   */
+  doRoute(url, type, cacheable = false) {
     const ViewConstructor = this.settings.viewConstructors[type] || BaseView;
 
-    if (firstRoute) {
+    if (this.firstRoute) {
+      // Can't cache here, at this point the DOM has been altered via JS.
+      // We can only cache fresh HTML from the server
+      
       this.currentView = new ViewConstructor(this.$viewContainer);
-      firstRoute = false;
+      this.firstRoute = false;
       return;
     }
 
     this.isTransitioning = true;
 
+    const urlKey = Utils.hashFromString(url);
     const transitionDeferred = $.Deferred();
     const ajaxDeferred       = $.Deferred();
 
-    // Add a timeout to do a basic redirect to the url if the request takes longer than a few seconds
-    const t = setTimeout(() => {
-      window.location = url;
-    }, this.settings.redirectTimeout);
+    // If we already have the page HTML in our cache...
+    if (cacheable && this.urlCache.hasOwnProperty(urlKey)) {
+      ajaxDeferred.resolve(this.urlCache[urlKey]);
+    }
+    else {
+      // Add a timeout to do a basic redirect to the url if the request takes longer than a few seconds
+      const t = setTimeout(() => {
+        window.location = url;
+      }, this.settings.redirectTimeout);
 
-    $.get(url, (response) => {
-      clearTimeout(t);
-      ajaxDeferred.resolve(response);
-    });
+      $.get(url, (response) => {
+        clearTimeout(t);
+        ajaxDeferred.resolve(response);
+
+        // Cache it for next time
+        if (cacheable && !this.urlCache.hasOwnProperty(urlKey)) {
+          this.urlCache[urlKey] = response;
+        }
+      });
+    }
 
     this.settings.onRouteStart(url);
 
