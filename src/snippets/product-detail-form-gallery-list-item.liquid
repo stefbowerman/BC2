@@ -12,7 +12,8 @@
 
 {% endcomment -%}
 
-{% assign photo_main_dimension = '1800x' %}
+{% comment %}Hmm do something about this... I don't think the scroll gallery needs to load something this big?  It *is* needed for the blowup view though, but don't want to load that until the user tries to zoom {% endcomment %}
+{% assign photo_main_dimension = '2000x' %}
 
 {% comment %} Defaults {% endcomment %}
 {% if pdfgli_lazyload == blank %}

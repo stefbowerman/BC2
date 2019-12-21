@@ -150,6 +150,6 @@ export default class ProductSection extends BaseSection {
   onUnload() {
     this.productDetailForm.destroy();
     $window.off('scroll', this.throttledOnScroll);
-    $window.off('resize', this.throttledOnResize);    
+    $window.off('resize', this.throttledOnResize);
   }
 }

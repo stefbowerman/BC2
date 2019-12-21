@@ -122,13 +122,13 @@
 {% endfor %}
 
 <div class="blowup" data-blowup>
-  <div class="blowup__close">
+  <div class="blowup__close" data-blowup-close>
     <img src="{{ 'icon-close.png' | asset_url }}" alt="Close icon" />
   </div>
   <div class="blowup__scroll" data-blowup-scroll>
     <img class="blowup__image" data-blowup-image alt="Product image zoom" />
   </div>
-  <div class="blowup__helper-text" >
+  <div class="blowup__helper-text" data-blowup-close>
     {% comment %}Pinch to zoom &middot; Tap to close{% endcomment %}
     Tap to close
   </div>
