@@ -48,8 +48,10 @@ import MobileMenuSection from './sections/mobileMenu';
     },
     onViewTransitionOutDone: (url, deferred) => {
       sections.nav.deactivateMenuLinks();
+      $loader.one(transitionEndEvent, () => {
+        setTimeout(deferred.resolve, 300); // A little weird but let the loader fully display for a tiny bit before transitioning
+      });
       $loader.addClass('is-visible');
-      $loader.on(transitionEndEvent, deferred.resolve);
     },
     onViewChangeStart: (url) => {
       sections.nav.activateMenuLinkForUrl(url);

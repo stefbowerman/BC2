@@ -22,7 +22,7 @@
           {% for article in stockists_blog.articles limit: 200 %}
             {% if article.tags contains tag %}
               <li data-alpha="{{ article.title | handle }}">
-                <strong>{{ article.title }}</strong>
+                <h6>{{ article.title }}</h6>
                 <div>{{ article.content }}</div>
               </li>
             {% endif %}
