@@ -53,6 +53,10 @@ function getBreakpointMinWidthKeyForWidth(w) {
   return foundKey;
 }
 
+function getWidth() {
+  return cachedWindowWidth || $window.width();
+}
+
 /**
 * Triggers a window event when a breakpoint is crossed, passing the new minimum breakpoint width key as an event parameter
 *
@@ -83,6 +87,7 @@ $(() => {
 });
 
 export {
+  getWidth,
   getBreakpointMinWidth,
   getBreakpointMinWidthKeyForWidth
 };

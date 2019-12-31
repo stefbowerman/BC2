@@ -26,7 +26,7 @@ export default class MobileMenuSection extends BaseSection {
 
     this.drawer  = new Drawer(this.$el);
 
-    this.throttledResize = throttle(100, this.onResize.bind(this))
+    this.throttledResize = throttle(100, this.onResize.bind(this));
 
     this.$toggle.on('click', this.onToggleClick.bind(this));
     this.$el.on('click', 'a', (e) => {
