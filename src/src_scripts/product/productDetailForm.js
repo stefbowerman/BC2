@@ -35,11 +35,8 @@ const classes = {
   variantOptionValueSelected: 'is-selected',
   variantOptionValueDisabled: 'is-disabled',
   variantOptionValueNotHovered: 'is-not-hovered',
-  zoomReady: 'is-zoomable',
-  zoomedIn: 'is-zoomed',
   galleriesAreReady: 'is-ready',
   galleryActive: 'is-active',
-  galleryImageLoaded: 'is-loaded',
   stickyFormReady: 'is-ready'
 };
 
@@ -492,13 +489,10 @@ export default class ProductDetailForm {
     }
     else if (Modernizr && Modernizr.touchevents) {
       this.productImageTouchZoomController.enable();
+      this.productImageDesktopZoomController.disable();
     }
 
-    if (window.innerWidth < this.stickyMaxWidth) {
-      this.$productDetailForm.css('margin-bottom', ($('.sticky-form').outerHeight() - 60)); // 60 is the content wrapper bottom margin
-    }
-    else {
-      this.$productDetailForm.css('margin-bottom', '');
-    }
+    const mb = window.innerWidth < this.stickyMaxWidth ? this.$stickyForm.outerHeight() : '';
+    this.$productDetailForm.css('margin-bottom', mb);
   }
 }
