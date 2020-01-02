@@ -328,7 +328,9 @@
           {% comment %} Sticky row {% endcomment %}
           <div class="sticky-form" data-sticky-form>
             <div class="sticky-row">
-              <div class="sticky-row__entry u-fw-bold">{{ product.title }}</div>
+              <div class="sticky-row__entry">
+                <h6 style="margin-bottom: 0">{{ product.title }}</h6>
+              </div>
               <div class="sticky-row__entry" style="flex-basis: 60px; flex: 0.1; text-align: right; align-self: stretch;">
                 {% include 'product-detail-price', product: product, current_variant: current_variant %}
               </div>

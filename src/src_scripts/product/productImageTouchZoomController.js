@@ -1,18 +1,20 @@
-// import IScroll from '../../../node_modules/iscroll/build/iscroll-zoom';
 import panzoom from 'panzoom';
 import Utils from '../utils';
 
 const selectors = {
   galleryImage: '[data-gallery-image]',
   blowup: '[data-blowup]',
-  blowupScroll: '[data-blowup-scroll]',
   blowupImage: '[data-blowup-image]',
   blowupClose: '[data-blowup-close]'
 };
 
 const classes = {
   bodyBlowupOpen: 'blowup-open',
-  blowupActive: 'is-active'
+  blowupActive: 'is-active',
+  blowupRevealed: 'is-revealed',
+  blowupIsInteracting: 'is-interacting',
+  blowupIsLeaving: 'is-leaving',
+  blowupImageHidden: 'is-hidden'
 };
 
 const $window = $(window);
@@ -42,8 +44,7 @@ export default class ProductImageTouchZoomController {
     this.settings = $.extend({}, defaults, options);
     this.enabled = false;
     this.isZoomed = false;
-    this.iscrollInstance = undefined;
-    this.panZoomInstance = undefined;
+    this.pzInstance = undefined;
     this.transitionEndEvent = Utils.whichTransitionEnd();
     this.orientationchangeCallback = this.onOrientationchange.bind(this);
 
@@ -55,7 +56,6 @@ export default class ProductImageTouchZoomController {
     }
 
     this.$blowup       = $(selectors.blowup, this.$container);
-    this.$blowupScroll = $(selectors.blowupScroll, this.$container);
     this.$blowupImage  = $(selectors.blowupImage, this.$container);
     this.$blowupClose  = $(selectors.blowupClose, this.$container);
   }
@@ -64,7 +64,7 @@ export default class ProductImageTouchZoomController {
     if (this.enabled) return;
 
     this.$container.on(this.events.CLICK, selectors.galleryImage, this.onGalleryImageClick.bind(this));
-    this.$blowupClose.on(this.events.CLICK, this.zoomOut.bind(this))
+    this.$blowupClose.on(this.events.CLICK, this.zoomOut.bind(this));
     $window.on('orientationchange', this.orientationchangeCallback);
     this.enabled = true;
   }
@@ -78,139 +78,108 @@ export default class ProductImageTouchZoomController {
     this.enabled = false;
   }
 
+  getInitialZoomAttributes() {
+    let minZoom = 0.1;
+    const maxZoom = 0.75; // Ensure that the image remains crisp
+    const startZoomRatio = 1.5; // Start by making the image 150% of the screen dimension in the shortest direction
+    const imageHeight = this.$blowupImage.outerHeight();
+    const imageWidth = this.$blowupImage.outerWidth();
+    const winHeight = $window.height();
+    const winWidth = $window.width();
+
+    // Landscape
+    if (winWidth > winHeight) {
+      minZoom = winHeight/imageHeight;
+    }
+    // Portrait
+    else {
+      minZoom = winWidth/imageWidth;
+    }
+
+    let startZoom = startZoomRatio * minZoom;
+
+    if (startZoom > maxZoom) {
+      startZoom = maxZoom;
+    }
+
+    const startX = Math.floor(-1 * (((imageWidth * startZoom) - winWidth)/2));
+    const startY = Math.floor(-1 * (((imageHeight * startZoom) - winHeight)/2));
+
+    return {
+      minZoom,
+      maxZoom,
+      startZoom,
+      startX,
+      startY
+    };
+  }
+
+  createPZInstance() {
+    const attrs = this.getInitialZoomAttributes();
+
+    this.pzInstance = panzoom(this.$blowupImage.get(0), {
+      minZoom: attrs.minZoom,
+      maxZoom: attrs.maxZoom,
+      bounds: true,
+      beforeWheel: () => false, // Ignore scroll
+      filterKey: () => true // Ignore keyboard events
+    });
+
+    this.pzInstance.on('panstart', (e) => {
+      this.$blowup.addClass(classes.blowupIsInteracting);
+    });
+
+    this.pzInstance.on('panend', (e) => {
+      this.$blowup.removeClass(classes.blowupIsInteracting);
+    });
+
+    this.pzInstance.zoomAbs(0, 0, attrs.startZoom); // This doesn't seem to set the initial position correctly
+    this.pzInstance.moveTo(attrs.startX, attrs.startY); // This does :-/
+  }
+
+  destroyPZInstance() {
+    this.pzInstance && this.pzInstance.dispose();
+    this.$blowupImage.attr('style', '');
+    this.pzInstance = null;
+  }
+
   zoomIn(src) {
     if (this.isZoomed) return;
     
-    this.$blowupImage.one('load', () => {
-      let startZoom;
-      const startZoomRatio = 1.2; // Start by making the image 120% in the shortest direction
-      const zoomMin = 0.4;
-      const imageHeight = this.$blowupImage.outerHeight();
-      const imageWidth = this.$blowupImage.outerHeight();
-      const winHeight = $window.height();
-      const winWidth = $window.width();
-
-      // Landscape
-      if (window.innerWidth > window.innerHeight) {
-        startZoom = startZoomRatio * (winHeight/imageHeight);
-      }
-      // Portrait
-      else {
-        startZoom = startZoomRatio * (winWidth/imageWidth);
-      }
-
-      if (startZoom < zoomMin) {
-        startZoom = zoomMin;
-      }
-
-      const startX = -1 * (((imageWidth * startZoom) - winWidth)/2);
-      const startY = -1 * (((imageHeight * startZoom) - winHeight)/2);
-
-      // this.iscrollInstance = new IScroll(this.$blowupScroll.get(0), {
-      //   zoom: true,
-      //   hideScrollbar: true,
-      //   scrollX: true,
-      //   scrollY: true,
-      //   zoomMin: zoomMin,
-      //   zoomMax: 1,
-      //   startZoom: startZoom,
-      //   startX: startX,
-      //   startY: startY,
-      //   directionLockThreshold: 20,
-      //   tap: true,
-      //   click: true
-      // });
-
-      console.log('creating panzoom instance');
-
-      // Find biggest screen dimension (height vs. width)
-      // Which ever one is larger, use that to define the min-zoom?
-
-      const minZoom = window.innerWidth / this.$blowupImage.outerWidth();
-      console.log(minZoom);
-
-      this.panZoomInstance = panzoom(this.$blowupImage.get(0), {
-        minZoom: minZoom,
-        maxZoom: 1,
-        bounds: true,
-        onTouch: function(e) {
-          // `e` - is current touch event.
-
-          console.log(e);
-          e.stopPropagation();
-          e.preventDefault();
-
-          return false; // tells the library to not preventDefault. Allows us to click and close?
-        },
-        filterKey: () => true // Ignore keyboard events
-      });
-
-      window.instance = this.panZoomInstance;
-
-      const _startZoom = 1;
-      const _startX = -1 * (((imageWidth * _startZoom) - winWidth)/2);
-      const _startY = -1 * (((imageHeight * _startZoom) - winHeight)/2);
-
-      // this.panZoomInstance.zoomAbs(startX, startY, startZoom);
-      console.log(`move to ${_startX}, ${_startY}`)
-      this.panZoomInstance.moveTo(_startX, _startY);
-
-      this.panZoomInstance.on('panstart', function(e) {
-        console.log('Fired when pan is just started ', e);
-        // Note: e === instance.
-      });
-
-      this.panZoomInstance.on('pan', function(e) {
-        console.log('Fired when the `element` is being panned', e);
-      });
-
-      this.panZoomInstance.on('panend', function(e) {
-        console.log('Fired when pan ended', e);
-      });
-
-      this.panZoomInstance.on('zoom', function(e) {
-        console.log('Fired when `element` is zoomed', e);
-      });
-
-      this.panZoomInstance.on('zoomend', function(e) {
-        console.log('Fired when zoom animation ended', e);
-      });
-
-      // this.panZoomInstance.on('transform', function(e) {
-      //   // This event will be called along with events above.
-      //   console.log('Fired when any transformation has happened', e);
-      // });
-    });
+    this.$blowupImage.one('load', this.createPZInstance.bind(this));
 
     // Set the smaller image immediately (it should already be loaded from the slideshow)
     this.$blowupImage.attr('src', src);
 
+    setTimeout(() => {
+      this.$blowup.addClass(classes.blowupRevealed);
+    }, 1000);
+
     this.$blowup.addClass(classes.blowupActive);
     $body.addClass(classes.bodyBlowupOpen);
-    // this.$blowup.one(this.events.CLICK, this.zoomOut.bind(this));
-    // this.$blowupImage.one(this.events.CLICK, this.zoomOut.bind(this));
-    this.$blowupImage.on('click', (e) => {
-      console.log('onCLick');
-    })
+
     this.isZoomed = true;
 
     this.settings.onZoomIn();
   }
 
   zoomOut() {
-    console.log('zoomOut');
     if (!this.isZoomed) return;
 
-    $body.removeClass(classes.bodyBlowupOpen);
-    this.$blowup.removeClass(classes.blowupActive);
-    this.$blowup.one(this.transitionEndEvent, () => {
-      // this.iscrollInstance && this.iscrollInstance.destroy();
-      this.panZoomInstance && this.panZoomInstance.dispose();
+    this.$blowup.addClass(classes.blowupIsLeaving);
+    this.$blowup.removeClass(classes.blowupRevealed);
+
+    // Transition end event wasn't happy
+    // Timeout duration is based on the duration + delay of .blowup.is-leaving
+    setTimeout(() => {
+      const classesToRemove = [classes.blowupActive, classes.blowupIsInteracting, classes.blowupIsLeaving].join(' ');
+      $body.removeClass(classes.bodyBlowupOpen);
+      this.$blowup.removeClass(classesToRemove);
+      this.destroyPZInstance();
       this.$blowupImage.attr('src', '');
       this.isZoomed = false;
-    });
-
-    this.settings.onZoomOut();
+      this.settings.onZoomOut();
+    }, 700);
   }
 
   onGalleryImageClick(e) {
@@ -219,12 +188,15 @@ export default class ProductImageTouchZoomController {
   }
 
   onOrientationchange(e) {
-    // console.log(e);
-    // if (!this.isZoomed) return;
-    // if (!this.panZoomInstance) return;
+    if (!(this.isZoomed && this.pzInstance)) return;
 
-    // console.log(this.panZoomInstance.getTransform());
+    // Kill the instance, hide the image briefly, create the instance and then display again
+    this.destroyPZInstance();
 
-    // On orientation change, we need to reset the center point...I think?
+    this.$blowupImage.addClass(classes.blowupImageHidden);
+    this.$blowupImage.one(this.transitionEndEvent, () => {
+      this.createPZInstance();
+      this.$blowupImage.removeClass(classes.blowupImageHidden);
+    });
   }
 }

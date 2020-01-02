@@ -427,8 +427,8 @@ body.template-product {
     height: 100vh;
 
     .product-gallery.is-zoomed & {
-      height: auto;   
-    }    
+      height: auto;
+    }
   }
 
   // Portrait images are model images
@@ -437,11 +437,9 @@ body.template-product {
     height: auto;
   }
 
-  // Since space is tight on tiny screens pull the image to the top for the first one
   @media (max-width: $screen-xs-max) {
+    // Since space is tight on tiny screens pull the image to the top for the first one
     &:first-child {
-      // min-height: 100vh;
-
       .product-gallery__image {
         @include align-self(flex-start);
       }
