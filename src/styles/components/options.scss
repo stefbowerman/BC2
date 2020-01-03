@@ -2,16 +2,18 @@
 // Options
 // -------------------------
 
+$spacing: 5px;
+
 .option-value-list {
-  font-size: $font-size-xsmall;
-  margin-left: -3px;
-  margin-right: -3px;
+  font-size: $font-size-small;
+  margin-left: -#{$spacing};
+  margin-right: -#{$spacing};
 }
 
 .option-value {
   display: inline-block;
   position: relative;
-  margin: 0 3px;
+  margin: 0 $spacing;
 
   &:after {
     content: '';

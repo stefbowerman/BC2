@@ -115,18 +115,18 @@
     </div>
     <div class="pdf-spaced-el hidden-xs">
       <h1 class="pdf-title">{{ product.title }}</h1>
+      {% if product.metafields.subtitle.text %}
+        <h3 class="pdf-subtitle">{{ product.metafields.subtitle.text }}</h3>
+      {% endif %}
     </div>
     <div class="pdf-spaced-el">
       <div class="fixed-description" data-fixed-description>
-        {% if product.metafields.subtitle.text %}
-          <h3 class="pdf-subtitle">{{ product.metafields.subtitle.text }}</h3>
-        {% endif %}
         <div class="pdf-description">{{ product.description }}</div>
         {% if size_guide_drawer_html != blank %}
-          <div class="hidden-xs hidden-sm" style="margin-top: 10px;">
+          <div class="size-guide-link hidden-xs hidden-sm">
             <a href="#" class="secondary-link" data-size-guide-show>→ See Size Guide</a>
           </div>
-        {% endif %}   
+        {% endif %}
       </div>
     </div>
 
