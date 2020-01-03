@@ -15,20 +15,9 @@
 // =require /../../node_modules/jquery/dist/jquery.min.js
 
 /*!
- * Zoom 1.7.18
- * http://www.jacklmoore.com/zoom
- */
-// =require /../../node_modules/jquery-zoom/jquery.zoom.min.js
-
-/*!
  * handlebars v4.0.10
  */
 // =require vendor/handlebars-v4.0.10.js
-
-/*!
-* js-cookie
-*/
-// =require /../../node_modules/js-cookie/src/js.cookie.js
 
 /*!
  * Bootstrap v3.3.7 (http://getbootstrap.com)
