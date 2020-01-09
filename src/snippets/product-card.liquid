@@ -7,7 +7,8 @@
 
   {% include 'product-card',
               product: { product } - required
-              lazy_load: { boolean } - optional, defaults to false,
+              lazy_load: { boolean } - optional, defaults to false
+              prefetch_onload: { boolean } - optional, defaults to false
   %}
 
 {% endcomment -%}
@@ -16,32 +17,51 @@
 {% if lazy_load == blank %}
   {% assign lazy_load = false %}
 {% endif %}
+
+{% if prefetch == blank %}
+  {% assign prefetch = false %}
+{% endif %}
 {% comment %} End Defaults {% endcomment %}
 
-{% assign product_image_dimension = '1200x' %}
+{% assign sold_out = false %}
+{% if product.available == false %}
+  {% assign sold_out = true %}
+{% endif %}
 
 {% if product %}
-  <div id="product-card-{{ product.id }}" class="product-card{% if product.available == false %} product-card--sold-out{% endif %}" data-product-card>
+  <div id="product-card-{{ product.id }}" class="product-card{% if sold_out %} product-card--sold-out{% endif %}" data-product-card>
     <a href="{{ product.url }}" class="product-card__contents" data-product-card-contents>
       {% if product.featured_image %}
+        {% assign src = product.featured_image.src | img_url: '1200x' %}
+
         <div class="product-card__gallery">
-          {% if lazy_load %}
-            <div class="product-card__gallery-image" style="height: 0; padding-bottom: {{ product.featured_image.height | times: 100 | divided_by: product.featured_image.width | append: '%' }}" data-product-card-gallery>
-              <img data-src="{{ product.featured_image.src | img_url: product_image_dimension }}" alt="{{ product.featured_image.alt | escape }}" data-product-card-main-lazy>
-              <div class="product-card__gallery-placeholder"></div>
-            </div>
-          {% else %}
-            <div class="product-card__gallery-image" data-product-card-gallery>
-              <img src="{{ product.featured_image.src | img_url: product_image_dimension }}" alt="{{ product.featured_image.alt | escape }}">
-            </div>
-          {% endif %}
+          <div class="product-card__gallery-image"
+            style="padding-bottom: {{ product.featured_image.height | times: 100 | divided_by: product.featured_image.width | append: '%' }}"
+            data-product-card-gallery
+          >
+            <img
+              {% if lazy_load %}
+                data-src="{{ src }}"
+                data-srcset="{% include 'image-srcset', ss_image: product.featured_image %}"
+                data-expand="600"
+                data-product-card-main-lazy
+                data-sizes="auto"
+                data-aspectratio="{{ product.featured_image.width | times: 1.00 | divided_by: product.featured_image.height | round: 4 }}"
+                class="lazyload"
+              {% else %}
+                src="{{ src }}"
+                srcset="{% include 'image-srcset', ss_image: product.featured_image %}"
+              {% endif %}
+              alt="{{ product.featured_image.alt | escape }}"
+            >
+          </div>
         </div>
       {% endif %}
 
       <div class="product-card__info">
         <p class="product-card__info-title">{{ product.title }}</p>
 
-        {% if product.available == false %}
+        {% if sold_out %}
           <p class="u-fs-xsmall">{{ 'products.product.sold_out' | t }}</p>
         {% else %}
 
@@ -60,13 +80,15 @@
           </p>
 
           {% for option in product.options_with_values %}
-            {% assign option_name_upcase = option.name | upcase | strip %}        
+            {% assign option_name_upcase = option.name | upcase | strip %}
             {% if option_name_upcase == "COLOR" and option.values.size > 1 %}
               <p class="u-fs-xsmall">{{ option.values.size }} Colors Available</p>
             {% endif %}
-          {% endfor %}        
+          {% endfor %}
         {% endif %}
       </div>
     </a>
+
+    <link rel="prefetch" {% if prefetch %}href{% else %}data-href="{{ product.url }}">
   </div>
 {% endif %}

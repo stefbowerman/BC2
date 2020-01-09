@@ -86,6 +86,7 @@
       "shipping_at_checkout": "Shipping & taxes calculated at checkout",
       "update": "Update Cart",
       "checkout": "Check Out",
+      "go_to_checkout": "Go to Check Out",
       "view_cart_and_check_out": "View Cart and Check Out",
       "view": "View Cart",
       "empty": "Your cart is empty.",
@@ -115,11 +116,19 @@
     "form": {
       "name": "Name",
       "email": "Email",
+      "your_email": "Your Email",
       "phone": "Phone Number",
       "order_number": "Order Number",
       "message": "Message",
       "send": "Send",
+      "submit": "Submit",
       "post_success": "Thanks for contacting us. We'll get back to you as soon as possible."
+    }
+  },
+  "subscribe": {
+    "form": {
+      "your_email": "Your Email",
+      "subscribe": "Subscribe"
     }
   },
   "customer": {

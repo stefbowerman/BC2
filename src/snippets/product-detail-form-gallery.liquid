@@ -9,8 +9,6 @@
 
 {% endcomment -%}
 
-{% assign photo_main_dimension = '2000x2000' %}
-
 {% comment %}
   This block of logic loops through all product images and checks if we have at least 1 with valid alt text for *each* color option.
 {% endcomment %}
@@ -51,20 +49,19 @@
               {% assign outputted_image_count = 0 %}
               {% for image in product.images %}
                 {% assign image_alt_upcase = image.alt | upcase %}
+                
                 {% comment %} Looking for an exact match here {% endcomment %}
                 {% if image_alt_upcase contains color_upcase %}
-                  {% assign orientation = "square" %}
-                  {% if image.height > image.width %}
-                    {% assign orientation = "portrait" %}
-                  {% elsif image.height < image.width %}
-                    {% assign orientation = "landscape" %}
-                  {% endif %}                
-                  <li class="product-gallery__item product-gallery__item--{{ orientation }}" data-image="{{ image.id }}" data-gallery-item>   
-                    <img {% if outputted_image_count == 0 %}src={% else %}data-src={% endif%}"{{ image | img_url: photo_main_dimension }}" 
-                         alt="{{ image.alt | escape }}"
-                         class="product-gallery__image"
-                         data-gallery-image>
-                  </li>
+                  {% assign lazyload = true %}
+                  {% if outputted_image_count == 0 %}
+                    {% assign lazyload = false %}
+                  {% endif %}
+
+                  {% include 'product-detail-form-gallery-list-item',
+                              pdfgli_image: image,
+                              pdfgli_lazyload: lazyload
+                  %}
+
                   {% assign outputted_image_count = outputted_image_count | plus: 1 %}
                 {% endif %}
               {% endfor %}
@@ -81,15 +78,15 @@
     <div class="product-gallery is-active" data-gallery>
       <ul class="product-gallery__list">
         {% for image in product.images %}
-          {% assign orientation = "square" %}
-          {% if image.height > image.width %}
-            {% assign orientation = "portrait" %}
-          {% elsif image.height < image.width %}
-            {% assign orientation = "landscape" %}
+          {% assign lazyload = true %}
+          {% if forloop.index0 == 0 %}
+            {% assign lazyload = false %}
           {% endif %}
-          <li class="product-gallery__item product-gallery__item--{{ orientation }}" data-image="{{ image.id }}" data-gallery-item>   
-            <img {% if forloop.index0 == 0 %}src={% else %}data-src={% endif%}"{{ image | img_url: photo_main_dimension }}" alt="{{ image.alt | escape }}" class="product-gallery__image" data-gallery-image>
-          </li>
+
+          {% include 'product-detail-form-gallery-list-item',
+            pdfgli_image: image,
+            pdfgli_lazyload: lazyload
+          %}
         {% endfor %}
       </ul>
     </div>
@@ -119,19 +116,19 @@
 {% for image in product.images %}
   {% if load_images contains image.src %}
     {% comment %} If you update the image size, update the value corresponding value in cartAPI.js {% endcomment %}
+    <!-- <link rel="prefetch" href="{{ image | img_url: '250x' }}"> -->
     <img src="{{ image | img_url: '250x' }}" style="display: none;" alt="{{ image.alt }}" />
   {% endif %}
 {% endfor %}
 
 <div class="blowup" data-blowup>
-  <div class="blowup__close">
+  <div class="blowup__close" data-blowup-close>
     <img src="{{ 'icon-close.png' | asset_url }}" alt="Close icon" />
   </div>
-  <div class="blowup__scroll" data-blowup-scroll>
+  <div class="blowup__scroll">
     <img class="blowup__image" data-blowup-image alt="Product image zoom" />
   </div>
-  <div class="blowup__helper-text" >
-    {% comment %}Pinch to zoom &middot; Tap to close{% endcomment %}
-    Tap to close
+  <div class="blowup__helper-text" data-blowup-close>
+    Pinch to zoom &middot; Tap here to close
   </div>
 </div>

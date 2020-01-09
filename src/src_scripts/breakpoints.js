@@ -1,5 +1,7 @@
+import { throttle } from 'throttle-debounce';
+
 const $window = $(window);
-let cachedWindowWidth = $window.width(); 
+let cachedWindowWidth = $window.width();
 
 // Match those set in variables.scss
 const _breakpointMinWidths = {
@@ -51,6 +53,10 @@ function getBreakpointMinWidthKeyForWidth(w) {
   return foundKey;
 }
 
+function getWidth() {
+  return cachedWindowWidth || $window.width();
+}
+
 /**
 * Triggers a window event when a breakpoint is crossed, passing the new minimum breakpoint width key as an event parameter
 *
@@ -67,18 +73,21 @@ function onResize() {
 
       return false;
     }
+
+    return true;
   });
 
   cachedWindowWidth = $window.width();
 
-  return true
+  return true;
 }
 
 $(() => {
-  $window.on('resize', $.throttle(20, onResize) );
-});  
+  $window.on('resize', throttle(50, onResize));
+});
 
 export {
+  getWidth,
   getBreakpointMinWidth,
   getBreakpointMinWidthKeyForWidth
 };

@@ -5,8 +5,6 @@ export default class CartView extends BaseView {
   constructor($el) {
     super($el);
 
-    this.cartSection = new CartSection($el.find('[data-section-type="cart"]'));
-
-    this.sections.push(this.cartSection);
+    this.sections.push(new CartSection($el.find('[data-section-type="cart"]')));
   }
 }

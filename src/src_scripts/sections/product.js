@@ -73,8 +73,11 @@ export default class ProductSection extends BaseSection {
     this.fixedDescriptionHidden = false;
     this.secondaryDescriptionInView = false;
 
-    $window.on('scroll', throttle(50, this.onScroll.bind(this)));
-    $window.on('resize', throttle(50, this.onResize.bind(this)));
+    this.throttledOnScroll = throttle(50, this.onScroll.bind(this));
+    this.throttledOnResize = throttle(100, this.onResize.bind(this));
+
+    $window.on('scroll', this.throttledOnScroll);
+    $window.on('resize', this.throttledOnResize);
     this.$secondaryDescriptionLink.on('click', this.onSecondaryDescriptionLinkClick.bind(this));
 
     this.onResize();
@@ -142,5 +145,11 @@ export default class ProductSection extends BaseSection {
       popstate: false,
       easing: 'easeOutQuart'
     });
+  }
+
+  onUnload() {
+    this.productDetailForm.destroy();
+    $window.off('scroll', this.throttledOnScroll);
+    $window.off('resize', this.throttledOnResize);
   }
 }

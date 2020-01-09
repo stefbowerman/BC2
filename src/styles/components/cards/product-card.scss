@@ -22,33 +22,21 @@
 }
 
 .product-card__gallery-image {
+  height: 0; // need to inline the height via padding-bottom: aspect-ratio%
   width: 100%;
 
   img {
     display: block;
-    margin-left: auto;
-    margin-right: auto;
-    width: auto;
-    max-width: 100%;
-    // min-height: 400px;
-    max-height: 100vh;
-
-    @media (min-width: $screen-xs-min) {
-      min-height: 0;
-    }
+    width: 100%;
   }
-}
 
-.product-card__gallery-placeholder {
-  @include stretch-within;
-  background: $body-bg;
-  opacity: 1;
-
-  // Hide the placeholder once the loading is complete
-  .product-card__gallery-image.is-loaded & {
+  .js & {
     opacity: 0;
-    pointer-events: none;
-    @include transition(opacity $transition-duration-base $transition-timing-function-out);
+
+    &.is-loaded {
+      opacity: 1;
+      transition: opacity 1s cubic-bezier(0.39, 0.31, 0.1, 1);
+    }
   }
 }
 
@@ -69,7 +57,7 @@
 html:not(.touchevents) {
   .product-card__info {
     opacity: 0;
-    @include transition(opacity $transition-duration-fast $transition-timing-function-base);
+    transition: opacity $transition-duration-fast $transition-timing-function-base;
   }
 
   .product-card:hover .product-card__info {

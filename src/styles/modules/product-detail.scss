@@ -166,7 +166,7 @@ body.template-product {
 .pdf-subtitle {
   @include h6;
   font-size: $font-size-small;
-  margin: $spacer * 0.75 0;
+  margin: $spacer * 0.5 0 $spacer * 0.75;
 }
 
 .pdf-price {
@@ -182,8 +182,12 @@ body.template-product {
     margin: 0 auto;
   }
 
-  p:last-child {
-    margin-bottom: 0;
+  p {
+    margin-bottom: $spacer/2;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
 }
 
@@ -300,12 +304,20 @@ body.template-product {
   @media (min-width: $screen-lg-min) {
     display: block;
   }
+
+  .pdf-description {
+    margin-top: $spacer * 1.5;
+  }
+
+  .size-guide-link {
+    margin: $spacer * 1.5 0 -#{$spacer * .5};
+  }
 }
 
 // Secondary description at the bottom of the scroll container
 .secondary-description {
   @include pdf-scrollable;
-  margin-top: 100px;
+  margin-top: 60px;
   padding: 0 $grid-gutter-width/2;
   text-align: center;
 
@@ -316,6 +328,13 @@ body.template-product {
 
   @media (min-width: $screen-lg-min) {
     display: none;
+  }
+
+  .pdf-subtitle {
+    // Above this screen size, it's displayed on the right side
+    @media (min-width: $screen-sm-min) {
+      display: none;
+    }
   }
 
   .pdf-description ul {
@@ -342,6 +361,11 @@ body.template-product {
   @media (min-width: $screen-sm-min) {
     display: none;
   }
+
+  // This will center a link if it's the only one
+  a:only-child {
+    @include flex(1);
+  }
 }
 
 .secondary-link {
@@ -349,7 +373,7 @@ body.template-product {
   opacity: 1;
 
   &, &:focus {
-    @include transition(opacity $transition-duration-fast $transition-timing-function-base);  
+    transition: opacity $transition-duration-fast $transition-timing-function-base;
   }
   
   &.is-hidden {
@@ -367,7 +391,7 @@ body.template-product {
 
     &.is-ready {
       opacity: 1;
-      @include transition($product-image-fade-transition);
+      transition: $product-image-fade-transition;
     }
   }
 }
@@ -382,11 +406,11 @@ body.template-product {
 
   html.js & {
     opacity: 0;
-    @include transition(opacity 250ms cubic-bezier(0.65, 0.27, 0.79, 0.76));
+    transition: opacity 250ms cubic-bezier(0.65, 0.27, 0.79, 0.76);
 
     &.is-active {
       opacity: 1;
-      @include transition(opacity 1200ms cubic-bezier(0.23, 0.31, 0.3, 0.96));
+      transition: opacity 1200ms cubic-bezier(0.23, 0.31, 0.3, 0.96);
     }
   }
 
@@ -422,8 +446,8 @@ body.template-product {
     height: 100vh;
 
     .product-gallery.is-zoomed & {
-      height: auto;   
-    }    
+      height: auto;
+    }
   }
 
   // Portrait images are model images
@@ -432,11 +456,9 @@ body.template-product {
     height: auto;
   }
 
-  // Since space is tight on tiny screens pull the image to the top for the first one
   @media (max-width: $screen-xs-max) {
+    // Since space is tight on tiny screens pull the image to the top for the first one
     &:first-child {
-      // min-height: 100vh;
-
       .product-gallery__image {
         @include align-self(flex-start);
       }
@@ -475,14 +497,12 @@ body.template-product {
   }
   
   // Lazy loaded
-  &[data-src] {
+  .js &.is-lazy {
     opacity: 0;
-  }
+    transition: $product-image-fade-transition-fast;
 
-  &.is-loaded {
-    opacity: 1;
-    @include transition($product-image-fade-transition-fast);
-    // @include transition(opacity $transition-duration-slow $transition-timing-function-in);
+    &.lazyloaded {
+      opacity: 1;
+    }
   }
-
 }

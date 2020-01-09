@@ -51,7 +51,7 @@ nav.main-nav {
     > li > a {
       display: block;
       padding-bottom: 5px;
-      @include transition(opacity $transition-duration-quick ease-in); // @TODO - move this stuff to vars?  It's shared between here and option values
+      transition: opacity $transition-duration-quick ease-in; // @TODO - move this stuff to vars?  It's shared between here and option values
 
       &.is-active {
         font-weight: bold;
@@ -128,7 +128,7 @@ nav.main-nav {
   }
 }
 
-a.intermediate-nav__next-product-link {
+a.intermediate-nav__next-link {
   display: inline-block;
   padding-right: 0;
   transition: padding-right 300ms ease-in;
@@ -139,17 +139,17 @@ a.intermediate-nav__next-product-link {
   }
 }
 
-.intermediate-nav__next-product-image {
+.intermediate-nav__next-image {
   width: 50px;
   position: absolute;
   top: 0;
   right: 0;
   z-index: -1;
-  transform: translateY(-6px);
+  @include translateY(-6px);
   opacity: 0;
   transition: opacity 500ms ease;
 
-  .intermediate-nav__next-product-link:hover & {
+  .intermediate-nav__next-link:hover & {
     opacity: 1;
     transition-duration: $transition-duration-quick;
     transition-delay: 80ms;

@@ -11,11 +11,11 @@
 
 {% raw %}
 <script type="text/x-handlebars-template" data-ajax-cart-template>
-  <div class="ajax-cart">
-    <div class="ajax-cart__inner">
-      <div class="ajax-cart__body" data-ajax-cart-body>
-        <form action="/cart" method="post" novalidate>
-          <a href="#" class="ajax-cart__close" data-ajax-cart-close>Close</a>
+  <form action="/cart" method="post" novalidate>
+    <div class="ajax-cart">
+      <a href="#" class="ajax-cart__close" data-ajax-cart-close>Close</a>      
+      <div class="ajax-cart__body">
+        <div class="ajax-cart__body-scroll">
           {{#if items}}
             {{#if has_unavailable_items}}
               <div class="alert">
@@ -47,7 +47,7 @@
                         {{/if}}
                       {{/if}}
                     {{/unless}}
-                    <li><span class="ajax-cart__item-qty">Qty: {{ quantity }}</span></li>
+                    <li>Qty: {{ quantity }}</li>
                     <li style="text-decoration: none !important">
                       <a href="#" class="ajax-cart__item-remove" data-ajax-cart-item-remove>→ Remove Item</a>
                     </li>
@@ -56,34 +56,37 @@
               </li>
               {{/each}}
             </ul>
-            <div data-ajax-cart-footer>
-              <div class="ajax-cart__footer-row u-fw-bold">
-                <p class="clearfix">Subtotal <span style="float: right">{{ total_price }}</span></p>  
-              </div>
-              <div class="ajax-cart__footer-row u-ta-center">
-                <button type="submit" class="btn btn-block" {{#if has_unavailable_items }}disabled="true"{{/if}}>{% endraw %}{{ 'cart.general.checkout' | t }}{% raw %}</button>
-                <br />
-                <a href="/cart" class="secondary-link">{% endraw %}{{ 'cart.general.view_cart_and_check_out' | t }}{% raw %}</a>
-              </div>
-              {% endraw %}
-              {% if section.settings.footer_text != blank %}
-                <div class="ajax-cart__footer-row u-ta-center">
-                  {{ section.settings.footer_text }}
-                </div>
-              {% endif %}
-              {% raw %}
-            </div>            
           {{else}}
             <div class="ajax-cart__empty-message">
               {% endraw %}
                 {{ 'cart.general.empty' | t }}
               {% raw %}
+            </div>
           {{/if}}
-          </div>
-        </form>
+        </div>
       </div>
+      {{#if items}}
+        <div class="ajax-cart__footer">
+          <div class="ajax-cart__footer-row u-fw-bold">
+            <p class="clearfix">Subtotal <span style="float: right">{{ total_price }}</span></p>  
+          </div>
+          <div class="ajax-cart__footer-row u-ta-center">
+            <button type="submit" class="btn btn-block" {{#if has_unavailable_items }}disabled="true"{{/if}}>
+              {% endraw %}{{ 'cart.general.go_to_checkout' | t }}{% raw %}
+            </button>
+            <a href="/cart" class="secondary-link">{% endraw %}{{ 'cart.general.view_cart_and_check_out' | t }}{% raw %}</a>
+          </div>
+          {% endraw %}
+          {% if section.settings.footer_text != blank %}
+            <div class="ajax-cart__footer-row u-ta-center">
+              {{ section.settings.footer_text }}
+            </div>
+          {% endif %}
+          {% raw %}
+        </div>
+      {{/if}}
     </div>
-  </div>
+  </form>
 </script>
 
 <script type="text/x-handlebars-template" data-cart-verify-modal-template>

@@ -9,6 +9,7 @@
 // Greyscale
 $color-black:       #111;
 $color-dark-grey:   #333;
+$color-medium-grey: #666;
 $color-grey:        #CCC;
 $color-off-white:   #EAEAEA;
 $color-white:       #FFF;
@@ -77,8 +78,8 @@ $line-height-h1:            1.2;
 $line-height-h2:            1.2;
 $line-height-h3:            1.2;
 $line-height-h4:            1.2;
-$line-height-h5:            1.2;
-$line-height-h6:            1.2;
+$line-height-h5:            1.4;
+$line-height-h6:            1.4;
 
 $text-transform-base:       uppercase;
 
@@ -93,6 +94,7 @@ $link-color:                $color-black !default;
 $link-decoration:           none !default;
 $link-hover-color:          lighten($link-color, 9%) !default;
 $link-hover-decoration:     none !default;
+$link-border-color:         $color-medium-grey;
 
 $selection-color:           $color-white;
 $selection-bg:              $color-black;
@@ -209,7 +211,7 @@ $input-border-focus:             $color-black !default;
 $input-color-placeholder:        $color-grey !default;
 
 //** Default `.form-control` height
-$input-height-base:              2.8rem; // ($line-height-computed + ($padding-base-vertical * 2) + 2) !default;
+$input-height-base:              2.3rem; // ($line-height-computed + ($padding-base-vertical * 2) + 2) !default;
 //** Large `.form-control` height
 $input-height-large:             (($font-size-large * $line-height-large) + ($padding-large-vertical * 2) + 2) !default;
 //** Small `.form-control` height
@@ -448,6 +450,7 @@ $layout-margin-bottom:        9vh;
 $header-bp-min:                         $screen-md-min; // Above this breakpoint, switch to the full desktop nav
 $header-height-mobile:                  60px;
 $header-logo-width:                     200px;
+$header-logo-width-mobile:              180px;
 
 // #Drawer
 $drawer-padding-vertical:               $grid-gutter-width;
@@ -458,13 +461,13 @@ $drawer-header-font-size:               $font-size-h5;
 $drawer-header-border-color:            $color-black;
 
 // #AJAX Cart
-$ajax-cart-width:                       400px;
 $ajax-cart-bg:                          $color-white;
 $ajax-cart-border-color:                darken($ajax-cart-bg, 5%);
-$ajax-cart-padding-vertical:            $grid-gutter-width;
-$ajax-cart-padding-horizontal:          $grid-gutter-width;
+$ajax-cart-padding-vertical:            $grid-gutter-width/2;
+$ajax-cart-padding-horizontal:          $grid-gutter-width/2;
 $ajax-cart-backdrop-color:              $drawer-backdrop-color;
 $ajax-cart-backdrop-opacity:            $drawer-backdrop-opacity;
+$ajax-cart-padding-vertical-mobile:     floor($grid-gutter-width/3);
 
 // #Product Card
 $product-card-text-align:               center;

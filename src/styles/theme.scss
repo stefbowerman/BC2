@@ -13,7 +13,7 @@
 @import url('global/helper-classes.scss');
 @import url('global/grid.scss');
 @import url('global/layout.scss');
-@import url('global/flexbox.scss');
+// @import url('global/flexbox.scss');
 @import url('global/component-animations.scss');
 
 /*================ COMPONENTS ================*/
@@ -21,7 +21,7 @@
 @import url('components/icons.scss');
 @import url('components/buttons.scss');
 @import url('components/modals.scss');
-@import url('components/page.scss');
+// @import url('components/page.scss');
 @import url('components/forms.scss');
 @import url('components/rte.scss');
 @import url('components/tables.scss');
@@ -33,6 +33,7 @@
 @import url('components/drawer.scss');
 @import url('components/blowup.scss');
 @import url('components/options.scss');
+@import url('components/subscribe-form.scss');
 
 /*================ MODULES ================*/
 // Modules are larger pieces of functionality that consume components
@@ -52,25 +53,27 @@
 @import url('templates/cart.scss');
 @import url('templates/collection.scss');
 @import url('templates/page.scss');
+@import url('templates/page-subscribe.scss');
 @import url('templates/stockists.scss');
+@import url('templates/password.scss');
 @import url('templates/challenge.scss');
 
 // Necessary bottom placement for specificity w/o `!important`
 @import url('global/utilities.scss');
 @import url('global/responsive-utilities.scss');
 
-@keyframes loader {
+@include keyframes(loader) {
   0% {
     opacity: 1;
-    @include scale(1);
+    transform: scale(1);
   }
   33% {
     opacity: 0.9;
-    @include scale(0.91);
+    transform: scale(0.91);
   }
   100% {
     opacity: 1;
-    @include scale(1);
+    transform: scale(1);
   }
 }
 
@@ -84,11 +87,12 @@
   opacity: 0;
   z-index: $z-index-loader;
   pointer-events: none;
-  transition: opacity 600ms cubic-bezier(0.54, 0.09, 0.29, 0.99);
+  transition: opacity 700ms cubic-bezier(0.49, 0.07, 0.38, 0.93);
 
   &.is-visible {
     pointer-events: auto;
     opacity: 1;
+    transition: opacity 700ms cubic-bezier(0.49, 0.05, 0.3, 0.99);
   }
 
   .loader__icon {
@@ -98,6 +102,8 @@
     height: 45px;
     width: 45px;
     @include translate(-50%, -50%);
+    opacity: 0;
+    transition: opacity 400ms ease-in-out;
 
     &:before {
       content: '';
@@ -111,6 +117,11 @@
 
       @include animation(loader 1.9s infinite);
     }
+  }
+
+  &.is-visible .loader__icon {
+    opacity: 1;
+    transition-delay: 300ms;
   }
 }
 
@@ -138,6 +149,10 @@
 .js body.is-loaded .view-container {
   opacity: 1;
   transition-delay: 0.5s;
+}
+
+.js body.template-password.is-loaded .view-container {
+  transition-delay: 1.2s;
 }
 
 // DEV: Don't display Shopify's admin preview bar

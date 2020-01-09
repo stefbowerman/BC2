@@ -1,21 +1,31 @@
+import 'lazysizes';
+import 'lazysizes/plugins/parent-fit/ls.parent-fit';
+
 import Utils from './utils';
 import AppRouter from './appRouter';
 import analytics from './analytics';
+import credits from './credits';
+
+// Views - Views are based on template names
+import IndexView      from './views/index';
+import ProductView    from './views/product';
+import CollectionView from './views/collection';
+import CartView       from './views/cart';
+import PageView       from './views/page';
 
 // Sections
-// import SectionManager  from './sectionManager';
 import HeaderSection     from './sections/header';
 import NavSection        from './sections/nav';
 import FooterSection     from './sections/footer';
 import AJAXCartSection   from './sections/ajaxCart';
 import MobileMenuSection from './sections/mobileMenu';
 
-const $body = $(document.body);
-
 (($) => {
-  // Sections Stuff 
-  // window.sectionManager = new SectionManager();
+  const $body   = $(document.body);
+  const $loader = $('#loader');
+  const $title  = $('#title');
 
+  const transitionEndEvent = Utils.whichTransitionEnd();
   const sections = {};
 
   sections.header     = new HeaderSection($('[data-section-type="header"]'));
@@ -25,24 +35,37 @@ const $body = $(document.body);
   sections.mobileMenu = new MobileMenuSection($('[data-section-type="mobile-menu"]'));
   
   const appRouter = new AppRouter({
+    viewConstructors: {
+      index: IndexView,
+      product: ProductView,
+      collection: CollectionView,
+      cart: CartView,
+      page: PageView
+    },
     onRouteStart: (url) => {
       sections.ajaxCart.ajaxCart.close();  // Run this immediately in case it's open
       sections.mobileMenu.drawer.hide();
     },
-    onViewTransitionOutDone: (url) => {
+    onViewTransitionOutDone: (url, deferred) => {
       sections.nav.deactivateMenuLinks();
+      $loader.one(transitionEndEvent, () => {
+        setTimeout(deferred.resolve, 300); // A little weird but let the loader fully display for a tiny bit before transitioning
+      });
+      $loader.addClass('is-visible');
     },
     onViewChangeStart: (url) => {
       sections.nav.activateMenuLinkForUrl(url);
-      analytics.trackPageView(window.location.pathname)
+      analytics.trackPageView(window.location.pathname);
     },
     onViewChangeDOMUpdatesComplete: ($responseHead, $responseBody) => {
-      window.scrollTop = 0;
-
-      const title = $responseBody.find('#title').text();
-      $('#title').text(title);
+      $title.text($responseBody.find('#title').text());
+    },
+    onViewReady: (view) => {
+      $loader.removeClass('is-visible');
     }
   });
+
+
   // Misc Stuff
 
   // Apply UA classes to the document
@@ -59,7 +82,7 @@ const $body = $(document.body);
   // Stop here...no AJAX navigation inside the theme editor
   if (window.Shopify && window.Shopify.designMode) {
     return;
-  }  
+  }
 
   if (window.history && window.history.pushState) {
     $body.on('click', 'a', (e) => {
@@ -77,47 +100,34 @@ const $body = $(document.body);
     });
   }
 
-  // Send browser details
-  analytics.trackEventWithRetry({
-    category: 'Browser Capability',
-    action: 'CSS - Transition End',
-    label: Utils.whichTransitionEnd(),
-    nonInteraction: true
-  })
-
   // Add "development mode" class for CSS hook
   if (window.location.hostname === 'localhost') {
     $body.addClass('development-mode');
   }
 
-  // Credits
-  if (window.location.hostname !== 'localhost') {
-    // eslint-disable-next-line no-console max-len
-    console.log('%cô', 'font-family: Helvetica; font-size: 35px; color: #111; text-transform: uppercase; background-color: #FFF; padding: 5px 10px 0; line-height: 50px; font-weight: bold;');
-    // eslint-disable-next-line no-console max-len
-    console.log('%cBianca Chandôn - design + development → stefanbowerman.com', 'font-family: Helvetica; font-size: 11px; color: #111; text-transform: uppercase; background-color: #FFF; padding: 3px 10px;');
-  }
+  credits();
 
   // Return early cause I'm not 100% that prefetching helps...
-  return;
+  // return;
 
   // Prefetching :)
-  let linkInteractivityTimeout = false;
-  let prefetchCache = {};
-  $body.on('mouseenter', 'a', (e) => {
-    const url = e.currentTarget.getAttribute('href');
-    const urlHash = Math.abs(Utils.hashFromString(url));
 
-    if (Utils.isExternal(url) || url === '#' || prefetchCache.hasOwnProperty(urlHash)) return;
+  // let linkInteractivityTimeout = false;
+  // let prefetchCache = {};
+  // $body.on('mouseenter', 'a', (e) => {
+  //   const url = e.currentTarget.getAttribute('href');
+  //   const urlHash = Math.abs(Utils.hashFromString(url));
 
-    let linkInteractivityTimeout = setTimeout(() => {
-      $.get(url, () => {
-        prefetchCache[urlHash] = true;
-      });
-    }, 500);
-  });
+  //   if (Utils.isExternal(url) || url === '#' || prefetchCache.hasOwnProperty(urlHash)) return;
 
-  $body.on('mouseleave', 'a', (e) => {
-    linkInteractivityTimeout = false;
-  });
+  //   let linkInteractivityTimeout = setTimeout(() => {
+  //     $.get(url, () => {
+  //       prefetchCache[urlHash] = true;
+  //     });
+  //   }, 500);
+  // });
+
+  // $body.on('mouseleave', 'a', (e) => {
+  //   linkInteractivityTimeout = false;
+  // });
 })(jQuery);

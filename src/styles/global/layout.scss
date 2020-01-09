@@ -44,6 +44,12 @@
     padding-left: $menu-clearance-max;
     padding-right: 100px; // $menu-clearance-max;    
   }
+
+  // Password doesn't have a menu, padding needs to be equal
+  .template-password & {
+    padding-left: $grid-gutter-width/2;
+    padding-right: $grid-gutter-width/2;
+  }
 }
 
 // Use this as the only direct child of main#MainContent on pages where you don't want the content flush to the header and footer

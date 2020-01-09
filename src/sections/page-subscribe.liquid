@@ -1,0 +1,71 @@
+<div data-section-id="{{ section.id }}" data-section-type="subscribe">
+  <div class="layout-content-wrapper layout-content-wrapper--even">
+    <div class="container">
+
+      <div class="page-form-wrapper">
+        {% unless settings.mailchimp_form_url == blank %}
+          <form action="{{ settings.mailchimp_form_url }}" class="subscribe-form" method="post" data-subscribe-form>
+
+            <div class="rte u-ta-center">
+              {{ section.settings.form_message | default: 'Enter your email to receive updates.' }}
+            </div>
+
+            <br />
+
+            {% if page.content != blank %}
+              <div class="rte u-ta-center">{{ page.content }}</div>
+              <br />
+            {% endif %}
+
+            <div class="form-group">
+              <label for="SubscribeFormEmail" class="sr-only">{{ 'subscribe.form.your_email' | t }}</label>
+              <input type="email"
+                name="EMAIL"
+                id="SubscribeFormEmail"
+                class="form-control u-ta-center"
+                placeholder="{{ 'subscribe.form.your_email' | t }}"
+                value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"
+                spellcheck="false"
+                autocapitalize="off"
+                required="required"
+                data-input-email>
+            </div>
+
+            <input type="hidden" name="SIGNUP" value="Site - Subscribe Page" />
+
+            <div class="form-group">
+              <input type="submit" class="btn btn-primary btn-block" value="{{ 'subscribe.form.subscribe' | t }}">
+            </div>
+
+            <div class="subscribe-form-success" data-form-success>
+              <div class="subscribe-form-success__text">
+                <strong>{{ settings.subscribe_message_success | default: 'Thank you for subscribing' }}</strong>
+                <br /><br />
+                <span class="rte u-tt-uppercase u-fs-small">
+                  <a href="/">return to shop</a>
+                </span>
+              </div>
+            </div>
+            <div class="subscribe-form-message" data-form-message></div>
+
+          </form>
+        {% endunless %}
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "Contact Page",
+    "settings": [
+      {
+        "id": "form_message",
+        "type": "textarea",
+        "label": "Form Message",
+        "info": "Enter your email to receive updates from our online store."
+      }
+    ]
+  }
+{% endschema %}

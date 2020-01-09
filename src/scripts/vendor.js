@@ -10,25 +10,14 @@
 // 3. There is a comment at the *previous* line, and it matches 1, 2, or 3.
 
 /*!
- * Zoom 1.7.18
- * http://www.jacklmoore.com/zoom
+ * jquery.min.js
  */
-// =require /../../node_modules/jquery-zoom/jquery.zoom.min.js
+// =require /../../node_modules/jquery/dist/jquery.min.js
 
 /*!
  * handlebars v4.0.10
  */
 // =require vendor/handlebars-v4.0.10.js
-
-/*!
- * jQuery Throttle / Debounce
- */
-// =require vendor/jquery.ba-throttle-debounce.min.js
-
-/*!
-* js-cookie
-*/
-// =require /../../node_modules/js-cookie/src/js.cookie.js
 
 /*!
  * Bootstrap v3.3.7 (http://getbootstrap.com)
@@ -39,13 +28,6 @@
  // =require vendor/bootstrap.modal.js
  // =require vendor/bootstrap.collapse.js
 
- /**
- * jQuery Unveil
- * A very lightweight jQuery plugin to lazy load images
- * http://luis-almeida.github.com/unveil
- */
- // =require vendor/jquery.unveil.js
- 
 /*!
  * ImagesLoaded
  */

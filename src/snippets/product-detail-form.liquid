@@ -115,18 +115,18 @@
     </div>
     <div class="pdf-spaced-el hidden-xs">
       <h1 class="pdf-title">{{ product.title }}</h1>
+      {% if product.metafields.subtitle.text %}
+        <h3 class="pdf-subtitle">{{ product.metafields.subtitle.text }}</h3>
+      {% endif %}
     </div>
     <div class="pdf-spaced-el">
       <div class="fixed-description" data-fixed-description>
-        {% if product.metafields.subtitle.text %}
-          <h3 class="pdf-subtitle">{{ product.metafields.subtitle.text }}</h3>
-        {% endif %}
         <div class="pdf-description">{{ product.description }}</div>
         {% if size_guide_drawer_html != blank %}
-          <div class="hidden-xs hidden-sm" style="margin-top: 10px;">
+          <div class="size-guide-link hidden-xs hidden-sm">
             <a href="#" class="secondary-link" data-size-guide-show>→ See Size Guide</a>
           </div>
-        {% endif %}   
+        {% endif %}
       </div>
     </div>
 
@@ -196,7 +196,7 @@
                       {% for value in option.values %}
 
                         {% comment %} If the product only has one option (like size) then we can show values as sold out by checking the variant for that option {% endcomment %}
-                        {% assign is_disabled = false %}                       
+                        {% assign is_disabled = false %}
 
                         {% if can_show_sold_out_ui_for_option %}
                           {% for v in product.variants %}
@@ -219,7 +219,7 @@
                     </div>
 
                   </div>
-                {% endcapture %}              
+                {% endcapture %}
 
                 {% capture sticky_row_option_html %}
 
@@ -328,7 +328,9 @@
           {% comment %} Sticky row {% endcomment %}
           <div class="sticky-form" data-sticky-form>
             <div class="sticky-row">
-              <div class="sticky-row__entry u-fw-bold">{{ product.title }}</div>
+              <div class="sticky-row__entry">
+                <h6 style="margin-bottom: 0">{{ product.title }}</h6>
+              </div>
               <div class="sticky-row__entry" style="flex-basis: 60px; flex: 0.1; text-align: right; align-self: stretch;">
                 {% include 'product-detail-price', product: product, current_variant: current_variant %}
               </div>
@@ -346,7 +348,7 @@
                   name="add"
                   class="btn btn-primary"
                   data-add-to-cart
-                  {% if selection_required or product.available == false %}disabled="disabled"{% endif %}>
+                  {% if selection_required %}disabled="disabled"{% endif %}>
                   <span data-add-to-cart-text>
                     {{ 'products.product.add_to_cart' | t }}
                   </span>
@@ -365,21 +367,20 @@
        
   {{ size_guide_drawer_html }}
 
-  {% unless product == empty %}
-    <script type="application/json" data-product-json>
-      {% include 'product-json', product: product %}
-    </script>
-  {% endunless %}
-
   <div class="intermediate-nav">
     <a href="/">Back to Shop</a>
     {% if next_product %}
       &nbsp; | &nbsp;
-      <a href="{{ next_product.url }}" class="intermediate-nav__next-product-link" title="Next Product: {{ next_product.title | escape }}">
+      <a href="{{ next_product.url }}" class="intermediate-nav__next-link" title="Next Product: {{ next_product.title | escape }}">
         Next Product &rarr;
-        <img src="{{ next_product.featured_image | img_url: '100x' }}" class="intermediate-nav__next-product-image" alt="{{ next_product.featured_image.alt | escape }}" />
+        <img src="{{ next_product.featured_image | img_url: '100x' }}" class="intermediate-nav__next-image" alt="{{ next_product.featured_image.alt | escape }}" />
       </a>
     {% endif %}
   </div>
 
+  {% unless product == empty %}
+    <script type="application/json" data-product-json>
+      {% include 'product-json', product: product %}
+    </script>
+  {% endunless %}  
 </div>

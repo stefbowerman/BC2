@@ -1,45 +1,31 @@
 import 'navigo';
 import Utils from './utils';
+import BaseView from './views/base';
 
-// Views
-import BaseView       from './views/base';
-import IndexView      from './views/index';
-import ProductView    from './views/product';
-import CollectionView from './views/collection';
-import CartView       from './views/cart';
-import ContactView    from './views/contact';
-import StockistsView  from './views/stockists';
-
-// TODO - Move the loader and view-container bits to variables that get passed in
 const $body = $(document.body);
-const $viewContainer = $('#view-container');
-const $loader = $('#loader');
 const TEMPLATE_REGEX = /(^|\s)template-\S+/g;
-const transitionEndEvent = Utils.whichTransitionEnd();
-let firstRoute = true;
 
 export default class AppRouter {
   constructor(options = {}) {
     const defaults = {
-      onRouteStart: $.noop,
-      onViewTransitionOutDone: $.noop,
-      onViewChangeStart: $.noop,
-      onViewChangeDOMUpdatesComplete: $.noop
-    };
-
-    this.viewConstructors = {
-      index: IndexView,
-      product: ProductView,
-      collection: CollectionView,
-      cart: CartView,
-      contact: ContactView,
-      stockists: StockistsView
+      viewContainerSelector: '#view-container',
+      viewContentSelector: '#view-content',
+      viewConstructors: {},
+      redirectTimeout: 5000,
+      onRouteStart: () => {},
+      onViewTransitionOutDone: (url, d) => { d.resolve(); }, // eslint-disable-line brace-style
+      onViewChangeStart: () => {},
+      onViewChangeDOMUpdatesComplete: () => {}
     };
 
     this.router = new Navigo(window.location.origin, false, '#!'); // eslint-disable-line no-undef
     this.isTransitioning = false;
     this.currentView = null;
+    this.firstRoute = true;
     this.settings = $.extend({}, defaults, options);
+    this.urlCache = {};
+
+    this.$viewContainer = $(this.settings.viewContainerSelector);
 
     // Add Routes
     this.router.on('/products/:slug', (params) => {
@@ -54,7 +40,7 @@ export default class AppRouter {
     // Product within collection
     this.router.on('/collections/:slug/products/:handle', (params, query) => {
       this.doRoute(`/collections/${params.slug}/products/${params.handle}`, 'product');
-    });    
+    });
 
     this.router.on('/collections/:slug', (params, query) => {
       let url = `/collections/${params.slug}`;
@@ -72,24 +58,15 @@ export default class AppRouter {
 
     this.router.on('/products', () => {
       this.doRoute('/products', 'list-collections');
-    });    
+    });
 
     this.router.on('/cart', (params) => {
       this.doRoute('/cart', 'cart');
     });
 
     this.router.on('/pages/:slug', (params) => {
-      // @TODO - What to do about this hmmm
-      if (params.slug.indexOf('contact') > -1) {
-        this.doRoute(`/pages/${params.slug}`, 'contact');
-      }
-      else if (params.slug.indexOf('stockists') > -1) {
-        this.doRoute(`/pages/${params.slug}`, 'stockists');
-      }      
-      else {
-        this.doRoute(`/pages/${params.slug}`, 'page');
-      }
-    })
+      this.doRoute(`/pages/${params.slug}`, 'page', true);
+    });
 
     this.router.on('/', () => {
       this.doRoute('/', 'index');
@@ -100,59 +77,74 @@ export default class AppRouter {
     });
 
     this.router.notFound((params) => {
-      // called when there is path specified but
-      // there is no route matching
-      // console.log(params);
+      // called when there is path specified but there is no route matching
       this.router.navigate('/'); // Just go back home
     });
 
     this.router.resolve();
   }
 
-  doRoute(url, type) {
-    const ViewConstructor = this.viewConstructors[type] || BaseView;
+  /**
+   * Fetches a new page for the passed in url and passes it to the view change method
+   *
+   * @param {string} url
+   * @param {string} type - type of view
+   * @param {boolean} - cacheable - whether or not this page can be cached on the frontend
+   */
+  doRoute(url, type, cacheable = false) {
+    const ViewConstructor = this.settings.viewConstructors[type] || BaseView;
 
-    if (firstRoute) {
-      this.currentView = new ViewConstructor($viewContainer);   
-      firstRoute = false;
+    if (this.firstRoute) {
+      // Can't cache here, at this point the DOM has been altered via JS.
+      // We can only cache fresh HTML from the server
+      
+      this.currentView = new ViewConstructor(this.$viewContainer);
+      this.firstRoute = false;
       return;
     }
 
     this.isTransitioning = true;
 
+    const urlKey = Utils.hashFromString(url);
     const transitionDeferred = $.Deferred();
     const ajaxDeferred       = $.Deferred();
 
-    // Add a timeout to do a basic redirect to the url if the request takes longer than a few seconds
-    const t = setTimeout(() => {
-      window.location = url;
-    }, 4000);
+    // If we already have the page HTML in our cache...
+    if (cacheable && this.urlCache.hasOwnProperty(urlKey)) {
+      ajaxDeferred.resolve(this.urlCache[urlKey]);
+    }
+    else {
+      // Add a timeout to do a basic redirect to the url if the request takes longer than a few seconds
+      const t = setTimeout(() => {
+        window.location = url;
+      }, this.settings.redirectTimeout);
 
-    $.get(url, (response) => {
-      clearTimeout(t);
-      ajaxDeferred.resolve(response);
-    });
+      $.get(url, (response) => {
+        clearTimeout(t);
+        ajaxDeferred.resolve(response);
+
+        // Cache it for next time
+        if (cacheable && !this.urlCache.hasOwnProperty(urlKey)) {
+          this.urlCache[urlKey] = response;
+        }
+      });
+    }
 
     this.settings.onRouteStart(url);
 
     // Let the current view do it's 'out' transition and then apply the loading state
     this.currentView.transitionOut(() => {
-      this.settings.onViewTransitionOutDone(url);
-
-      $loader.addClass('is-visible');
-      $loader.on(transitionEndEvent, () => {
-        transitionDeferred.resolve();
-      });
+      this.settings.onViewTransitionOutDone(url, transitionDeferred);
     });
 
     // Once AJAX *and* css animations are done, trigger the callback
     $.when(ajaxDeferred, transitionDeferred).done((response) => {
       this.doViewChange(response, ViewConstructor, url);
-    }); 
+    });
   }
 
   doViewChange(AJAXResponse, ViewConstructor, url) {
-    this.settings.onViewChangeStart(url)
+    this.settings.onViewChangeStart(url);
 
     this.currentView.destroy(); // Kill the current view
 
@@ -163,11 +155,11 @@ export default class AppRouter {
     const $responseHead = $responseHtml.find('head');
     const $responseBody = $responseHtml.find('body');
 
-    const $dom  = $responseBody.find('#view-content');
+    const $dom  = $responseBody.find(this.settings.viewContentSelector);
 
     // Do DOM updates
     document.title = $responseHead.find('title').text();
-    $viewContainer.find('#view-content').replaceWith($dom);
+    this.$viewContainer.find(this.settings.viewContentSelector).replaceWith($dom);
     $body.removeClass((i, classname) => {
       return (classname.match(TEMPLATE_REGEX) || []).join(' ');
     });
@@ -181,10 +173,10 @@ export default class AppRouter {
     // Finish DOM updates
     this.settings.onViewChangeDOMUpdatesComplete($responseHead, $responseBody);
 
-    this.currentView = new ViewConstructor($viewContainer);
+    this.currentView = new ViewConstructor(this.$viewContainer);
 
-    $viewContainer.imagesLoaded(() => {
-      $loader.removeClass('is-visible');
+    this.$viewContainer.imagesLoaded(() => {
+      this.settings.onViewReady(this.currentView);
       this.currentView.transitionIn();
     });
 

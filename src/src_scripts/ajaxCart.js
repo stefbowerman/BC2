@@ -1,3 +1,4 @@
+import { throttle } from 'throttle-debounce';
 import CartAPI from './cartAPI';
 import Utils from './utils';
 import Toast from './uiComponents/toast';
@@ -13,9 +14,6 @@ const selectors = {
   addForm: 'form[action^="/cart/add"]',
   addToCart: '[data-add-to-cart]',
   addToCartText: '[data-add-to-cart-text]',
-  header: '[data-ajax-cart-header]',
-  body: '[data-ajax-cart-body]',
-  footer: '[data-ajax-cart-footer]',
   item: '[data-ajax-item][data-id][data-qty]',
   itemRemove: '[data-ajax-cart-item-remove]',
   cartBadge: '[data-cart-badge]',
@@ -36,6 +34,7 @@ const classes = {
   backdropVisible: 'is-visible',
   backdropCursorVisible: 'is-visible',
   cartOpen: 'is-open',
+  cartHasOverflow: 'has-overflow',
   cartBadgeHasItems: 'has-items',
   cartRequestInProgress: 'request-in-progress'
 };
@@ -48,6 +47,7 @@ export default class AJAXCart {
       RENDER:  `render${this.namespace}`,
       DESTROY: `destroy${this.namespace}`,
       SCROLL:  `scroll${this.namespace}`,
+      RESIZE:  `resize${this.namespace}`,
       UPDATE:  `update${this.namespace}`, //  Use this as a global event to hook into whenever the cart changes
       NEEDS_UPDATE: `needsUpdate${this.namespace}`
     };
@@ -95,6 +95,7 @@ export default class AJAXCart {
       $window.on(this.events.RENDER, this.onCartRender.bind(this));
       $window.on(this.events.DESTROY, this.onCartDestroy.bind(this));
       $window.on(this.events.NEEDS_UPDATE, this.onNeedsUpdate.bind(this));
+      $window.on(this.events.RESIZE, throttle(50, this.onResize.bind(this)));
 
       // Get the cart data when we initialize the instance
       CartAPI.getCart().then(cart => this.renderCart(cart));
@@ -175,6 +176,19 @@ export default class AJAXCart {
     this.$el.removeClass(classes.cartRequestInProgress);
   }
 
+  _overflowCheck() {
+    // Don't worry about storing these as instance variables because this doesn't get called *too* often
+    const bodyHeight = $('.ajax-cart__body-scroll').outerHeight() - 15; // There's a little padding on the bottom of the body to account for
+    const availableHeight = $('.ajax-cart').outerHeight() - $('.ajax-cart__footer').outerHeight();
+
+    if (bodyHeight > availableHeight) {
+      this.$el.addClass(classes.cartHasOverflow);
+    }
+    else {
+      this.$el.removeClass(classes.cartHasOverflow);
+    }
+  }
+
   addBackdrop(callback) {
     const cb = callback || (() => {});
 
@@ -191,9 +205,14 @@ export default class AJAXCart {
       this.$backdrop.on('mouseleave', () => { this.$backdropCursor.removeClass(classes.backdropCursorVisible); }); // eslint-disable-line
       this.$backdrop.on('mousemove', (e) => {
         window.requestAnimationFrame(() => {
-          this.$backdropCursor.css({
-            transform: `translate(${e.clientX}px, ${e.clientY}px)`
-          });
+          try {
+            this.$backdropCursor.css({
+              transform: `translate(${e.clientX}px, ${e.clientY}px)`
+            });
+          }
+          catch (err) {
+            // console.log(err)
+          }
         });
       });
 
@@ -220,7 +239,12 @@ export default class AJAXCart {
       });
 
       setTimeout(() => {
-        this.$backdrop.removeClass(classes.backdropVisible);
+        try {
+          this.$backdrop.removeClass(classes.backdropVisible);
+        }
+        catch (err) {
+          // console.log(err)
+        }
       }, 10);
     }
     else {
@@ -256,6 +280,7 @@ export default class AJAXCart {
     // We only re-render the cart when something has changed.
     // If something changed, the user has to re-verify
     this.cartIsVerified = false;
+    this._overflowCheck();
   }
 
  /**
@@ -280,6 +305,12 @@ export default class AJAXCart {
         this.renderCart(cart);
       });
     }
+  }
+
+  onResize(e) {
+    if (this.isClosed()) return;
+    
+    this._overflowCheck();
   }
 
   renderCart(cart) {

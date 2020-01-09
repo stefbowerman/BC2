@@ -15,10 +15,6 @@ $cart-padding-v: 15px;
 
 .cart-list__row {
   position: relative;
-
-  &:not(:last-child) {
-    border-bottom: 1px solid $color-off-white;
-  }
 }
 
 .cart-list__header,
@@ -64,13 +60,13 @@ $cart-padding-v: 15px;
 @media screen and (min-width: $screen-sm-min) {
 
   .cart-list__col-product {
-    width: 70%;
+    width: 79%;
     padding-right: $cart-padding-h;
   }
 
   .cart-list__col-subtotal {
     display: block;
-    width: 30%;
+    width: 21%;
     text-align: right;
   }
 
@@ -90,11 +86,11 @@ $cart-padding-v: 15px;
 }
 
 .cart-list__item-details {
-  margin-left: 100px + $grid-gutter-width;
+  margin-left: 100px + $grid-gutter-width/2;
   font-size: $font-size-small;
 
   @media (min-width: $screen-sm-min) {
-    margin-left: 120px + $grid-gutter-width; // gutter between image and item details  
+    margin-left: 120px + $grid-gutter-width/2; // gutter between image and item details  
   }
 
   ul {
@@ -107,7 +103,7 @@ $cart-padding-v: 15px;
   
   @media (min-width: $screen-xs-min) {
     position: absolute;
-    bottom: $cart-padding-h;
+    bottom: 27px; // Match it to the bottom of the last li - $cart-padding-h;
     right: 0;
   }
 }

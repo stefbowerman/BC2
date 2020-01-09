@@ -2,16 +2,25 @@
 
   {% capture collection_product_grid_items %}
     {% assign outputted_collection_count = 0 %}
+    {% assign outputted_product_count = 0 %}
     {% assign all_products_sold_out = true %}
     
     {% for block in section.blocks %}
       {% if block.settings.collection and collections[block.settings.collection].products.size > 0 %}
 
         {% for product in collections[block.settings.collection].products limit: 500 %}
+
+          {% comment %} Prefetch the first 3 products on page load.  All other ones get lazy loaded on mouseenter {% endcomment %}
+          {% assign prefetch_onload = false %}
+          {% if outputted_product_count < 3 %}
+            {% assign prefetch_onload = true %}
+          {% endif %}
+
           <div class="content-grid__item">
-            {% include 'product-card', product: product, lazy_load: true %}
+            {% include 'product-card', product: product, lazy_load: true, prefetch_onload: prefetch_onload %}
           </div>
 
+          {% assign outputted_product_count = outputted_product_count | plus: 1 %}
           {% if product.available %}
             {% assign all_products_sold_out = false %}
           {% endif %}
