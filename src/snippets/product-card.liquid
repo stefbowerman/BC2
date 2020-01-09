@@ -89,6 +89,6 @@
       </div>
     </a>
 
-    <link rel="prefetch" {% if prefetch %}href{% else %}data-href="{{ product.url }}">
+    <link rel="prefetch" {% if prefetch %}href{% else %}data-href="{{ product.url }}"{% endif %}>
   </div>
 {% endif %}
