@@ -154,7 +154,7 @@ body.template-product {
 
 .pdf-spaced-el {
   & + & {
-    margin-top: $spacer * 0.75;
+    margin-top: $spacer * 0.65;
   }
 }
 
@@ -166,7 +166,7 @@ body.template-product {
 .pdf-subtitle {
   @include h6;
   font-size: $font-size-small;
-  margin: $spacer * 0.5 0 $spacer * 0.75;
+  margin: $spacer * 0.3 0 0;
 }
 
 .pdf-price {
@@ -306,7 +306,7 @@ body.template-product {
   }
 
   .pdf-description {
-    margin-top: $spacer * 1.5;
+    margin-top: $spacer * 0.75;
   }
 
   .size-guide-link {
@@ -331,6 +331,8 @@ body.template-product {
   }
 
   .pdf-subtitle {
+    margin-bottom: $spacer*.75;
+
     // Above this screen size, it's displayed on the right side
     @media (min-width: $screen-sm-min) {
       display: none;
