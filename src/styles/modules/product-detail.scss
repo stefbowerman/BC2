@@ -170,7 +170,8 @@ body.template-product {
 }
 
 .pdf-price {
-  font-size: $font-size-small
+  font-size: $font-size-small;
+  margin-bottom: -#{$spacer / 4};
 }
 
 .pdf-description {
