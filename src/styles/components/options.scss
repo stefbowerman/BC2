@@ -46,5 +46,6 @@ $spacing: 5px;
 
   &.is-not-hovered {
     opacity: 0.2;
+    transition-timing-function: cubic-bezier(0.06, 0.8, 0.58, 1);
   }
 }
