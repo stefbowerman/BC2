@@ -19,8 +19,9 @@
 {% if settings.gwp_product != blank %}
   {% assign gwp_product = all_products[settings.gwp_product] %}
 
-  {% comment %} GWP product needs to: 1) have a single variant that is free and 2) not belong to any collection {% endcomment %}
-  {% if gwp_product.has_only_default_variant and
+  {% comment %} GWP product needs to: 1) be available 2) have a single variant that is free and 3) not belong to any collection {% endcomment %}
+  {% if gwp_product.available and
+        gwp_product.has_only_default_variant and
         gwp_product.first_available_variant.price == 0 and
         gwp_product.collections.size == 0
   %}
