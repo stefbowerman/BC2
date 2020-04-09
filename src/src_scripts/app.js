@@ -19,6 +19,7 @@ import NavSection        from './sections/nav';
 import FooterSection     from './sections/footer';
 import AJAXCartSection   from './sections/ajaxCart';
 import MobileMenuSection from './sections/mobileMenu';
+import SiteNoticeSection from './sections/siteNotice';
 
 (($) => {
   const $body   = $(document.body);
@@ -33,6 +34,7 @@ import MobileMenuSection from './sections/mobileMenu';
   sections.footer     = new FooterSection($('[data-section-type="footer"]'));
   sections.ajaxCart   = new AJAXCartSection($('[data-section-type="ajax-cart"]'));
   sections.mobileMenu = new MobileMenuSection($('[data-section-type="mobile-menu"]'));
+  sections.siteNotice = new SiteNoticeSection($('[data-section-type="site-notice"]'));
   
   const appRouter = new AppRouter({
     viewConstructors: {
@@ -78,6 +80,10 @@ import MobileMenuSection from './sections/mobileMenu';
   // END Misc Stuff
 
   $body.addClass('is-loaded').removeClass('is-loading');
+
+  setTimeout(() => {
+    sections.siteNotice.showIfNeeded();
+  }, 2000);
 
   // Stop here...no AJAX navigation inside the theme editor
   if (window.Shopify && window.Shopify.designMode) {
