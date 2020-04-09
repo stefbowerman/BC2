@@ -1,0 +1,51 @@
+<div data-section-id="{{ section.id }}" data-section-type="site-notice" data-enabled="{{ section.settings.enabled }}">
+  <div class="modal fade site-notice-modal" tabindex="-1" role="dialog" aria-labelledby="siteNoticeModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <a href="#" class="close" data-dismiss="modal" aria-label="Close">
+            <img src="{{ 'icon-close.png' | asset_url }}" />  
+          </a>
+          <div class="modal-title" id="siteNoticeModalLabel">{{ section.settings.title }}</div>
+        </div>
+        <div class="modal-body">
+          {{ section.settings.content }}
+        </div>
+        <div class="modal-footer">
+          <a href="#" class="btn" data-dismiss="modal">
+            {{ section.settings.button_text | default: 'Proceed to Website' }}
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "Site Notice",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "enabled",
+        "label": "Enabled",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title"
+      },
+      {
+        "type": "richtext",
+        "id": "content",
+        "label": "Content"
+      },
+      {
+        "type": "text",
+        "id": "button_text",
+        "label": "Button Text"
+      }
+    ]
+  }
+{% endschema %}

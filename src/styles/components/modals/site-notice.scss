@@ -1,0 +1,16 @@
+// -------------------------
+// Site Notice Modal Styling
+// -------------------------
+
+.site-notice-modal {
+  .modal-body {
+    text-transform: none;
+    text-align: center;
+
+    p {
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+}
