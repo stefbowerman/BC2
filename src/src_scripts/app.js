@@ -47,6 +47,7 @@ import SiteNoticeSection from './sections/siteNotice';
     onRouteStart: (url) => {
       sections.ajaxCart.ajaxCart.close();  // Run this immediately in case it's open
       sections.mobileMenu.drawer.hide();
+      sections.siteNotice.close();
     },
     onViewTransitionOutDone: (url, deferred) => {
       sections.nav.deactivateMenuLinks();

@@ -3,14 +3,18 @@
 // -------------------------
 
 .site-notice-modal {
-  .modal-body {
-    text-transform: none;
+  // RTE is mostly used for articles so it has a large space between paragraphs and images
+  .rte {
     text-align: center;
-
-    p {
-      &:last-child {
-        margin-bottom: 0;
-      }
+    text-transform: none;
+    p + p,
+    p + img,
+    img + p {
+      margin-top: 0;
     }
+
+    p:last-child {
+      margin-bottom: 0;
+    }    
   }
 }

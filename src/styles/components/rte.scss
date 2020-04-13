@@ -45,6 +45,11 @@
 
   a {
     border-bottom: 1px solid $link-border-color;
+    transition: border-bottom-color 200ms ease-out;
+
+    &:hover {
+      border-bottom-color: $link-hover-border-color;
+    }
   }
 }
 

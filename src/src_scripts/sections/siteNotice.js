@@ -30,6 +30,10 @@ export default class SiteNoticeSection extends BaseSection {
     }
   }
 
+  close() {
+    this.$modal.modal('hide');
+  }
+
   onModalHidden() {
     if (this.themeEditor) {
       return;
