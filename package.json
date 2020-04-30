@@ -38,7 +38,7 @@
   "dependencies": {
     "gulp-notify": "^3.2.0",
     "imagesloaded": "^4.1.4",
-    "jquery": "^3.2.1",
+    "jquery": "^3.5.0",
     "js-cookie": "^2.2.1",
     "lazysizes": "^5.2.0-beta1",
     "navigo": "^7.1.2",
