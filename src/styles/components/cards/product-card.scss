@@ -8,6 +8,11 @@
   margin: 0 auto;
 
   &.product-card--sold-out {}
+
+  // 2 column grid - let them be a little wide
+  .content-grid--wide & {
+    max-width: 650px;
+  }
 }
 
 .product-card__contents {

@@ -43,7 +43,7 @@
               {% if lazy_load %}
                 data-src="{{ src }}"
                 data-srcset="{% include 'image-srcset', ss_image: product.featured_image %}"
-                data-expand="600"
+                data-expand="700"
                 data-product-card-main-lazy
                 data-sizes="auto"
                 data-aspectratio="{{ product.featured_image.width | times: 1.00 | divided_by: product.featured_image.height | round: 4 }}"

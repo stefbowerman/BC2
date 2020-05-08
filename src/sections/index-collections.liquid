@@ -39,7 +39,9 @@
       {{ section.settings.sold_out_message | default: 'New collection coming soon' }}
     </div>
   {% else if collection_product_grid_items != blank %}
-    <div class="content-grid">{{ collection_product_grid_items }}</div>  
+    <div class="content-grid{% if outputted_product_count == 2 or outputted_product_count == 4 %} content-grid--wide{% endif %}">
+      {{ collection_product_grid_items }}
+    </div>  
   {% endif %}
   
 </div>
