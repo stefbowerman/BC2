@@ -67,14 +67,16 @@
   {% endfor %}
 {% endcapture %}
 
+{% assign form_disabled = false %}
+{% if cart_has_unavailable_items or cart.attributes["Shipping Notice Seen"] != "true" %}
+  {% assign form_disabled = true %}
+{% endif %}
 
-<div data-section-id="{{ section.id }}" data-section-type="cart">
+<div data-section-id="{{ section.id }}" data-section-type="cart" data-form-disabled="{{ form_disabled }}">
   <div class="layout-content-wrapper">
     <div class="container">
       <div style="max-width: 560px; margin: 0 auto;">
-
         {% if cart_item_count > 0 %}
-
           {% if cart_has_unavailable_items %}
             <div class="alert u-ta-center">{{ 'cart.general.unavailable_message' | t }}</div>
           {% endif %}
@@ -97,8 +99,29 @@
                   {% if cart.total_discounts > 0 %}
                     <p>{{ 'cart.general.savings' | t }} {{ cart.total_discounts | money_without_trailing_zeros }}</p>
                   {% endif %}
+
+                  {% unless cart_has_unavailable_items %}
+                    <div class="checkbox">
+                      <label>
+                        <input type="checkbox"
+                               name="attributes[Shipping Notice Seen]"
+                               value="true"
+                               {% if cart.attributes["Shipping Notice Seen"] == "true" %} checked{% endif %}
+                               data-shipping-notice-checkbox
+                        >
+                        <span class="checkbox-ui"></span>
+                        I have read the shipping policy and understand additional fees maybe incurred for international shipments.
+                      </label>
+                    </div>
+                  {% endunless %}
+
                   <p>
-                    <input type="submit" name="checkout" class="btn btn-primary btn-block" value="{{ 'cart.general.checkout' | t }}"  {% if cart_has_unavailable_items %}disabled="true"{% endif %}>
+                    <input type="submit"
+                           name="checkout"
+                           class="btn btn-primary btn-block"
+                           value="{{ 'cart.general.checkout' | t }}"
+                           {% if form_disabled %}disabled="true"{% endif %}
+                    >
                   </p>
                   {% if additional_checkout_buttons %}
                     <div class="additional-checkout-buttons">

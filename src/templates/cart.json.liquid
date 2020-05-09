@@ -111,18 +111,28 @@
   {% assign gwp_needs_gift = true %}
 {% endif %}
 
-{
-  "total_price": {{ cart.total_price }},
-  "original_total_price": {{ cart.original_total_price }},
-  "total_discount": {{ cart.total_discount }},
-  "total_weight": {{ cart.total_weight }},
-  "note": {{ cart.note | json }},
-  "item_count": {{ cart.item_count }},
-  "items": [{{ items }}],
-  "section_html": {{ cart_section_html | json }},
-  "gwp_variant_id": {{ gwp_variant_id }},
-  "gwp_qualification_price": {{ gwp_qualification_price }},
-  "gwp_cart_qualifies": {{ gwp_cart_qualifies }},
-  "gwp_cart_gift_count": {{ gwp_cart_gift_count }},
-  "gwp_needs_gift": {{ gwp_needs_gift }}
-}
+{%- capture json -%}
+  {
+    "attributes": {
+      {% for attribute in cart.attributes %}
+        {{ attribute | first | json }}: {{ attribute | last | json }}
+        {% unless forloop.last %},{% endunless %}
+      {% endfor %}
+    },
+    "total_price": {{ cart.total_price }},
+    "original_total_price": {{ cart.original_total_price }},
+    "total_discount": {{ cart.total_discount }},
+    "total_weight": {{ cart.total_weight }},
+    "note": {{ cart.note | json }},
+    "item_count": {{ cart.item_count }},
+    "items": [{{ items }}],
+    "section_html": {{ cart_section_html | json }},
+    "gwp_variant_id": {{ gwp_variant_id }},
+    "gwp_qualification_price": {{ gwp_qualification_price }},
+    "gwp_cart_qualifies": {{ gwp_cart_qualifies }},
+    "gwp_cart_gift_count": {{ gwp_cart_gift_count }},
+    "gwp_needs_gift": {{ gwp_needs_gift }}
+  }
+{%- endcapture -%}
+
+{{ json | strip | strip_newlines }}

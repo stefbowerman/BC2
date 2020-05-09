@@ -75,6 +75,33 @@ export default {
   },
 
  /**
+  * AJAX update the cart's note, attributes, or line item quantities.
+  *
+  * @param {Object} data - Data object
+  * @return {Promise} - Resolve returns JSON cart | Reject returns an error message
+  */
+  update(data) {
+    const promise = $.Deferred();
+    
+    $.ajax({
+      type: 'post',
+      dataType: 'json',
+      url: '/cart/update.js',
+      data: data,
+      success: () => {
+        this.getCart().then(response => promise.resolve(response));
+      },
+      error: function(err) {
+        promise.reject({
+          message: err
+        });
+      }      
+    });
+
+    return promise
+  },
+
+ /**
   * Retrieve a JSON respresentation of the users cart
   *
   * @return {Promise} - JSON cart

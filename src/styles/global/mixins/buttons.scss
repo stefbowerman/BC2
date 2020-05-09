@@ -38,7 +38,7 @@
   color: $color;
   background-color: $background;
   border-color: $border;
-  transition: all ease-in-out .3s;
+  transition: all ease-in-out .2s;
 
   &:focus,
   &.focus {
@@ -50,7 +50,7 @@
     color: $hover-color;
     background-color: $hover-background;
         border-color: $hover-border;
-    transition: all ease-in-out .3s;
+    transition: all ease-in-out .15s;
   }
   &:active,
   &.active,

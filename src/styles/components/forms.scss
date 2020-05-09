@@ -266,7 +266,7 @@ input[type="search"] {
 
   label {
     min-height: $line-height-computed; // Ensure the input doesn't jump when there is no text
-    padding-left: 40px;
+    padding-left: 30px;
     margin-bottom: 0;
     font-weight: normal;
     cursor: pointer;
@@ -373,10 +373,11 @@ input[type="checkbox"] {
 
 // Hide browser checkboxes and replace them with ones made via generated content
 .checkbox-ui {
-  height: 21px;
-  width: 21px;
-  top: 1px;
-  line-height: 17px;
+  height: 17px;
+  width: 17px;
+  top: 2px;
+  font-size: 18px;
+  line-height: 14px;
   border: 1px solid $color-black;
 
   &:before {
