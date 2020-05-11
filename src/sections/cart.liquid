@@ -1,6 +1,12 @@
 {% assign cart_has_unavailable_items = false %}
 {% assign cart_item_count = 0 %}
 
+{% assign seen_shipping_notice_attribute = 'Shipping notice seen' %}
+{% assign shipping_notice_seen = false %}
+{% if cart.attributes[seen_shipping_notice_attribute] == 'true' %}
+  {% assign shipping_notice_seen = true %}
+{% endif %}
+
 {% capture cart_body %}
   {% for item in cart.items %}
 
@@ -68,7 +74,7 @@
 {% endcapture %}
 
 {% assign form_disabled = false %}
-{% if cart_has_unavailable_items or cart.attributes["Shipping Notice Seen"] != "true" %}
+{% if cart_has_unavailable_items or shipping_notice_seen == false %}
   {% assign form_disabled = true %}
 {% endif %}
 
@@ -104,9 +110,9 @@
                     <div class="checkbox">
                       <label>
                         <input type="checkbox"
-                               name="attributes[Shipping Notice Seen]"
+                               name="attributes[{{ seen_shipping_notice_attribute }}]"
                                value="true"
-                               {% if cart.attributes["Shipping Notice Seen"] == "true" %} checked{% endif %}
+                               {% if shipping_notice_seen %} checked{% endif %}
                                data-shipping-notice-checkbox
                         >
                         <span class="checkbox-ui"></span>

@@ -13,3 +13,10 @@
 
 
 old GA account -> UA-47737056-1
+
+## Cart
+
+#### Cart Attributes
+| Name | Value | Description |
+|---|---|---|
+| `Shipping notice seen` | `null` or "true" | User must check a box confirming that they have read the shipping policy. |

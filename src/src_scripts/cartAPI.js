@@ -90,6 +90,10 @@ class CartAPI {
     return promise;
   }
 
+  setShippingNoticeSeen(seen) {
+    return this.update(`attributes[Shipping notice seen]=${seen ? 'true' : ''}`)
+  }
+
  /**
   * Modifies the JSON cart for consumption by our handlebars template
   *

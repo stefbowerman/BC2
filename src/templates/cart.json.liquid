@@ -111,13 +111,25 @@
   {% assign gwp_needs_gift = true %}
 {% endif %}
 
+{% assign shipping_notice_seen = false %}
+{%- capture attributes_json -%}
+  {% for attribute in cart.attributes %}
+    {% assign attribute_name = attribute | first %}
+    {% assign attribute_value = attribute | last %}
+
+    {{ attribute_name | json }}: {{ attribute_value | json }}
+
+    {% if attribute_name == 'Shipping notice seen' and attribute_value == 'true' %}
+      {% assign shipping_notice_seen = true %}
+    {% endif %}
+    {% unless forloop.last %},{% endunless %}
+  {% endfor %}
+{%- endcapture -%}
+
 {%- capture json -%}
   {
     "attributes": {
-      {% for attribute in cart.attributes %}
-        {{ attribute | first | json }}: {{ attribute | last | json }}
-        {% unless forloop.last %},{% endunless %}
-      {% endfor %}
+      {{ attributes_json | strip }}
     },
     "total_price": {{ cart.total_price }},
     "original_total_price": {{ cart.original_total_price }},
@@ -127,6 +139,7 @@
     "item_count": {{ cart.item_count }},
     "items": [{{ items }}],
     "section_html": {{ cart_section_html | json }},
+    "shipping_notice_seen": {{ shipping_notice_seen }},
     "gwp_variant_id": {{ gwp_variant_id }},
     "gwp_qualification_price": {{ gwp_qualification_price }},
     "gwp_cart_qualifies": {{ gwp_cart_qualifies }},

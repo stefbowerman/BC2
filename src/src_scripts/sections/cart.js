@@ -85,20 +85,16 @@ export default class CartSection extends BaseSection {
   }
 
   onShippingNoticeCheckboxChange(e) {
-    const $checkbox = $(e.currentTarget);
-    const attr = $checkbox.attr('name')
-    const checked = $checkbox.is(':checked');
-
     this.formIsDisabled = true
     this.$form.fadeTo(300, 0.5);
 
-    CartAPI.update(`${attr}=${checked ? 'true' : ''}`)
+    CartAPI.setShippingNoticeSeen(e.currentTarget.checked)
       .then((cart) => {
-        const disabled = !(cart.attributes['Shipping Notice Seen'] === 'true')
+        const disabled = cart.shipping_notice_seen !== true;
 
         this.formIsDisabled = disabled
         this.$formSubmit.attr('disabled', disabled);
         this.$form.fadeTo(200, 1);
-      });
+      })
   }
 }
