@@ -43,8 +43,10 @@ export default class CartSection extends BaseSection {
   onFormSubmit(e) {
     if (this.formIsDisabled) return;
 
-    this.$formSubmit.val('Redirecting to Checkout..');
-    this.$formSubmit.prop('disabled', true);
+    this.$formSubmit
+      .prop('disabled', true)
+      .val('Redirecting to Checkout..');
+
     window.location.href = '/checkout';
 
     return false;
@@ -86,7 +88,7 @@ export default class CartSection extends BaseSection {
 
   onShippingNoticeCheckboxChange(e) {
     this.formIsDisabled = true
-    this.$form.fadeTo(300, 0.5);
+    this.$form.fadeTo(150, 0.5);
 
     CartAPI.setShippingNoticeSeen(e.currentTarget.checked)
       .then((cart) => {
@@ -94,7 +96,7 @@ export default class CartSection extends BaseSection {
 
         this.formIsDisabled = disabled
         this.$formSubmit.attr('disabled', disabled);
-        this.$form.fadeTo(200, 1);
+        this.$form.fadeTo(350, 1);
       })
   }
 }

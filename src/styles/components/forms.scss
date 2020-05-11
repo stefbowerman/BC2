@@ -367,7 +367,7 @@ input[type="checkbox"] {
   left: 0;
   font-size: $font-size-base;
   text-align: center;
-  color: $color-black;
+  color: $color-dark-grey;
   overflow: hidden;
 }
 
@@ -375,8 +375,8 @@ input[type="checkbox"] {
 .checkbox-ui {
   height: 17px;
   width: 17px;
-  top: 2px;
-  font-size: 18px;
+  top: 1px;
+  font-size: 16px;
   line-height: 14px;
   border: 1px solid $color-black;
 
