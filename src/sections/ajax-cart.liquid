@@ -1,6 +1,25 @@
 <div data-section-id="{{ section.id }}" data-section-type="ajax-cart">
   <div class="ajax-cart-container" data-ajax-cart-container></div>
-  <div data-cart-verify-modal-container></div>
+  
+  <div class="modal fade verify-modal" tabindex="-1" role="dialog" aria-labelledby="verifyCartModalLabel" data-verify-modal>
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <a href="#" class="close" data-dismiss="modal" aria-label="Close">
+            <img src="{{ 'icon-close.png' | asset_url }}" />  
+          </a>
+          <div class="modal-title" id="verifyCartModalLabel">Verify Cart</div>
+        </div>
+        <div class="modal-body" data-verify-modal-body></div>
+        <div class="modal-footer">
+          <form action="/cart" method="post" novalidate data-verify-modal-form>
+            
+          </form>
+        </div> 
+      </div>
+    </div>
+  </div>
+
   <div class="toast" data-ajax-cart-toast>
     <a href="#" class="toast__close" data-toast-close>
       Close This Notification
@@ -89,57 +108,65 @@
   </form>
 </script>
 
-<script type="text/x-handlebars-template" data-cart-verify-modal-template>
-  <div class="modal fade verify-modal" tabindex="-1" role="dialog" aria-labelledby="verifyCartModalLabel" data-verify-modal>
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <a href="#" class="close" data-dismiss="modal" aria-label="Close">
-            {% endraw %}
-            <img src="{{ 'icon-close.png' | asset_url }}" />  
-            {% raw %}
-          </a>
-          <div class="modal-title" id="verifyCartModalLabel">Verify Cart</div>
+<script type="text/x-handlebars-template" data-verify-modal-body-template>
+  <p class="u-ta-center u-fs-xsmall">Please verify cart contents before proceeding to checkout</p>                  
+  {{#if items}}
+    <div class="verify-table">
+      {{#each items}}
+        <div class="verify-row">
+          <img src="{{ image }}" class="verify-row__image">
+          <div class="verify-row__content">
+            <div class="verify-row__price">{{ line_price }}</div>
+            <div class="verify-row__title">{{ product_title }}{{#if has_multiple}} &times; <strong>{{ quantity }}</strong>{{/if}}</div>
+            {{#unless has_only_default_variant}}
+              <ul class="list-unstyled">
+                {{#if variant_options}}
+                  {{#each variant_options}}
+                    <li>
+                      {{ name }}: <strong>{{ value }}</strong>
+                    </li>
+                  {{/each}}
+                {{else}}
+                  {{#if variant_title}}
+                    <li>{{ variant_title }}</li>
+                  {{/if}}
+                {{/if}}
+              </ul>
+            {{/unless}}
+          </div>
         </div>
-        <div class="modal-body">
-          <p class="u-ta-center u-fs-xsmall">Please verify cart contents before proceeding to checkout</p>                  
-          {{#if items}}
-            <div class="verify-table">
-              {{#each items}}
-                <div class="verify-row">
-                  <img src="{{ image }}" class="verify-row__image">
-                  <div class="verify-row__content">
-                    <div class="verify-row__price">{{ line_price }}</div>
-                    <div class="verify-row__title">{{ product_title }}{{#if has_multiple}} &times; <strong>{{ quantity }}</strong>{{/if}}</div>
-                    {{#unless has_only_default_variant}}
-                      <ul class="list-unstyled">
-                        {{#if variant_options}}
-                          {{#each variant_options}}
-                            <li>
-                              {{ name }}: <strong>{{ value }}</strong>
-                            </li>
-                          {{/each}}
-                        {{else}}
-                          {{#if variant_title}}
-                            <li>{{ variant_title }}</li>
-                          {{/if}}
-                        {{/if}}
-                      </ul>
-                    {{/unless}}
-                  </div>
-                </div>
-              {{/each}}
-            </div>
-          {{/if}}
-        </div>
-        <div class="modal-footer">
-          <p>Cart Total: <strong>{{ total_price }}</strong></p>
-          <a href="/checkout" class="btn" data-verify-checkout-link>
-            Proceed to Checkout
-          </a>
-        </div>
-      </div>
+      {{/each}}
     </div>
+  {{/if}}
+</script>
+
+<script type="text/x-handlebars-template" data-verify-modal-form-template>
+  <div class="modal-footer__row">
+    Cart Total: <strong>{{ total_price }}</strong>
+  </div>
+  <div class="modal-footer__row">
+    <div class="checkbox u-margin-0 u-ta-left">
+      <label>
+        <input type="checkbox"
+               name="attributes[Shipping notice seen]"
+               value="true"
+               {{#if shipping_notice_seen}}checked{{/if}}
+               data-verify-shipping-notice-checkbox
+        >
+        <span class="checkbox-ui"></span>
+        {% endraw %}
+          {{ section.settings.shipping_notice_checkbox_label | default: 'I have read the shipping policy and understand additional fees maybe incurred for international shipments.' }}
+        {% raw %}
+      </label>
+    </div>
+  </div>          
+  <div class="modal-footer__row">
+    <input type="submit"
+           name="checkout"
+           class="btn btn-primary btn-block"
+           value="Proceed to Checkout"
+           {{#if shipping_notice_seen}}{{else}}disabled="true"{{/if}}
+    >          
   </div>
 </script>
 {% endraw %}
@@ -149,6 +176,11 @@
   {
     "name": "Ajax Cart",
     "settings": [
+      {
+        "id": "shipping_notice_checkbox_label",
+        "type": "richtext",
+        "label": "Shipping notice checkbox label"
+      }
     ]
   }
 {% endschema %}

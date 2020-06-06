@@ -342,15 +342,7 @@ body.template-product {
 
   .pdf-description ul {
     display: block;
-    padding-left: 1rem;
-    margin-left: $grid-gutter-width/2;
-    margin-right: $grid-gutter-width/2;
     text-align: left;
-
-    @media (min-width: $screen-xs-min) {
-      margin-left: 50px;
-      margin-right: 50px;
-    }
   }
 }
 

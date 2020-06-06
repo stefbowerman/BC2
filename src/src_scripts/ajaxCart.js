@@ -19,9 +19,12 @@ const selectors = {
   cartBadge: '[data-cart-badge]',
 
   // Verify Stuff
-  verifyContainer: '[data-cart-verify-modal-container]',
-  verifyTemplate: '[data-cart-verify-modal-template]',
-  verifyCheckoutLink: '[data-verify-checkout-link]',
+  verifyModal: '[data-verify-modal]',
+  verifyBody: '[data-verify-modal-body]',
+  verifyForm: '[data-verify-modal-form]',
+  verifyBodyTemplate: '[data-verify-modal-body-template]',
+  verifyFormTemplate: '[data-verify-modal-form-template]',
+  verifyShippingNoticeCheckbox: '[data-verify-shipping-notice-checkbox]',
 
   // Alert
   toast: '[data-ajax-cart-toast]'
@@ -76,22 +79,28 @@ export default class AJAXCart {
 
       this.$cartBadge       = $(selectors.cartBadge);
       this.$cartBadgeCount  = $(selectors.cartBadgeCount);
-      this.$verifyContainer = $(selectors.verifyContainer);
+      this.$verifyModal     = $(selectors.verifyModal);
+      this.$verifyBody      = $(selectors.verifyBody);
+      this.$verifyForm      = $(selectors.verifyForm);
       this.toast            = new Toast($(selectors.toast));
 
-      // Compile this once during initialization
+      // Compile once during initialization
       this.template = Handlebars.compile($(selectors.template).html());
-      this.verifyTemplate = Handlebars.compile($(selectors.verifyTemplate).html());
+      this.verifyBodyTemplate = Handlebars.compile($(selectors.verifyBodyTemplate).html());
+      this.verifyFormTemplate = Handlebars.compile($(selectors.verifyFormTemplate).html());
 
       // Add the AJAX part
       this._formOverride();
 
       // Add event handlers here
+      this.$el.on('submit', 'form', this.onFormSubmit.bind(this));
+      this.$verifyForm.on('submit', this.onVerifyFormSubmit.bind(this));
+      this.$verifyForm.on('change', selectors.verifyShippingNoticeCheckbox, this.onVerifyShippingNoticeCheckboxChange.bind(this));
+
       $body.on('click', selectors.trigger, this.onTriggerClick.bind(this));
       $body.on('click', selectors.close, this.onCloseClick.bind(this));
       $body.on('click', selectors.itemRemove, this.onItemRemoveClick.bind(this));
-      this.$el.on('submit', 'form', this.onFormSubmit.bind(this));
-      this.$verifyContainer.on('click', selectors.verifyCheckoutLink, this.onVerifyCheckoutLinkClick.bind(this));
+
       $window.on(this.events.RENDER, this.onCartRender.bind(this));
       $window.on(this.events.DESTROY, this.onCartDestroy.bind(this));
       $window.on(this.events.NEEDS_UPDATE, this.onNeedsUpdate.bind(this));
@@ -181,12 +190,7 @@ export default class AJAXCart {
     const bodyHeight = $('.ajax-cart__body-scroll').outerHeight() - 15; // There's a little padding on the bottom of the body to account for
     const availableHeight = $('.ajax-cart').outerHeight() - $('.ajax-cart__footer').outerHeight();
 
-    if (bodyHeight > availableHeight) {
-      this.$el.addClass(classes.cartHasOverflow);
-    }
-    else {
-      this.$el.removeClass(classes.cartHasOverflow);
-    }
+    this.$el.toggleClass(classes.cartHasOverflow, (bodyHeight > availableHeight));
   }
 
   addBackdrop(callback) {
@@ -301,9 +305,7 @@ export default class AJAXCart {
       this.renderCart(e.cart);
     }
     else {
-      CartAPI.getCart().then(cart => {
-        this.renderCart(cart);
-      });
+      CartAPI.getCart().then(cart => this.renderCart(cart));
     }
   }
 
@@ -317,7 +319,8 @@ export default class AJAXCart {
     $window.trigger(this.events.DESTROY);
 
     this.$el.empty().append(this.template(cart));
-    this.$verifyContainer.empty().append(this.verifyTemplate(cart));
+    this.$verifyBody.empty().append(this.verifyBodyTemplate(cart));
+    this.$verifyForm.empty().append(this.verifyFormTemplate(cart));
 
     $window.trigger(this.events.RENDER);
     $window.trigger(this.events.UPDATE);
@@ -347,18 +350,35 @@ export default class AJAXCart {
   * @param {event} e - Submit Event
   */
   onFormSubmit(e) {
-    if (!this.cartIsVerified && this.$verifyContainer.find('.modal').length) {
-      this.$verifyContainer.find('.modal').modal('show');
+    if (!this.cartIsVerified) {
+      this.$verifyModal.modal('show');
       return false;
     }
 
     return true;
   }
 
-  onVerifyCheckoutLinkClick(e) {
+  onVerifyShippingNoticeCheckboxChange(e) {
+    this.$verifyForm.fadeTo(150, 0.5);
+
+    CartAPI.setShippingNoticeSeen(e.currentTarget.checked)
+      .then((cart) => {
+        this.$verifyForm.fadeTo(350, 1);
+        this.$verifyForm.find('input[type="submit"]')
+          .attr('disabled', cart.shipping_notice_seen !== true);
+      })
+  }
+
+  onVerifyFormSubmit(e) {
     this.cartIsVerified = true;
-    $(e.currentTarget).attr('disabled', true);
-    $(e.currentTarget).text('Redirecting to Checkout..');
+
+    this.$verifyForm.find('input[type="submit"]')
+      .attr('disabled', true)
+      .val('Redirecting to Checkout..')
+
+    window.location.href = '/checkout';
+
+    return false;
   }
 
  /**
@@ -463,5 +483,8 @@ export default class AJAXCart {
     this.removeBackdrop(() => {
       $body.removeClass(classes.bodyCartOpen);
     });
+
+    // Close the modal in case it's open
+    this.$verifyModal.modal('hide');
   }
 }

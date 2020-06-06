@@ -68,6 +68,15 @@
     ]
   },
   {
+    "name": "Shipping",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Shipping Notice"
+      }
+    ]
+  },
+  {
     "name": "Gift With Purchase",
     "settings": [
       {

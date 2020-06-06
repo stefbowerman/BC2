@@ -36,6 +36,16 @@ label {
   font-size: $label-font-size;
   font-weight: $label-font-weight;
   text-transform: $label-text-transform;
+
+  // Copying styles from rte.scss
+  a {
+    border-bottom: 1px solid $link-border-color;
+    transition: border-bottom-color 200ms ease-out;
+
+    &:hover {
+      border-bottom-color: $link-hover-border-color;
+    }
+  }
 }
 
 
@@ -266,7 +276,7 @@ input[type="search"] {
 
   label {
     min-height: $line-height-computed; // Ensure the input doesn't jump when there is no text
-    padding-left: 40px;
+    padding-left: 30px;
     margin-bottom: 0;
     font-weight: normal;
     cursor: pointer;
@@ -367,16 +377,17 @@ input[type="checkbox"] {
   left: 0;
   font-size: $font-size-base;
   text-align: center;
-  color: $color-black;
+  color: $color-dark-grey;
   overflow: hidden;
 }
 
 // Hide browser checkboxes and replace them with ones made via generated content
 .checkbox-ui {
-  height: 21px;
-  width: 21px;
+  height: 17px;
+  width: 17px;
   top: 1px;
-  line-height: 17px;
+  font-size: 16px;
+  line-height: 14px;
   border: 1px solid $color-black;
 
   &:before {

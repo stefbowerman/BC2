@@ -33,6 +33,7 @@ class CartAPI {
     }
   }
 
+  // All these methods are just wrappers around their respective ShopifyAPI method
   getCart() {
     const promise = $.Deferred();
 
@@ -73,6 +74,24 @@ class CartAPI {
       });
 
     return promise;
+  }
+
+  update(data) {
+    const promise = $.Deferred();
+
+    ShopifyAPI.update(data)
+      .done(cart => {
+        this._onRequestDone(cart, promise);
+      })
+      .fail(response => {
+        promise.reject(response);
+      });
+
+    return promise;
+  }
+
+  setShippingNoticeSeen(seen) {
+    return this.update(`attributes[Shipping notice seen]=${seen ? 'true' : ''}`)
   }
 
  /**

@@ -14,7 +14,7 @@
 
 .verify-row {
   @include display-flex;
-  @include align-items(flex-start);
+  @include align-items(center);
 
   & + & {
     margin-top: 25px;
@@ -37,6 +37,7 @@
 
   ul {
     font-size: $font-size-xsmall;
+    margin: 0;
   }
 }
 

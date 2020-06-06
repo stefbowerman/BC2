@@ -70,8 +70,8 @@
     margin-bottom: $layout-margin-top-mobile;
 
     @media (min-width: $screen-md-min) {
-      margin-top: $layout-margin-bottom;
-      margin-bottom: $layout-margin-bottom;
+      margin-top: $layout-margin-top;
+      margin-bottom: $layout-margin-top;
     }
   }
 

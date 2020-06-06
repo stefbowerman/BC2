@@ -49,7 +49,13 @@
     {% assign size_guide_source_is_metafield = true %}
   {% endif %}
 
+  {% assign has_size_option_and_size_guide_source = false %}
   {% if has_size and size_guide_source != false %}
+    {% assign has_size_option_and_size_guide_source = true %}
+  {% endif %}
+
+  {% comment %} the "OR" here allows products without a size option to still display a size guide if the metafield is set {% endcomment %}
+  {% if has_size_option_and_size_guide_source or size_guide_source_is_metafield %}
     <div class="drawer drawer--size-guide" data-size-guide-drawer>
       <div class="drawer__inner">
         <a href="#" class="drawer__close" data-drawer-close>

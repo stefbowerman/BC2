@@ -141,6 +141,12 @@
   }
 }
 
+.modal-footer__row {
+  & + & {
+    margin-top: 15px;
+  }
+}
+
 // Measure scrollbar width for padding body during modal show/hide
 .modal-scrollbar-measure {
   position: absolute;

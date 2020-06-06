@@ -3,7 +3,8 @@ import CartAPI from '../cartAPI';
 
 const selectors = {
   form: '[data-cart-form]',
-  itemRemoveLink: '[data-item-remove-link]'
+  itemRemoveLink: '[data-item-remove-link]',
+  shippingNoticeCheckbox: '[data-shipping-notice-checkbox]'
 };
 
 const $window = $(window);
@@ -11,6 +12,12 @@ const $window = $(window);
 export default class CartSection extends BaseSection {
   constructor(container) {
     super(container, 'cart');
+
+    this.formIsDisabled = this.$container.data('form-disabled');
+
+    this.onFormSubmit = this.onFormSubmit.bind(this)
+    this.onItemRemoveLinkClick = this.onItemRemoveLinkClick.bind(this)
+    this.onShippingNoticeCheckboxChange = this.onShippingNoticeCheckboxChange.bind(this)
 
     this.setInstanceVars();
     this.bindEvents();
@@ -22,18 +29,24 @@ export default class CartSection extends BaseSection {
   }
 
   bindEvents(e) {
-    this.$form.on('submit', this.onFormSubmit.bind(this));
-    this.$container.on('click', selectors.itemRemoveLink, this.onItemRemoveLinkClick.bind(this));
+    this.$form.on('submit', this.onFormSubmit);
+    this.$container.on('click', selectors.itemRemoveLink, this.onItemRemoveLinkClick);
+    this.$container.on('change', selectors.shippingNoticeCheckbox, this.onShippingNoticeCheckboxChange);
   }
 
   removeEvents(e) {
     this.$form.off('submit');
     this.$container.off('click', selectors.itemRemoveLink, this.onItemRemoveLinkClick);
+    this.$container.off('change', selectors.shippingNoticeCheckbox, this.onShippingNoticeCheckboxChange);
   }
 
   onFormSubmit(e) {
-    this.$formSubmit.val('Redirecting to Checkout..');
-    this.$formSubmit.prop('disabled', true);
+    if (this.formIsDisabled) return;
+
+    this.$formSubmit
+      .prop('disabled', true)
+      .val('Redirecting to Checkout..');
+
     window.location.href = '/checkout';
 
     return false;
@@ -43,7 +56,7 @@ export default class CartSection extends BaseSection {
     e.preventDefault();
     const $link = $(e.currentTarget);
 
-    this.$form.attr('disabled', true);
+    this.formIsDisabled = true
     this.$formSubmit.attr('disabled', true);
     this.$form.fadeTo(300, 0.5);
 
@@ -69,6 +82,21 @@ export default class CartSection extends BaseSection {
         $window.scrollTop(0);
         this.$form.css('opacity', 0.5);
         this.$form.fadeTo(300, 1);
+        this.formIsDisabled = false
       });
+  }
+
+  onShippingNoticeCheckboxChange(e) {
+    this.formIsDisabled = true
+    this.$form.fadeTo(150, 0.5);
+
+    CartAPI.setShippingNoticeSeen(e.currentTarget.checked)
+      .then((cart) => {
+        const disabled = cart.shipping_notice_seen !== true;
+
+        this.formIsDisabled = disabled
+        this.$formSubmit.attr('disabled', disabled);
+        this.$form.fadeTo(350, 1);
+      })
   }
 }

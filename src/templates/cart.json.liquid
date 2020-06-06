@@ -111,18 +111,41 @@
   {% assign gwp_needs_gift = true %}
 {% endif %}
 
-{
-  "total_price": {{ cart.total_price }},
-  "original_total_price": {{ cart.original_total_price }},
-  "total_discount": {{ cart.total_discount }},
-  "total_weight": {{ cart.total_weight }},
-  "note": {{ cart.note | json }},
-  "item_count": {{ cart.item_count }},
-  "items": [{{ items }}],
-  "section_html": {{ cart_section_html | json }},
-  "gwp_variant_id": {{ gwp_variant_id }},
-  "gwp_qualification_price": {{ gwp_qualification_price }},
-  "gwp_cart_qualifies": {{ gwp_cart_qualifies }},
-  "gwp_cart_gift_count": {{ gwp_cart_gift_count }},
-  "gwp_needs_gift": {{ gwp_needs_gift }}
-}
+{% assign shipping_notice_seen = false %}
+{%- capture attributes_json -%}
+  {% for attribute in cart.attributes %}
+    {% assign attribute_name = attribute | first %}
+    {% assign attribute_value = attribute | last %}
+
+    {{ attribute_name | json }}: {{ attribute_value | json }}
+
+    {% if attribute_name == 'Shipping notice seen' and attribute_value == 'true' %}
+      {% assign shipping_notice_seen = true %}
+    {% endif %}
+    {% unless forloop.last %},{% endunless %}
+  {% endfor %}
+{%- endcapture -%}
+
+{%- capture json -%}
+  {
+    "attributes": {
+      {{ attributes_json | strip }}
+    },
+    "total_price": {{ cart.total_price }},
+    "original_total_price": {{ cart.original_total_price }},
+    "total_discount": {{ cart.total_discount }},
+    "total_weight": {{ cart.total_weight }},
+    "note": {{ cart.note | json }},
+    "item_count": {{ cart.item_count }},
+    "items": [{{ items }}],
+    "section_html": {{ cart_section_html | json }},
+    "shipping_notice_seen": {{ shipping_notice_seen }},
+    "gwp_variant_id": {{ gwp_variant_id }},
+    "gwp_qualification_price": {{ gwp_qualification_price }},
+    "gwp_cart_qualifies": {{ gwp_cart_qualifies }},
+    "gwp_cart_gift_count": {{ gwp_cart_gift_count }},
+    "gwp_needs_gift": {{ gwp_needs_gift }}
+  }
+{%- endcapture -%}
+
+{{ json | strip | strip_newlines }}
