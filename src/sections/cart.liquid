@@ -116,7 +116,7 @@
                                data-shipping-notice-checkbox
                         >
                         <span class="checkbox-ui"></span>
-                        I have read the shipping policy and understand additional fees maybe incurred for international shipments.
+                        {{ settings.shipping_notice_checkbox_label | default: 'I have read the shipping policy and understand additional fees maybe incurred for international shipments.' }}
                       </label>
                     </div>
                   {% endunless %}
@@ -134,13 +134,14 @@
                       {{ content_for_additional_checkout_buttons }}
                     </div>
                   {% endif %}
-                  {% if section.settings.message != blank %}
-                    <div class="u-fs-small u-ta-center">
+                </div>
+                {% if section.settings.message != blank %}
+                  <div class="cart-list__footer-row">
+                    <div class="u-fs-xsmall u-ta-center">
                       {{ section.settings.message }}
                     </div>
-                  {% endif %}                  
-                  {% comment %}<p class="u-fs-small u-ta-center">{{ 'cart.general.shipping_at_checkout' | t }}</p>                  {% endcomment %}
-                </div>
+                  </div>
+                {% endif %}                
               </div>
             </div>
 

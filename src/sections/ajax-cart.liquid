@@ -155,7 +155,7 @@
         >
         <span class="checkbox-ui"></span>
         {% endraw %}
-          {{ section.settings.shipping_notice_checkbox_label | default: 'I have read the shipping policy and understand additional fees maybe incurred for international shipments.' }}
+          {{ settings.shipping_notice_checkbox_label | default: 'I have read the shipping policy and understand additional fees maybe incurred for international shipments.' }}
         {% raw %}
       </label>
     </div>
@@ -175,12 +175,6 @@
 {% schema %}
   {
     "name": "Ajax Cart",
-    "settings": [
-      {
-        "id": "shipping_notice_checkbox_label",
-        "type": "richtext",
-        "label": "Shipping notice checkbox label"
-      }
-    ]
+    "settings": []
   }
 {% endschema %}

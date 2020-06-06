@@ -73,6 +73,11 @@
       {
         "type": "header",
         "content": "Shipping Notice"
+      },
+      {
+        "id": "shipping_notice_checkbox_label",
+        "type": "richtext",
+        "label": "Checkbox Label"
       }
     ]
   },

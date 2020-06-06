@@ -141,6 +141,12 @@ $cart-padding-v: 15px;
   padding-top: 25px;
 }
 
+.cart-list__footer-row {
+  & + & {
+    margin-top: $spacer * 2.8;
+  }
+}
+
 .additional-checkout-buttons {
   margin: 10px 0;
 
