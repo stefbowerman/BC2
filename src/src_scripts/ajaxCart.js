@@ -84,8 +84,6 @@ export default class AJAXCart {
       this.$verifyForm      = $(selectors.verifyForm);
       this.toast            = new Toast($(selectors.toast));
 
-      debugger;
-
       // Compile once during initialization
       this.template = Handlebars.compile($(selectors.template).html());
       this.verifyBodyTemplate = Handlebars.compile($(selectors.verifyBodyTemplate).html());
@@ -485,5 +483,8 @@ export default class AJAXCart {
     this.removeBackdrop(() => {
       $body.removeClass(classes.bodyCartOpen);
     });
+
+    // Close the modal in case it's open
+    this.$verifyModal.modal('hide');
   }
 }

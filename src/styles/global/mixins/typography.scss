@@ -43,7 +43,6 @@
 @mixin article-content {
   // font-size: $font-size-small;
   text-transform: none;
-  text-align: justify;
 
   h1, h2, h3, h4, h5, h6 {
     margin: $spacer*3 0 $spacer*0.75;
@@ -62,7 +61,7 @@
   p + p,
   p + img,
   img + p {
-    margin-top: $spacer*3;
+    margin-top: $spacer;
   }
 
   p > img:only-child,

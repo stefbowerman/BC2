@@ -36,6 +36,16 @@ label {
   font-size: $label-font-size;
   font-weight: $label-font-weight;
   text-transform: $label-text-transform;
+
+  // Copying styles from rte.scss
+  a {
+    border-bottom: 1px solid $link-border-color;
+    transition: border-bottom-color 200ms ease-out;
+
+    &:hover {
+      border-bottom-color: $link-hover-border-color;
+    }
+  }
 }
 
 
