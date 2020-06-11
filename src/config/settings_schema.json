@@ -68,20 +68,6 @@
     ]
   },
   {
-    "name": "Shipping",
-    "settings": [
-      {
-        "type": "header",
-        "content": "Shipping Notice"
-      },
-      {
-        "id": "shipping_notice_checkbox_label",
-        "type": "richtext",
-        "label": "Checkbox Label"
-      }
-    ]
-  },
-  {
     "name": "Gift With Purchase",
     "settings": [
       {

@@ -21,10 +21,10 @@ const selectors = {
   // Verify Stuff
   verifyModal: '[data-verify-modal]',
   verifyBody: '[data-verify-modal-body]',
-  verifyForm: '[data-verify-modal-form]',
+  verifyFooter: '[data-verify-modal-footer]',
   verifyBodyTemplate: '[data-verify-modal-body-template]',
-  verifyFormTemplate: '[data-verify-modal-form-template]',
-  verifyShippingNoticeCheckbox: '[data-verify-shipping-notice-checkbox]',
+  verifyFooterTemplate: '[data-verify-modal-footer-template]',
+  verifyCheckoutLink: '[data-verify-checkout-link]',
 
   // Alert
   toast: '[data-ajax-cart-toast]'
@@ -81,22 +81,20 @@ export default class AJAXCart {
       this.$cartBadgeCount  = $(selectors.cartBadgeCount);
       this.$verifyModal     = $(selectors.verifyModal);
       this.$verifyBody      = $(selectors.verifyBody);
-      this.$verifyForm      = $(selectors.verifyForm);
+      this.$verifyFooter    = $(selectors.verifyFooter);
       this.toast            = new Toast($(selectors.toast));
 
       // Compile once during initialization
       this.template = Handlebars.compile($(selectors.template).html());
       this.verifyBodyTemplate = Handlebars.compile($(selectors.verifyBodyTemplate).html());
-      this.verifyFormTemplate = Handlebars.compile($(selectors.verifyFormTemplate).html());
+      this.verifyFooterTemplate = Handlebars.compile($(selectors.verifyFooterTemplate).html());
 
       // Add the AJAX part
       this._formOverride();
 
       // Add event handlers here
       this.$el.on('submit', 'form', this.onFormSubmit.bind(this));
-      this.$verifyForm.on('submit', this.onVerifyFormSubmit.bind(this));
-      this.$verifyForm.on('change', selectors.verifyShippingNoticeCheckbox, this.onVerifyShippingNoticeCheckboxChange.bind(this));
-
+      this.$verifyModal.on('click', selectors.verifyCheckoutLink, this.onVerifyCheckoutLinkClick.bind(this));
       $body.on('click', selectors.trigger, this.onTriggerClick.bind(this));
       $body.on('click', selectors.close, this.onCloseClick.bind(this));
       $body.on('click', selectors.itemRemove, this.onItemRemoveClick.bind(this));
@@ -320,7 +318,7 @@ export default class AJAXCart {
 
     this.$el.empty().append(this.template(cart));
     this.$verifyBody.empty().append(this.verifyBodyTemplate(cart));
-    this.$verifyForm.empty().append(this.verifyFormTemplate(cart));
+    this.$verifyFooter.empty().append(this.verifyFooterTemplate(cart));
 
     $window.trigger(this.events.RENDER);
     $window.trigger(this.events.UPDATE);
@@ -358,27 +356,12 @@ export default class AJAXCart {
     return true;
   }
 
-  onVerifyShippingNoticeCheckboxChange(e) {
-    this.$verifyForm.fadeTo(150, 0.5);
-
-    CartAPI.setShippingNoticeSeen(e.currentTarget.checked)
-      .then((cart) => {
-        this.$verifyForm.fadeTo(350, 1);
-        this.$verifyForm.find('input[type="submit"]')
-          .attr('disabled', cart.shipping_notice_seen !== true);
-      })
-  }
-
-  onVerifyFormSubmit(e) {
+  onVerifyCheckoutLinkClick(e) {
     this.cartIsVerified = true;
 
-    this.$verifyForm.find('input[type="submit"]')
+    $(e.currentTarget)
       .attr('disabled', true)
-      .val('Redirecting to Checkout..')
-
-    window.location.href = '/checkout';
-
-    return false;
+      .text('Redirecting to Checkout..');
   }
 
  /**

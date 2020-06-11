@@ -11,11 +11,7 @@
           <div class="modal-title" id="verifyCartModalLabel">Verify Cart</div>
         </div>
         <div class="modal-body" data-verify-modal-body></div>
-        <div class="modal-footer">
-          <form action="/cart" method="post" novalidate data-verify-modal-form>
-            
-          </form>
-        </div> 
+        <div class="modal-footer" data-verify-modal-footer></div>
       </div>
     </div>
   </div>
@@ -140,33 +136,14 @@
   {{/if}}
 </script>
 
-<script type="text/x-handlebars-template" data-verify-modal-form-template>
+<script type="text/x-handlebars-template" data-verify-modal-footer-template>
   <div class="modal-footer__row">
     Cart Total: <strong>{{ total_price }}</strong>
-  </div>
+  </div>        
   <div class="modal-footer__row">
-    <div class="checkbox u-margin-0 u-ta-left">
-      <label>
-        <input type="checkbox"
-               name="attributes[Shipping notice seen]"
-               value="true"
-               {{#if shipping_notice_seen}}checked{{/if}}
-               data-verify-shipping-notice-checkbox
-        >
-        <span class="checkbox-ui"></span>
-        {% endraw %}
-          {{ settings.shipping_notice_checkbox_label | default: 'I have read the shipping policy and understand additional fees maybe incurred for international shipments.' }}
-        {% raw %}
-      </label>
-    </div>
-  </div>          
-  <div class="modal-footer__row">
-    <input type="submit"
-           name="checkout"
-           class="btn btn-primary btn-block"
-           value="Proceed to Checkout"
-           {{#if shipping_notice_seen}}{{else}}disabled="true"{{/if}}
-    >          
+    <a href="/checkout" class="btn" data-verify-checkout-link>  
+      Proceed to Checkout 
+    </a>         
   </div>
 </script>
 {% endraw %}
