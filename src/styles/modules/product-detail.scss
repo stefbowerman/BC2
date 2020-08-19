@@ -161,6 +161,10 @@ body.template-product {
 .pdf-title {
   @include h5;
   margin: 0;
+
+  @media (min-width: $screen-lg-min) {
+    padding-right: 30px;
+  }
 }
 
 .pdf-subtitle {
